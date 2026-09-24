@@ -1,0 +1,783 @@
+:root {
+  --blue-deep: #315A73;
+  --blue-dark: #426D86;
+  --blue-main: #6696B1;
+  --blue-mid: #91B7CA;
+  --blue-soft: #DDECF3;
+  --blue-pale: #F3F8FB;
+  --green: #5F8F80;
+  --green-bg: #EDF6F2;
+  --amber: #A97B42;
+  --amber-bg: #FBF5EA;
+  --gray-badge: #75828A;
+  --gray-badge-bg: #F1F3F4;
+  --ink: #34434D;
+  --ink-strong: #273943;
+  --text-sub: #607580;
+  --text-muted: #87969E;
+  --border: #D9E6EC;
+  --border-strong: #C6D9E2;
+}
+
+
+/* =========================================================
+   A4 PAGE
+
+   기본 상태:
+   - 최소 A4 크기
+   - 내용이 많아지면 아래로 확장
+
+   페이지 크기 잠금:
+   - 정확히 A4 크기로 고정
+========================================================= */
+
+.a4-page {
+  width: 210mm;
+  min-height: 297mm;
+  height: auto;
+
+  padding: 14mm 15mm;
+
+  background: #fff;
+
+  box-shadow:
+    0 16px 45px rgba(51,86,105,.15);
+
+  position: relative;
+
+  overflow: visible;
+
+  flex: 0 0 auto;
+
+  zoom: var(--zoom, .9);
+}
+
+
+.page-inner {
+  position: relative;
+
+  width: 100%;
+
+  /*
+   * A4 297mm
+   * - 상단 14mm
+   * - 하단 14mm
+   * = 실제 본문 영역 269mm
+   */
+  min-height: 269mm;
+
+  overflow: visible;
+
+  outline: none;
+
+  color: var(--ink);
+
+  font-family:
+    Pretendard,
+    "Noto Sans KR",
+    "Apple SD Gothic Neo",
+    "Malgun Gothic",
+    sans-serif;
+
+  font-size: 11pt;
+
+  line-height: 1.7;
+
+  word-break: keep-all;
+  overflow-wrap: break-word;
+
+  caret-color: var(--blue-deep);
+}
+
+
+.page-inner:focus {
+  outline: none;
+}
+
+
+.a4-page.active {
+  box-shadow:
+    0 0 0 2px rgba(102,150,177,.55),
+    0 16px 45px rgba(51,86,105,.15);
+}
+
+
+.page-inner > *:first-child {
+  margin-top: 0;
+}
+
+
+/* =========================================================
+   DOCUMENT HEADER
+========================================================= */
+
+.doc-header {
+  padding-bottom: 8mm;
+  margin-bottom: 8mm;
+
+  border-bottom:
+    2px solid var(--blue-deep);
+}
+
+
+.doc-eyebrow {
+  margin-bottom: 2.5mm;
+
+  color: var(--blue-main);
+
+  font-size: 9.75pt;
+  font-weight: 800;
+
+  letter-spacing: .08em;
+}
+
+
+.doc-title {
+  margin: 0;
+
+  color: var(--blue-deep);
+
+  font-size: 27pt;
+  font-weight: 850;
+
+  line-height: 1.25;
+
+  letter-spacing: -.045em;
+}
+
+
+.doc-title-sub {
+  margin-top: 2.5mm;
+
+  color: var(--text-sub);
+
+  font-size: 12pt;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+.intro {
+  margin: 0 0 10mm;
+
+  padding: 5mm 6mm;
+
+  background: var(--blue-pale);
+
+  border-left:
+    1.1mm solid var(--blue-main);
+
+  border-radius:
+    0 3mm 3mm 0;
+
+  color: var(--text-sub);
+
+  font-size: 11.25pt;
+  font-weight: 500;
+
+  line-height: 1.85;
+}
+
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.doc-section {
+  margin-top: 12mm;
+}
+
+
+.doc-section-title {
+  display: flex;
+
+  align-items: center;
+
+  gap: 2.5mm;
+
+  margin: 0 0 4.5mm;
+
+  color: var(--blue-deep);
+
+  font-size: 16.5pt;
+  font-weight: 800;
+
+  line-height: 1.4;
+
+  letter-spacing: -.03em;
+}
+
+
+.doc-section-no {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 8mm;
+  height: 8mm;
+
+  padding: 0 2mm;
+
+  background: var(--blue-deep);
+
+  color: #fff;
+
+  border-radius: 2mm;
+
+  font-size: 10.5pt;
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   SUB TITLES
+========================================================= */
+
+.doc-subtitle {
+  margin: 7mm 0 2.5mm;
+
+  color: var(--blue-dark);
+
+  font-size: 12.75pt;
+  font-weight: 750;
+
+  line-height: 1.45;
+}
+
+
+.doc-mini-title {
+  margin: 4.5mm 0 2mm;
+
+  color: var(--ink-strong);
+
+  font-size: 11.25pt;
+  font-weight: 750;
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+.doc-body {
+  margin: 0 0 4mm;
+
+  color: var(--ink);
+
+  font-size: 11.25pt;
+  font-weight: 400;
+
+  line-height: 1.85;
+}
+
+
+/* =========================================================
+   NOTE
+========================================================= */
+
+.doc-note {
+  margin: 3mm 0 0;
+
+  padding-left: 5mm;
+
+  position: relative;
+
+  color: var(--text-sub);
+
+  font-size: 9.75pt;
+
+  line-height: 1.7;
+}
+
+
+.doc-note::before {
+  content: "※";
+
+  position: absolute;
+
+  left: 0;
+
+  color: var(--blue-main);
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   DIVIDER
+========================================================= */
+
+.doc-divider {
+  height: 1px;
+
+  margin: 8mm 0;
+
+  background: var(--border);
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.editor-table-wrap {
+  width: 100%;
+
+  margin: 4mm 0 5mm;
+
+  border:
+    1px solid var(--border-strong);
+
+  border-radius: 3mm;
+
+  overflow: hidden;
+}
+
+
+.editor-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  background: #fff;
+
+  table-layout: fixed;
+}
+
+
+.editor-table th,
+.editor-table td {
+  padding: 2.8mm 3mm;
+
+  border-right:
+    1px solid var(--border);
+
+  border-bottom:
+    1px solid var(--border);
+
+  vertical-align: middle;
+
+  font-size: 9.75pt;
+
+  line-height: 1.55;
+
+  text-align: left;
+
+  min-height: 8mm;
+}
+
+
+.editor-table th:last-child,
+.editor-table td:last-child {
+  border-right: none;
+}
+
+
+.editor-table tr:last-child td {
+  border-bottom: none;
+}
+
+
+.editor-table th {
+  background: var(--blue-soft);
+
+  color: var(--blue-deep);
+
+  font-weight: 800;
+
+  text-align: center;
+}
+
+
+/* =========================================================
+   CHECKBOX
+========================================================= */
+
+.doc-checkbox {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 2mm;
+
+  margin: 1mm 2mm 1mm 0;
+
+  color: var(--ink);
+}
+
+
+.doc-checkbox input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 4.5mm;
+  height: 4.5mm;
+
+  margin: 0;
+
+  border:
+    1.6px solid var(--blue-mid);
+
+  border-radius: 1mm;
+
+  background: #fff;
+
+  cursor: pointer;
+
+  position: relative;
+
+  flex: 0 0 auto;
+}
+
+
+.doc-checkbox input[type="checkbox"]:checked {
+  background: var(--blue-main);
+
+  border-color: var(--blue-main);
+}
+
+
+.doc-checkbox input[type="checkbox"]:checked::after {
+  content: "✓";
+
+  color: white;
+
+  position: absolute;
+
+  left: 50%;
+  top: 47%;
+
+  transform:
+    translate(-50%,-50%);
+
+  font-size: 9pt;
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   TEXT BOX
+========================================================= */
+
+.doc-textbox {
+  margin: 4mm 0;
+
+  padding: 4.5mm 5mm;
+
+  min-height: 18mm;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 3mm;
+
+  background: var(--blue-pale);
+
+  color: var(--ink);
+
+  line-height: 1.7;
+}
+
+
+.doc-textbox::before {
+  content: "텍스트박스";
+
+  display: block;
+
+  margin-bottom: 1.5mm;
+
+  color: var(--blue-deep);
+
+  font-size: 9pt;
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   CALLOUT
+========================================================= */
+
+.doc-callout {
+  margin: 4.5mm 0;
+
+  padding: 4.5mm 5mm;
+
+  border:
+    1px solid var(--blue-soft);
+
+  border-radius: 3mm;
+
+  background: var(--blue-pale);
+
+  font-size: 10.5pt;
+
+  line-height: 1.75;
+}
+
+
+.doc-callout-title {
+  margin: 0 0 1.5mm;
+
+  color: var(--blue-deep);
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   SIGNATURE
+========================================================= */
+
+.doc-signature {
+  margin-top: 13mm;
+
+  text-align: center;
+}
+
+
+.doc-signature-date {
+  margin-bottom: 4mm;
+
+  color: var(--text-sub);
+
+  font-size: 10.5pt;
+}
+
+
+.doc-signature-org {
+  color: var(--blue-deep);
+
+  font-size: 15pt;
+  font-weight: 800;
+
+  letter-spacing: -.02em;
+}
+
+
+.doc-signature-stamp {
+  display: inline-block;
+
+  margin-top: 2mm;
+
+  padding: 1mm 2.6mm;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 999px;
+
+  color: var(--text-muted);
+
+  font-size: 8.25pt;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   EDITOR MARKER
+========================================================= */
+
+.editor-marker {
+  outline:
+    1px dashed rgba(102,150,177,.4);
+
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   TABLE SELECTION
+========================================================= */
+
+.editor-table td.table-selected-cell,
+.editor-table th.table-selected-cell {
+  box-shadow:
+    inset 0 0 0 2px
+    rgba(102,150,177,.75);
+
+  background-image:
+    linear-gradient(
+      rgba(221,236,243,.38),
+      rgba(221,236,243,.38)
+    );
+}
+
+
+/* =========================================================
+   IMAGE
+========================================================= */
+
+.doc-image-block {
+  margin: 5mm 0;
+
+  text-align: center;
+
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+
+.doc-image {
+  display: inline-block;
+
+  max-width: 100%;
+  max-height: 245mm;
+
+  height: auto;
+
+  object-fit: contain;
+
+  border-radius: 3mm;
+
+  box-shadow:
+    0 3px 14px rgba(51,86,105,.10);
+
+  vertical-align: top;
+
+  cursor: pointer;
+}
+
+
+.doc-image.selected {
+  outline:
+    2px solid rgba(102,150,177,.75);
+
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   A4 OVERFLOW WARNING
+========================================================= */
+
+.a4-page.overflowing::after {
+  content: "A4 영역 초과";
+
+  position: absolute;
+
+  z-index: 4;
+
+  padding: 1mm 2mm;
+
+  border-radius: 999px;
+
+  background: #fff1f1;
+
+  color: #a95f5f;
+
+  border:
+    1px solid #e8c3c3;
+
+  font-size: 8pt;
+  font-weight: 700;
+
+  pointer-events: none;
+}
+
+
+/*
+ * 잠금이 해제된 상태에서는 페이지가
+ * 내용만큼 아래로 늘어난다.
+ *
+ * 따라서 원래 A4가 끝나는 297mm 위치를
+ * 빨간 점선으로 표시한다.
+ */
+@media screen {
+
+  body:not(.page-size-locked)
+  .a4-page.overflowing::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    top: calc(297mm - 1px);
+
+    border-top:
+      1px dashed rgba(169,95,95,.55);
+
+    pointer-events: none;
+
+    z-index: 3;
+  }
+
+
+  body:not(.page-size-locked)
+  .a4-page.overflowing::after {
+
+    right: 4mm;
+
+    top:
+      calc(297mm - 9mm);
+
+    bottom: auto;
+  }
+
+}
+
+
+/* =========================================================
+   PAGE SIZE LOCK
+
+   잠금 OFF
+   ---------------------------------
+   최소 높이 297mm
+   내용이 많으면 페이지가 아래로 확장
+
+   잠금 ON
+   ---------------------------------
+   정확히 297mm
+   A4를 넘어가는 내용은 화면에서 숨김
+
+   ※ @media screen 으로 제한하여
+      PDF 인쇄 CSS에는 영향을 주지 않는다.
+========================================================= */
+
+@media screen {
+
+  body.page-size-locked
+  .a4-page {
+
+    width: 210mm;
+
+    height: 297mm;
+
+    min-height: 297mm;
+    max-height: 297mm;
+
+    overflow: hidden;
+  }
+
+
+  body.page-size-locked
+  .page-inner {
+
+    width: 100%;
+
+    height: 269mm;
+
+    min-height: 269mm;
+    max-height: 269mm;
+
+    overflow: hidden;
+  }
+
+
+  body.page-size-locked
+  .a4-page.overflowing::after {
+
+    right: 4mm;
+
+    bottom: 3mm;
+
+    top: auto;
+  }
+
+}
