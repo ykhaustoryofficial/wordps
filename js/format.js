@@ -94,25 +94,11 @@ SimpleDoc.Format = {};
 
     function getSavedRange() {
 
-        const editor = SimpleDoc.getActiveEditor();
-        const range = SimpleDoc.state.savedRange;
-
-        if (!editor || !range) {
-            return null;
-        }
-
-        try {
-
-            if (!editor.contains(range.commonAncestorContainer)) {
-                return null;
-            }
-
-            return range.cloneRange();
-
-        } catch {
-
-            return null;
-        }
+        return (
+            SimpleDoc.Selection
+                ?.getSavedRange?.()
+            || null
+        );
     }
 
 
@@ -132,11 +118,48 @@ SimpleDoc.Format = {};
 
         if (!range) return null;
 
-        if (range.startContainer.nodeType === Node.ELEMENT_NODE) {
-            return range.startContainer;
+        /*
+         * V9: 블록 시작점(page-inner offset 0 등)에서도
+         * 실제로 선택된 첫 글자의 Element를 우선한다.
+         * 이것이 페이지 첫 줄 서식 붙여넣기 누락을 막는 핵심이다.
+         */
+        const selectedTextElement =
+            SimpleDoc.Selection
+                ?.firstSelectedTextElement?.(range);
+
+        if (selectedTextElement) {
+            return selectedTextElement;
         }
 
-        return range.startContainer.parentElement;
+        let node = range.startContainer;
+
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            const child = node.childNodes?.[
+                Math.min(
+                    range.startOffset,
+                    Math.max(0, node.childNodes.length - 1)
+                )
+            ];
+
+            if (child) node = child;
+        }
+
+        let element =
+            node.nodeType === Node.ELEMENT_NODE
+                ? node
+                : node.parentElement;
+
+        if (
+            element &&
+            !SimpleDoc.Selection?.isEditableNode?.(element)
+        ) {
+            const editable =
+                element.querySelector?.('[contenteditable="true"]');
+
+            if (editable) element = editable;
+        }
+
+        return element;
     }
 
 
@@ -188,83 +211,75 @@ SimpleDoc.Format = {};
     }
 
 
+    function copyParagraphStyle(element) {
+
+        if (!element) {
+            return {};
+        }
+
+        const style =
+            getComputedStyle(
+                element
+            );
+
+        const result =
+            copyStyleProperties(
+                style,
+                PARAGRAPH_PROPERTIES
+            );
+
+
+        /*
+         * computedStyle의 lineHeight는 px로 반환되기 때문에
+         * 그대로 복사하면 대상 글자크기가 다를 때 비율이 달라진다.
+         * 한/글의 줄 간격처럼 상대 비율로 보존한다.
+         */
+        if (
+            style.lineHeight &&
+            style.lineHeight !== 'normal'
+        ) {
+
+            const fontSize =
+                parseFloat(
+                    style.fontSize
+                );
+
+            const lineHeight =
+                parseFloat(
+                    style.lineHeight
+                );
+
+
+            if (
+                Number.isFinite(fontSize) &&
+                fontSize > 0 &&
+                Number.isFinite(lineHeight)
+            ) {
+
+                result.lineHeight =
+                    (
+                        lineHeight /
+                        fontSize
+                    ).toFixed(3);
+            }
+        }
+
+
+        return result;
+    }
+
+
     /* =========================================================
        선택영역에 걸쳐 있는 문단 찾기
     ========================================================= */
 
     function getTargetBlocks(range) {
 
-        const editor = SimpleDoc.getActiveEditor();
-
-        if (!editor || !range) {
-            return [];
-        }
-
-        const selector = [
-            'p',
-            'h1',
-            'h2',
-            'h3',
-            'h4',
-            'li',
-            'td',
-            'th',
-            '.intro',
-            '.doc-callout',
-            '.doc-signature'
-        ].join(',');
-
-
-        let blocks = [
-            ...editor.querySelectorAll(selector)
-        ].filter(element => {
-
-            try {
-
-                return range.intersectsNode(element);
-
-            } catch {
-
-                return false;
-            }
-        });
-
-
-        /*
-         * 안내박스/서명부처럼 내부에 여러 요소가 있는 경우
-         * 부모와 자식이 동시에 변환되는 것을 방지
-         */
-
-        blocks = blocks.filter(element => {
-
-            return !blocks.some(parent => {
-
-                return (
-                    parent !== element &&
-                    parent.contains(element) &&
-                    (
-                        parent.classList.contains('doc-callout') ||
-                        parent.classList.contains('doc-signature')
-                    )
-                );
-            });
-        });
-
-
-        if (!blocks.length) {
-
-            const closest =
-                SimpleDoc.Selection.closestBlock(
-                    range.startContainer
-                );
-
-            if (closest && closest !== editor) {
-                blocks = [closest];
-            }
-        }
-
-
-        return blocks;
+        return (
+            SimpleDoc.Selection
+                ?.blocksInRange?.(range)
+            || []
+        );
     }
 
 
@@ -822,8 +837,11 @@ SimpleDoc.Format = {};
         selection.addRange(range);
 
 
-        SimpleDoc.state.savedRange =
-            range.cloneRange();
+        if (SimpleDoc.Selection?.saveRange) {
+            SimpleDoc.Selection.saveRange(range.cloneRange());
+        } else {
+            SimpleDoc.state.savedRange = range.cloneRange();
+        }
     }
 
 
@@ -967,7 +985,7 @@ SimpleDoc.Format = {};
                     '복사할 서식을 먼저 선택하세요'
                 );
 
-                return;
+                return false;
             }
 
 
@@ -976,7 +994,7 @@ SimpleDoc.Format = {};
 
 
             if (!startElement) {
-                return;
+                return false;
             }
 
 
@@ -996,74 +1014,47 @@ SimpleDoc.Format = {};
             const block =
                 presetElement ||
                 SimpleDoc.Selection.closestBlock(
+                    startElement
+                ) ||
+                SimpleDoc.Selection.closestBlock(
                     range.startContainer
                 ) ||
                 startElement;
 
+            const paragraphSource =
+                SimpleDoc.Selection.closestBlock(
+                    startElement
+                ) ||
+                SimpleDoc.Selection.closestBlock(
+                    range.startContainer
+                ) ||
+                block;
+
 
             /*
-             * 문서 요소
+             * 한/글의 모양 복사는 문서 요소 구조를 복제하는 것이 아니라
+             * 현재 글자/문단의 모양만 복사한다.
              */
+            formatClipboard = {
 
-            if (presetType) {
+                type: 'normal',
 
-                formatClipboard = {
+                sourcePresetType:
+                    presetType || null,
 
-                    type: 'preset',
-
-                    presetType,
-
-                    inlineStyle:
-                        block.getAttribute(
-                            'style'
-                        ) || '',
-
-                    character:
-                        copyStyleProperties(
-                            getComputedStyle(
-                                startElement
-                            ),
-                            CHARACTER_PROPERTIES
+                character:
+                    copyStyleProperties(
+                        getComputedStyle(
+                            startElement
                         ),
+                        CHARACTER_PROPERTIES
+                    ),
 
-                    paragraph:
-                        copyStyleProperties(
-                            getComputedStyle(
-                                block
-                            ),
-                            PARAGRAPH_PROPERTIES
-                        )
-                };
-
-            }
-
-            /*
-             * 일반 텍스트
-             */
-
-            else {
-
-                formatClipboard = {
-
-                    type: 'normal',
-
-                    character:
-                        copyStyleProperties(
-                            getComputedStyle(
-                                startElement
-                            ),
-                            CHARACTER_PROPERTIES
-                        ),
-
-                    paragraph:
-                        copyStyleProperties(
-                            getComputedStyle(
-                                block
-                            ),
-                            PARAGRAPH_PROPERTIES
-                        )
-                };
-            }
+                paragraph:
+                    copyParagraphStyle(
+                        paragraphSource
+                    )
+            };
 
 
             document
@@ -1077,8 +1068,10 @@ SimpleDoc.Format = {};
 
 
             showMessage(
-                '서식 복사됨 · Alt+V로 적용'
+                '모양 복사됨 · 대상 선택 후 Alt+C'
             );
+
+            return true;
         };
 
 
@@ -1091,67 +1084,63 @@ SimpleDoc.Format = {};
         data
     ) {
 
-        const blocks =
-            getTargetBlocks(
-                range
-            );
-
-
-        /*
-         * 문단 서식
-         */
-
-        blocks.forEach(
-            block => {
-
-                Object.assign(
-                    block.style,
-                    data.paragraph || {}
-                );
-            }
-        );
-
-
-        /*
-         * 글자 서식
-         */
-
-        const span =
-            document.createElement(
-                'span'
-            );
-
-
-        Object.assign(
-            span.style,
-            data.character || {}
-        );
-
-
-        try {
-
-            range.surroundContents(
-                span
-            );
-
-        } catch {
-
-            const fragment =
-                range.extractContents();
-
-
-            span.appendChild(
-                fragment
-            );
-
-
-            range.insertNode(
-                span
-            );
+        if (!range) {
+            return false;
         }
 
 
-        finishChange([span]);
+        /*
+         * 여러 문단을 선택해도 문단 단위 스타일은
+         * 각각의 실제 편집 블록에 적용한다.
+         */
+        const blocks =
+            SimpleDoc.Selection
+                ?.applyBlockStyles?.(
+                    data.paragraph || {},
+                    range,
+                    {
+                        finalize: false
+                    }
+                )
+            || [];
+
+
+        /*
+         * 문자 서식은 선택영역 전체를 하나의 span으로
+         * 감싸지 않고, 각 텍스트 노드의 선택부분에만
+         * 개별적으로 적용한다.
+         */
+        const spans =
+            SimpleDoc.Selection
+                ?.applyCharacterStyles?.(
+                    data.character || {},
+                    range,
+                    {
+                        finalize: false,
+                        preserveSelection: true
+                    }
+                )
+            || [];
+
+
+        const changed = [
+            ...blocks,
+            ...spans
+        ];
+
+
+        if (!changed.length) {
+            return false;
+        }
+
+
+        SimpleDoc.Selection
+            ?.finalizeChange?.(
+                changed
+            );
+
+
+        return true;
     }
 
 
@@ -1166,10 +1155,10 @@ SimpleDoc.Format = {};
             if (!formatClipboard) {
 
                 showMessage(
-                    '먼저 서식을 복사하세요 · Alt+C'
+                    '먼저 모양을 복사하세요 · Alt+C'
                 );
 
-                return;
+                return false;
             }
 
 
@@ -1186,72 +1175,42 @@ SimpleDoc.Format = {};
                     '서식을 적용할 텍스트를 드래그해서 선택하세요'
                 );
 
-                return;
+                return false;
             }
 
 
             /*
-             * 문서요소 서식
+             * 모양 붙이기는 선택된 모든 문단/텍스트 조각에
+             * 글자 + 문단 모양을 적용하되 DOM 구조는 바꾸지 않는다.
              */
-
-            if (
-                formatClipboard.type ===
-                'preset'
-            ) {
-
-                const changed =
-                    applyPresetToRange(
-                        range,
-                        formatClipboard.presetType
-                    );
-
-
-                changed.forEach(
-                    element => {
-
-                        if (!element) return;
-
-
-                        if (
-                            formatClipboard.inlineStyle
-                        ) {
-
-                            element.setAttribute(
-                                'style',
-                                formatClipboard.inlineStyle
-                            );
-                        }
-
-
-                        Object.assign(
-                            element.style,
-                            formatClipboard.character || {},
-                            formatClipboard.paragraph || {}
-                        );
-                    }
-                );
-
-
-                finishChange(changed);
-            }
-
-
-            /*
-             * 일반 글자/문단 서식
-             */
-
-            else {
-
+            const applied =
                 applyNormalFormat(
                     range,
                     formatClipboard
                 );
+
+
+            if (!applied) {
+
+                showMessage(
+                    '적용할 수 있는 텍스트가 없습니다'
+                );
+
+                return false;
             }
 
 
             showMessage(
-                '서식 적용됨'
+                '모양 붙이기 완료'
             );
+
+            return true;
+        };
+
+
+    SimpleDoc.Format.hasClipboard =
+        function() {
+            return !!formatClipboard;
         };
 
 
@@ -1295,6 +1254,31 @@ SimpleDoc.Format = {};
             });
 
 
+            /*
+             * 문서 요소 버튼도 드래그 선택을 유지한다.
+             */
+            document
+                .querySelectorAll(
+                    '[data-block]'
+                )
+                .forEach(button => {
+
+                    button.addEventListener(
+                        'mousedown',
+                        event => {
+
+                            if (
+                                SimpleDoc.Selection
+                                    ?.getSavedRange?.()
+                            ) {
+
+                                event.preventDefault();
+                            }
+                        }
+                    );
+                });
+
+
             copyButton?.addEventListener(
                 'click',
                 SimpleDoc.Format.copy
@@ -1308,60 +1292,6 @@ SimpleDoc.Format = {};
         }
     );
 
-
-    /* =========================================================
-       ALT + C / ALT + V
-    ========================================================= */
-
-    document.addEventListener(
-        'keydown',
-        event => {
-
-            if (
-                !event.altKey ||
-                event.ctrlKey ||
-                event.metaKey
-            ) {
-
-                return;
-            }
-
-
-            /*
-             * 파일명/숫자입력/select 등에서는
-             * 단축키를 가로채지 않음
-             */
-
-            if (
-                event.target.matches?.(
-                    'input, textarea, select'
-                )
-            ) {
-
-                return;
-            }
-
-
-            const key =
-                event.key.toLowerCase();
-
-
-            if (key === 'c') {
-
-                event.preventDefault();
-
-                SimpleDoc.Format.copy();
-            }
-
-
-            if (key === 'v') {
-
-                event.preventDefault();
-
-                SimpleDoc.Format.paste();
-            }
-        }
-    );
 
 /* =========================================================
    개요박스 / 안내박스 내부 Enter 처리
@@ -1406,8 +1336,11 @@ function insertBoxLineBreak() {
     /*
      * SimpleDoc 선택영역도 갱신
      */
-    SimpleDoc.state.savedRange =
-        range.cloneRange();
+    if (SimpleDoc.Selection?.saveRange) {
+        SimpleDoc.Selection.saveRange(range.cloneRange());
+    } else {
+        SimpleDoc.state.savedRange = range.cloneRange();
+    }
 
 
     /*
@@ -1540,8 +1473,11 @@ document.addEventListener(
             );
 
 
-            SimpleDoc.state.savedRange =
-                newRange.cloneRange();
+            if (SimpleDoc.Selection?.saveRange) {
+                SimpleDoc.Selection.saveRange(newRange.cloneRange());
+            } else {
+                SimpleDoc.state.savedRange = newRange.cloneRange();
+            }
 
             return;
         }

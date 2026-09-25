@@ -61,7 +61,10 @@ SimpleDoc.Docx.createExportRoot = function() {
     const pageContent = document.createElement('div');
     pageContent.className = 'docx-export-page';
     pageContent.innerHTML = page.querySelector('.page-inner').innerHTML;
-    pageContent.querySelectorAll('.table-selected-cell,.selected').forEach(el => el.classList.remove('table-selected-cell','selected'));
+    pageContent.querySelectorAll('.table-selected-cell,.selected,.sd-object-selected').forEach(el => {
+      el.classList.remove('table-selected-cell','selected','sd-object-selected');
+    });
+    pageContent.querySelectorAll('.sd-object-handle,.sd-table-resize-handle').forEach(el => el.remove());
     root.appendChild(pageContent);
     if (i < pages.length - 1) {
       const br = document.createElement('div');

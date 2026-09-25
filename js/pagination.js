@@ -52,38 +52,28 @@ SimpleDoc.Pagination.getContentLimit =
    OVERFLOW
 ========================================================= */
 
-SimpleDoc.Pagination.isOverflow =
-  function(page) {
+SimpleDoc.Pagination.isOverflow = function(page) {
+  const inner = page?.querySelector('.page-inner');
+  if (!inner) return false;
 
-    const inner =
-      page?.querySelector(
-        '.page-inner'
-      );
+  const limit = SimpleDoc.Pagination.getContentLimit() + 2;
+  const children = [...inner.children];
 
+  if (!children.length) return false;
 
-    if (!inner) {
+  /*
+   * scrollHeight는 개체 선택 핸들/표 resize handle 같은
+   * 절대배치 편집 UI까지 포함할 수 있다.
+   * 실제 문서 흐름의 마지막/가장 아래 블록 위치만 측정한다.
+   */
+  const bottom = Math.max(...children.map(child => {
+    const style = getComputedStyle(child);
+    const marginBottom = Number.parseFloat(style.marginBottom) || 0;
+    return child.offsetTop + child.offsetHeight + marginBottom;
+  }));
 
-      return false;
-
-    }
-
-
-    /*
-     * 페이지의 현재 화면 높이가 아니라
-     * 실제 A4 본문 높이와 비교한다.
-     */
-    return (
-
-      inner.scrollHeight >
-
-      SimpleDoc.Pagination
-        .getContentLimit() +
-
-      2
-
-    );
-
-  };
+  return bottom > limit;
+};
 
 
 /* =========================================================
@@ -449,11 +439,15 @@ SimpleDoc.Pagination.splitTextBlock =
 
     if (
       !block.matches(
-        'p'
+        'p,h1,h2,h3,h4,h5,h6,li,div.sd-free-paragraph'
+      ) ||
+
+      block.matches(
+        '.sd-object,.doc-section-title'
       ) ||
 
       block.closest(
-        'td,th'
+        'td,th,.sd-object-editor'
       )
     ) {
 
@@ -962,177 +956,134 @@ SimpleDoc.Pagination.splitTable =
 
 
 /* =========================================================
-   FLOW OVERFLOW
+   V8 PRECISE OVERFLOW DETECTION
 ========================================================= */
 
-SimpleDoc.Pagination.flowOverflow =
-  function(page) {
+SimpleDoc.Pagination.childBottom = function(inner, child) {
+  if (!inner || !child) return 0;
 
-    const inner =
-      page.querySelector(
-        '.page-inner'
-      );
+  const style = getComputedStyle(child);
+  const marginBottom = Number.parseFloat(style.marginBottom) || 0;
 
+  return child.offsetTop + child.offsetHeight + marginBottom;
+};
 
-    let changed =
-      false;
+SimpleDoc.Pagination.firstOverflowChild = function(page) {
+  const inner = page?.querySelector('.page-inner');
+  if (!inner) return null;
 
+  const limit = SimpleDoc.Pagination.getContentLimit() + 2;
 
-    let guard =
-      0;
+  return [...inner.children].find(child => {
+    return SimpleDoc.Pagination.childBottom(inner, child) > limit;
+  }) || null;
+};
 
+SimpleDoc.Pagination.moveFollowingSiblings = function(node, nextInner) {
+  if (!node || !nextInner) return false;
 
-    /*
-     * A4 기준을 넘는 동안
-     * 끝쪽 요소를 다음 페이지로 이동
-     */
-    while (
+  const following = [];
+  let current = node.nextElementSibling;
 
-      SimpleDoc.Pagination
-        .isOverflow(
-          page
-        ) &&
+  while (current) {
+    following.push(current);
+    current = current.nextElementSibling;
+  }
 
-      guard++ < 80
+  if (!following.length) return false;
 
-    ) {
+  /* prependNode는 맨 앞에 넣으므로 역순으로 넣어 원래 순서를 유지한다. */
+  for (let i = following.length - 1; i >= 0; i--) {
+    SimpleDoc.Pagination.prependNode(nextInner, following[i]);
+  }
 
-      const last =
-        inner.lastElementChild;
+  return true;
+};
 
+/* =========================================================
+   FLOW OVERFLOW — V8 PRECISE REFLOW
 
-      if (!last) {
+   과거: 마지막 블록부터 무조건 통째로 이동
+   V8 : 실제 경계를 처음 넘는 블록을 찾아 그 블록부터 처리
+        - 텍스트 문단: 현재 쪽에 들어가는 부분은 남기고 tail만 이동
+        - 표: 걸리는 행부터 이동
+        - 복합 section: 내부 뒤쪽부터 이동
+        - 나눌 수 없는 개체: 개체 하나만 통째로 이동
+========================================================= */
 
-        break;
+SimpleDoc.Pagination.flowOverflow = function(page) {
+  const inner = page?.querySelector('.page-inner');
+  if (!inner) return false;
 
-      }
+  let changed = false;
+  let guard = 0;
 
+  while (
+    SimpleDoc.Pagination.isOverflow(page) &&
+    guard++ < 120
+  ) {
+    const overflowNode = SimpleDoc.Pagination.firstOverflowChild(page)
+      || inner.lastElementChild;
 
-      const next =
-        SimpleDoc.Pagination
-          .ensureNextPage(
-            page
-          );
+    if (!overflowNode) break;
 
+    const next = SimpleDoc.Pagination.ensureNextPage(page);
+    const nextInner = next.querySelector('.page-inner');
+    if (!nextInner) break;
 
-      const nextInner =
-        next.querySelector(
-          '.page-inner'
-        );
-
-
-      /*
-       * 표
-       */
-      if (
-
-        last.matches(
-          '.editor-table-wrap'
-        ) &&
-
-        SimpleDoc.Pagination
-          .splitTable(
-            page,
-            last,
-            nextInner
-          )
-
-      ) {
-
-        changed =
-          true;
-
-        continue;
-
-      }
-
-
-      /*
-       * 섹션
-       */
-      if (
-
-        last.matches(
-          '.doc-section'
-        ) &&
-
-        SimpleDoc.Pagination
-          .splitSection(
-            page,
-            last,
-            nextInner
-          )
-
-      ) {
-
-        changed =
-          true;
-
-        continue;
-
-      }
-
-
-      /*
-       * 페이지에 문단 하나만 남아있으면
-       * 문단 내부 텍스트 분할 시도
-       */
-      if (
-        inner.children.length ===
-        1
-      ) {
-
-        if (
-          SimpleDoc.Pagination
-            .splitTextBlock(
-              page,
-              last,
-              nextInner
-            )
-        ) {
-
-          changed =
-            true;
-
-          continue;
-
-        }
-
-
-        /*
-         * 이미지 등 분할할 수 없는
-         * 하나의 객체가 A4보다 크면
-         * 그대로 두고 초과 경고
-         */
-        break;
-
-      }
-
-
-      /*
-       * 일반 블록은 통째로 이동
-       */
-      SimpleDoc.Pagination
-        .prependNode(
-          nextInner,
-          last
-        );
-
-
-      changed =
-        true;
-
+    /* 경계 뒤에 있는 요소는 100% 다음 쪽 내용이므로 먼저 이동한다. */
+    if (SimpleDoc.Pagination.moveFollowingSiblings(overflowNode, nextInner)) {
+      changed = true;
     }
 
+    /* 뒤쪽을 옮긴 것만으로 현재 쪽이 맞으면 overflowNode는 그대로 둔다. */
+    if (!SimpleDoc.Pagination.isOverflow(page)) {
+      break;
+    }
 
-    SimpleDoc.warnOverflow(
-      page
-    );
+    /* 표는 행 단위로 정확히 분할 */
+    if (
+      overflowNode.matches('.editor-table-wrap') &&
+      SimpleDoc.Pagination.splitTable(page, overflowNode, nextInner)
+    ) {
+      changed = true;
+      continue;
+    }
 
+    /* 복합 섹션은 내부 블록 단위로 분할 */
+    if (
+      overflowNode.matches('.doc-section') &&
+      SimpleDoc.Pagination.splitSection(page, overflowNode, nextInner)
+    ) {
+      changed = true;
+      continue;
+    }
 
-    return changed;
+    /* 일반 텍스트 블록은 페이지에 들어가는 문자까지만 남긴다. */
+    if (
+      SimpleDoc.Pagination.splitTextBlock(page, overflowNode, nextInner)
+    ) {
+      changed = true;
+      continue;
+    }
 
-  };
+    /*
+     * 이미지/개요/안내/텍스트박스처럼 나눌 수 없는 원자 개체,
+     * 또는 현재 페이지에 한 글자도 들어갈 수 없는 블록은
+     * 해당 개체/블록 하나만 다음 페이지로 보낸다.
+     */
+    SimpleDoc.Pagination.prependNode(nextInner, overflowNode);
+    changed = true;
+
+    /* 빈 페이지에 개체 하나가 A4보다 큰 경우 무한 이동 방지 */
+    if (!inner.children.length) {
+      break;
+    }
+  }
+
+  SimpleDoc.warnOverflow(page);
+  return changed;
+};
 
 
 /* =========================================================
@@ -1320,6 +1271,13 @@ SimpleDoc.Pagination.paginateFrom =
 
     try {
 
+      /*
+       * 페이지 계산 전에 개체 경계를 먼저 정규화해야
+       * 실제 화면 흐름과 계산 대상 DOM이 동일하다.
+       */
+      SimpleDoc.Objects
+        ?.normalizeAll?.();
+
       let pages =
         SimpleDoc.getPages();
 
@@ -1394,8 +1352,34 @@ SimpleDoc.Pagination.paginateFrom =
 
 
       /*
-       * 최종 초과 상태 점검
+       * 표 분할/개체 이동으로 새 페이지가 생기면 object manager가
+       * 실제 커서용 문단을 보충할 수 있다. 그 추가 레이아웃까지 포함해
+       * 한 번 더 정밀 reflow를 돌려 숨은 초과를 제거한다.
        */
+      SimpleDoc.Objects
+        ?.normalizeAll?.();
+
+      pages = SimpleDoc.getPages();
+
+      for (
+        let i = start;
+        i < pages.length;
+        i++
+      ) {
+        changed =
+          SimpleDoc.Pagination
+            .flowOverflow(
+              pages[i]
+            ) ||
+          changed;
+
+        pages = SimpleDoc.getPages();
+      }
+
+      SimpleDoc.Objects
+        ?.normalizeAll?.();
+
+      /* 최종 초과 상태 점검 */
       SimpleDoc
         .getPages()
         .forEach(
@@ -1479,6 +1463,471 @@ SimpleDoc.Pagination.paginateAll =
           first
         )
     );
+
+  };
+
+
+
+/* =========================================================
+   CARET PRESERVATION ACROSS AUTO PAGINATION
+
+   Enter로 새 문단이 생긴 직후 페이지가 나뉘면
+   브라우저 Selection이 이전 페이지에 남는 문제를 방지한다.
+========================================================= */
+
+SimpleDoc.Pagination.createCaretMarker =
+  function(page) {
+
+    const selection =
+      window.getSelection();
+
+
+    if (
+      !selection ||
+      !selection.rangeCount ||
+      !selection.isCollapsed
+    ) {
+
+      return null;
+
+    }
+
+
+    const range =
+      selection.getRangeAt(0);
+
+
+    const inner =
+      page?.querySelector(
+        '.page-inner'
+      );
+
+
+    if (
+      !inner ||
+      !inner.contains(
+        range.startContainer
+      )
+    ) {
+
+      return null;
+
+    }
+
+
+    const id =
+      `caret-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+
+
+    const marker =
+      document.createElement(
+        'span'
+      );
+
+
+    marker.dataset
+      .paginationCaret =
+        id;
+
+
+    marker.contentEditable =
+      'false';
+
+
+    marker.setAttribute(
+      'aria-hidden',
+      'true'
+    );
+
+
+    marker.style.display =
+      'inline-block';
+
+
+    marker.style.width =
+      '0';
+
+
+    marker.style.height =
+      '0';
+
+
+    marker.style.overflow =
+      'hidden';
+
+
+    marker.style.lineHeight =
+      '0';
+
+
+    marker.style.fontSize =
+      '0';
+
+
+    marker.style.pointerEvents =
+      'none';
+
+
+    try {
+
+      range.insertNode(
+        marker
+      );
+
+
+      return id;
+
+    }
+
+    catch {
+
+      return null;
+
+    }
+
+  };
+
+
+SimpleDoc.Pagination.restoreCaretMarker =
+  function(
+    markerId,
+    fallbackPage = null
+  ) {
+
+    if (!markerId) {
+
+      return false;
+
+    }
+
+
+    const markers =
+      [
+        ...document.querySelectorAll(
+          `[data-pagination-caret="${markerId}"]`
+        )
+      ];
+
+
+    /*
+     * splitTextBlock 과정에서 cloneContents가 관여해
+     * 예외적으로 marker가 둘 이상 생긴 경우
+     * 문서상 가장 뒤쪽 marker가 실제 입력 지점에 가장 가깝다.
+     */
+    const marker =
+      markers[
+        markers.length - 1
+      ];
+
+
+    if (!marker) {
+
+      /*
+       * marker가 사라진 예외 상황에서는
+       * 다음 페이지 첫 편집 위치로 안전하게 이동한다.
+       */
+      const next =
+        fallbackPage
+          ? SimpleDoc.Pagination.nextPage(
+              fallbackPage
+            )
+          : null;
+
+
+      const targetPage =
+        next ||
+        fallbackPage;
+
+
+      const targetInner =
+        targetPage?.querySelector(
+          '.page-inner'
+        );
+
+
+      if (!targetInner) {
+
+        return false;
+
+      }
+
+
+      const firstEditable =
+        targetInner.querySelector(
+          [
+            '.cell-editor',
+            '.intro-editor',
+            '.doc-callout-editor',
+            '.doc-textbox-editor',
+            '.doc-section-text',
+            'p',
+            'h1',
+            'h2',
+            'h3',
+            'h4',
+            'li'
+          ].join(',')
+        )
+        ||
+        targetInner;
+
+
+      try {
+
+        targetInner.focus({
+          preventScroll: true
+        });
+
+      }
+
+      catch {
+
+        targetInner.focus();
+
+      }
+
+
+      const range =
+        document.createRange();
+
+
+      range.selectNodeContents(
+        firstEditable
+      );
+
+
+      range.collapse(
+        true
+      );
+
+
+      const selection =
+        window.getSelection();
+
+
+      selection.removeAllRanges();
+
+      selection.addRange(
+        range
+      );
+
+
+      if (SimpleDoc.Selection?.saveRange) {
+        SimpleDoc.Selection.saveRange(range.cloneRange());
+      } else {
+        SimpleDoc.state.savedRange = range.cloneRange();
+      }
+
+
+      SimpleDoc.setActivePage(
+        targetPage
+      );
+
+
+      targetPage.scrollIntoView({
+        block: 'center',
+        behavior: 'smooth'
+      });
+
+
+      return true;
+
+    }
+
+
+    const parent =
+      marker.parentNode;
+
+
+    if (!parent) {
+
+      return false;
+
+    }
+
+
+    const index =
+      [
+        ...parent.childNodes
+      ].indexOf(
+        marker
+      );
+
+
+    const page =
+      marker.closest(
+        '.a4-page'
+      );
+
+
+    const inner =
+      page?.querySelector(
+        '.page-inner'
+      );
+
+
+    /*
+     * 먼저 focus한 뒤 range를 설정해야
+     * contenteditable focus가 selection을 다시 덮어쓰지 않는다.
+     */
+    try {
+
+      inner?.focus({
+        preventScroll: true
+      });
+
+    }
+
+    catch {
+
+      inner?.focus();
+
+    }
+
+
+    markers.forEach(
+      item => {
+
+        if (
+          item !== marker &&
+          item.isConnected
+        ) {
+
+          item.remove();
+
+        }
+
+      }
+    );
+
+
+    marker.remove();
+
+
+    const range =
+      document.createRange();
+
+
+    try {
+
+      range.setStart(
+        parent,
+        Math.max(
+          0,
+          Math.min(
+            index,
+            parent.childNodes.length
+          )
+        )
+      );
+
+      range.collapse(
+        true
+      );
+
+    }
+
+    catch {
+
+      range.selectNodeContents(
+        parent
+      );
+
+      range.collapse(
+        false
+      );
+
+    }
+
+
+    const selection =
+      window.getSelection();
+
+
+    selection.removeAllRanges();
+
+    selection.addRange(
+      range
+    );
+
+
+    if (SimpleDoc.Selection?.saveRange) {
+      SimpleDoc.Selection.saveRange(range.cloneRange());
+    } else {
+      SimpleDoc.state.savedRange = range.cloneRange();
+    }
+
+
+    if (page) {
+
+      SimpleDoc.setActivePage(
+        page
+      );
+
+
+      /*
+       * 페이지가 실제로 바뀐 경우에만 새 페이지가 보이도록 스크롤.
+       */
+      if (
+        fallbackPage &&
+        page !== fallbackPage
+      ) {
+
+        page.scrollIntoView({
+          block: 'center',
+          behavior: 'smooth'
+        });
+
+      }
+
+    }
+
+
+    return true;
+
+  };
+
+
+SimpleDoc.Pagination.paginateAndRestoreCaret =
+  function(page) {
+
+    if (
+      !page?.isConnected ||
+      !SimpleDoc.state.autoPaginate
+    ) {
+
+      return false;
+
+    }
+
+
+    clearTimeout(
+      SimpleDoc.Pagination.timer
+    );
+
+
+    const markerId =
+      SimpleDoc.Pagination
+        .createCaretMarker(
+          page
+        );
+
+
+    const changed =
+      SimpleDoc.Pagination
+        .paginateFrom(
+          page
+        );
+
+
+    SimpleDoc.Pagination
+      .restoreCaretMarker(
+        markerId,
+        page
+      );
+
+
+    return changed;
 
   };
 

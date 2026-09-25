@@ -12,7 +12,7 @@ SimpleDoc.Storage.getDocumentData = function() {
 
     app: 'SimpleDoc',
 
-    version: '2.0',
+    version: '8.0',
 
     title:
       document
