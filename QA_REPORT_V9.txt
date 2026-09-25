@@ -1,0 +1,56 @@
+SimpleDoc HWP v9 - QA REPORT
+============================
+
+검증 환경
+---------
+- Chromium 144 실제 DOM / Range / Selection / Layout 엔진 (CDP 주입)
+- Node.js --check 전체 JavaScript 문법 검사
+- HTML 중복 ID / 로컬 CSS·JS 참조 검사
+
+V9 선택/서식/삭제 회귀 검사 — 21/21 PASS
+----------------------------------------
+01. PASS - 3개 문단 선택 시 blocksInRange 3개 인식
+02. PASS - 3개 문단 선택 시 textSlices 3개 인식
+03. PASS - 툴바 클릭으로 live Selection이 사라져도 첫 문단 줄간격 적용
+04. PASS - 중간 문단 줄간격 적용
+05. PASS - 마지막 문단 줄간격 적용
+06. PASS - 모양 복사 성공 상태 반환
+07. PASS - 페이지 첫 줄을 offset 0에서 선택해도 첫 문단 인식
+08. PASS - 여러 문단 모양 붙이기 실행
+09. PASS - 페이지 첫 줄 문자 모양 적용
+10. PASS - 중간 문단 문자 모양 적용
+11. PASS - 마지막 문단 문자 모양 적용
+12. PASS - 첫 대상 문단 문단 모양 적용
+13. PASS - 여러 문단 Delete 시 중간 문단 제거
+14. PASS - 삭제 후 시작/끝 잔여 텍스트 한 문단 병합
+15. PASS - 페이지 첫 줄 경계부터 Backspace 선택 삭제
+16. PASS - 개요박스 내부 전체 텍스트 삭제 후 박스 껍데기 유지
+17. PASS - 일반문단→개체→일반문단 범위 삭제 시 개체 포함 삭제
+18. PASS - 개체 포함 범위 삭제 후 잔여 텍스트 병합
+19. PASS - 여러 페이지에 걸친 문단 스타일 첫 페이지 적용
+20. PASS - 여러 페이지에 걸친 문단 스타일 다음 페이지 적용
+21. PASS - Ctrl+A 문서 전체 선택 모델
+
+V8 기능 회귀 검사 — 8/8 PASS
+-----------------------------
+22. PASS - 개체 앞 Delete 즉시 삭제
+23. PASS - 표 객체 생성 유지
+24. PASS - 표 전체 너비 55% 적용
+25. PASS - 긴 문서 자동 페이지 생성
+26. PASS - 자동 페이지 후 전체 텍스트 보존
+27. PASS - 경계 이전 앞 문단 첫 페이지 유지
+28. PASS - Ctrl+A non-collapsed selection 생성
+29. PASS - Ctrl+A 여러 페이지 문단 포함
+
+정적 검사
+---------
+- JavaScript 전체 파일: 문법 오류 0
+- index.html 중복 ID: 0
+- 로컬 CSS/JS 참조 누락: 0
+
+V9 핵심 결론
+------------
+- 선택영역을 브라우저 live Selection 한 가지에 의존하지 않음
+- 페이지 첫 줄 offset 0 포함
+- 여러 문단 삭제/문자서식/문단서식/모양 붙이기 동일 Range 모델 사용
+- 다른 모듈의 커서 이동도 bookmark와 동기화

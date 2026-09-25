@@ -9,226 +9,953 @@
   <link rel="stylesheet" href="./css/document.css" />
   <link rel="stylesheet" href="./css/print.css" media="print" />
 </head>
+
 <body>
+
+  <!-- =====================================================
+       TOP HEADER
+       파일 작업만 상단에 유지
+  ====================================================== -->
   <header class="app-header no-print">
+
     <div class="brand-block">
       <div class="brand-mark">S</div>
+
       <div>
         <div class="brand-title">SimpleDoc</div>
-        <div class="brand-subtitle">A4 문서 편집기 · v2</div>
+        <div class="brand-subtitle">A4 문서 편집기 · v9</div>
       </div>
     </div>
-    <div class="header-actions">
-      <button class="btn ghost" id="newDocBtn" type="button">새 문서</button>
-      <label class="btn ghost file-label" for="loadFileInput">불러오기</label>
-      <input id="loadFileInput" type="file" accept=".ykdoc,.json,.html,.htm" hidden />
-      <button class="btn primary" id="saveBtn" type="button">저장</button>
-      <button class="btn docx" id="docxBtn" type="button">DOCX</button>
-      <button class="btn strong" id="printBtn" type="button">PDF 출력</button>
+
+
+    <div class="header-status">
+      <span id="saveStatus">저장되지 않음</span>
+      <span id="docStats">글자 0 · 단어 0</span>
+      <span class="header-page-status" id="pageStatus">1 / 1 페이지</span>
     </div>
+
+
+    <div class="header-actions">
+
+      <button
+        class="btn ghost"
+        id="newDocBtn"
+        type="button"
+      >
+        새 문서
+      </button>
+
+
+      <label
+        class="btn ghost file-label"
+        for="loadFileInput"
+      >
+        불러오기
+      </label>
+
+
+      <input
+        id="loadFileInput"
+        type="file"
+        accept=".ykdoc,.json,.html,.htm"
+        hidden
+      />
+
+
+      <button
+        class="btn primary"
+        id="saveBtn"
+        type="button"
+      >
+        저장
+      </button>
+
+
+      <button
+        class="btn docx"
+        id="docxBtn"
+        type="button"
+      >
+        DOCX
+      </button>
+
+
+      <button
+        class="btn strong"
+        id="printBtn"
+        type="button"
+      >
+        PDF 출력
+      </button>
+
+    </div>
+
   </header>
 
-  <div class="toolbar-wrap no-print">
-    <div class="toolbar" aria-label="문서 편집 도구">
-      <div class="tool-group wide">
-        <select id="fontFamily" class="control select" title="글꼴">
-          <option value="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">Pretendard</option>
-          <option value="'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">Noto Sans KR</option>
-          <option value="'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">Apple SD Gothic Neo</option>
-          <option value="'Malgun Gothic', sans-serif">맑은 고딕</option>
-          <option value="Batang, serif">바탕</option>
-          <option value="Gulim, sans-serif">굴림</option>
-          <option value="Dotum, sans-serif">돋움</option>
-          <option value="Arial, sans-serif">Arial</option>
-          <option value="'Times New Roman', serif">Times New Roman</option>
-        </select>
-        <select id="fontSize" class="control size-select" title="글자 크기">
-          <option>9</option><option>10</option><option selected>11</option><option>12</option>
-          <option>13</option><option>14</option><option>15</option><option>16</option>
-          <option>18</option><option>20</option><option>22</option><option>24</option>
-          <option>28</option><option>32</option><option>36</option><option>40</option>
-        </select>
-        <span class="unit">pt</span>
-      </div>
 
-      <div class="tool-divider"></div>
+  <!-- 파일명 UI는 제거하되 기존 저장 로직 호환을 위해 숨김 -->
+  <input
+    id="docTitle"
+    type="hidden"
+    value="새 문서"
+  />
 
-      <div class="tool-group">
-        <button class="tool-btn" id="boldBtn" type="button" title="굵게"><strong>B</strong></button>
-        <button class="tool-btn italic" id="italicBtn" type="button" title="기울임">I</button>
-        <button class="tool-btn underline" id="underlineBtn" type="button" title="밑줄">U</button>
-        <label class="color-tool" title="글자색"><span>A</span><input id="textColor" type="color" value="#34434d" /></label>
-      </div>
 
-      <div class="tool-divider"></div>
-
-      <div class="tool-group">
-        <button class="tool-btn align" data-align="left" type="button" title="왼쪽 정렬">≡</button>
-        <button class="tool-btn align center-icon" data-align="center" type="button" title="가운데 정렬">≡</button>
-        <button class="tool-btn align right-icon" data-align="right" type="button" title="오른쪽 정렬">≡</button>
-        <button class="tool-btn align justify-icon" data-align="justify" type="button" title="양쪽 정렬">≡</button>
-      </div>
-
-      <div class="tool-divider"></div>
-
-      <div class="tool-group paragraph-tools">
-        <label class="mini-control-label">줄간격
-          <select id="lineHeight" class="control mini-select" title="줄간격">
-            <option value="1">1.0</option><option value="1.15">1.15</option><option value="1.3">1.3</option>
-            <option value="1.5">1.5</option><option value="1.7" selected>1.7</option><option value="1.85">1.85</option><option value="2">2.0</option>
-          </select>
-        </label>
-        <label class="mini-control-label">문단후
-          <select id="paragraphSpacing" class="control mini-select" title="문단 뒤 간격">
-            <option value="0">0</option><option value="3">3</option><option value="6" selected>6</option>
-            <option value="9">9</option><option value="12">12</option><option value="18">18</option><option value="24">24</option>
-          </select>
-          <span class="unit">pt</span>
-        </label>
-      </div>
-
-      <div class="tool-divider"></div>
-
-      <div class="tool-group insert-group">
-        <button class="btn compact" id="insertTableBtn" type="button">표</button>
-        <button class="btn compact" id="insertCheckboxBtn" type="button">체크박스</button>
-        <button class="btn compact" id="insertTextboxBtn" type="button">텍스트박스</button>
-        <button class="btn compact" id="insertImageBtn" type="button">이미지</button>
-        <input id="imageFileInput" type="file" accept="image/*" hidden />
-        <button class="btn compact" id="insertDividerBtn" type="button">구분선</button>
-      </div>
-<div class="tool-group">
-    <button
-        class="btn compact"
-        id="formatCopyBtn"
-        type="button"
-        title="서식 복사 (Alt+C)"
-    >
-        서식 복사
-    </button>
-
-    <button
-        class="btn compact"
-        id="formatPasteBtn"
-        type="button"
-        title="서식 붙여넣기 (Alt+V)"
-    >
-        서식 붙여넣기
-    </button>
-</div>
-
-      <div class="tool-divider"></div>
-
-      <div class="tool-group">
-        <button class="tool-btn" id="undoBtn" type="button" title="실행 취소">↶</button>
-        <button class="tool-btn" id="redoBtn" type="button" title="다시 실행">↷</button>
-      </div>
-    </div>
-
-    <div class="template-bar">
-      <span class="template-label">문서 요소</span>
-      <button class="chip" data-block="title" type="button">문서 제목</button>
-      <button class="chip" data-block="intro" type="button">개요 박스</button>
-      <button class="chip" data-block="section" type="button">섹션 제목</button>
-      <button class="chip" data-block="subtitle" type="button">중제목</button>
-      <button class="chip" data-block="note" type="button">각주</button>
-      <button class="chip" data-block="callout" type="button">안내 박스</button>
-      <button class="chip" data-block="signature" type="button">서명부</button>
-      <span class="template-spacer"></span>
-      <label class="auto-page-toggle"><input id="autoPaginateToggle" type="checkbox" checked> 자동 페이지</label>
-<button
-    class="chip page-lock-btn"
-    id="pageSizeLockBtn"
-    type="button"
-    aria-pressed="false"
-    title="화면의 페이지 크기를 A4로 고정"
->
-    🔓 페이지 크기
-</button>
-      <button class="chip page-action" id="addPageBtn" type="button">+ 페이지</button>
-      <button class="chip page-action danger" id="deletePageBtn" type="button">페이지 삭제</button>
-    </div>
-
-    <div class="context-bar" id="tableTools" hidden>
-      <span class="context-title">표 도구</span>
-      <span class="context-info" id="tableSelectionCount">1셀 선택</span>
-      <button class="chip" id="rowAboveBtn" type="button">행 위 추가</button>
-      <button class="chip" id="rowBelowBtn" type="button">행 아래 추가</button>
-      <button class="chip danger-soft" id="deleteRowBtn" type="button">행 삭제</button>
-      <span class="context-sep"></span>
-      <button class="chip" id="colLeftBtn" type="button">열 왼쪽 추가</button>
-      <button class="chip" id="colRightBtn" type="button">열 오른쪽 추가</button>
-      <button class="chip danger-soft" id="deleteColBtn" type="button">열 삭제</button>
-      <span class="context-sep"></span>
-      <button class="chip emphasis" id="mergeCellsBtn" type="button">셀 병합</button>
-      <button class="chip" id="splitCellBtn" type="button">셀 나누기</button>
-      <span class="context-hint">여러 셀: 첫 셀 클릭 후 Shift+클릭</span>
-    </div>
-
-    <div class="context-bar" id="imageTools" hidden>
-      <span class="context-title">이미지 도구</span>
-      <label class="mini-control-label">너비
-        <select id="imageWidth" class="control mini-select">
-          <option value="25">25%</option><option value="50">50%</option><option value="75" selected>75%</option><option value="100">100%</option>
-        </select>
-      </label>
-      <button class="chip danger-soft" id="deleteImageBtn" type="button">이미지 삭제</button>
-    </div>
-  </div>
-
+  <!-- =====================================================
+       WORKSPACE
+  ====================================================== -->
   <main class="workspace">
-    <aside class="side-panel no-print">
-      <div class="panel-title">문서</div>
-      <label class="field-label" for="docTitle">파일명</label>
-      <input id="docTitle" class="side-input" value="새 문서" />
 
-      <div class="panel-divider"></div>
-      <div class="panel-title small">페이지</div>
-      <div id="pageList" class="page-list"></div>
+    <!-- ===================================================
+         LEFT DASHBOARD
+         문자 / 문단 관련 도구
+    ==================================================== -->
+    <aside class="dashboard dashboard-left no-print">
 
-      <div class="panel-divider"></div>
-      <div class="panel-help">
-        <strong>편집 팁</strong>
-        <p>내용이 A4 영역을 넘으면 자동으로 다음 페이지가 생성됩니다. 직접 추가한 페이지는 수동 페이지 경계로 유지됩니다.</p>
-        <p>표의 여러 셀을 병합하려면 첫 셀을 클릭한 뒤 Shift를 누른 채 마지막 셀을 클릭하세요.</p>
-      </div>
+      <section class="dashboard-section">
+
+        <div class="dashboard-heading">
+          글자
+        </div>
+
+
+        <label class="dashboard-field">
+          <span>글꼴</span>
+
+          <select
+            id="fontFamily"
+            class="control dashboard-select selection-preserving"
+            title="글꼴"
+          >
+            <option value="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">Pretendard</option>
+            <option value="'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">Noto Sans KR</option>
+            <option value="'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">Apple SD Gothic Neo</option>
+            <option value="'Malgun Gothic', sans-serif">맑은 고딕</option>
+            <option value="Batang, serif">바탕</option>
+            <option value="Gulim, sans-serif">굴림</option>
+            <option value="Dotum, sans-serif">돋움</option>
+            <option value="Arial, sans-serif">Arial</option>
+            <option value="'Times New Roman', serif">Times New Roman</option>
+          </select>
+        </label>
+
+
+        <div class="dashboard-row">
+
+          <label class="dashboard-field grow">
+            <span>크기</span>
+
+            <select
+              id="fontSize"
+              class="control selection-preserving"
+              title="글자 크기"
+            >
+              <option>9</option>
+              <option>10</option>
+              <option selected>11</option>
+              <option>12</option>
+              <option>13</option>
+              <option>14</option>
+              <option>15</option>
+              <option>16</option>
+              <option>18</option>
+              <option>20</option>
+              <option>22</option>
+              <option>24</option>
+              <option>28</option>
+              <option>32</option>
+              <option>36</option>
+              <option>40</option>
+            </select>
+          </label>
+
+
+          <span class="field-unit">pt</span>
+
+        </div>
+
+
+        <div class="dashboard-tool-grid">
+
+          <button
+            class="tool-btn selection-preserving"
+            id="boldBtn"
+            type="button"
+            title="굵게"
+          >
+            <strong>B</strong>
+          </button>
+
+
+          <button
+            class="tool-btn italic selection-preserving"
+            id="italicBtn"
+            type="button"
+            title="기울임"
+          >
+            I
+          </button>
+
+
+          <button
+            class="tool-btn underline selection-preserving"
+            id="underlineBtn"
+            type="button"
+            title="밑줄"
+          >
+            U
+          </button>
+
+
+          <label
+            class="color-tool selection-preserving"
+            title="글자색"
+          >
+            <span>A</span>
+
+            <input
+              id="textColor"
+              type="color"
+              value="#34434d"
+            />
+          </label>
+
+        </div>
+
+
+        <div class="dashboard-tool-grid dashboard-tool-grid-three">
+
+          <button class="tool-btn text-icon selection-preserving" id="superscriptBtn" type="button" title="위 첨자 (Alt+Shift+P)">x<sup>2</sup></button>
+
+          <button class="tool-btn text-icon selection-preserving" id="subscriptBtn" type="button" title="아래 첨자 (Alt+Shift+S)">x<sub>2</sub></button>
+
+          <button class="tool-btn text-icon selection-preserving" id="clearFormatBtn" type="button" title="보통 모양 (Alt+Shift+C)">기본</button>
+
+        </div>
+
+
+        <label class="dashboard-field">
+          <span>자간</span>
+
+          <select
+            id="quickCharSpacing"
+            class="control selection-preserving"
+            title="자간"
+          >
+            <option value="-20">-20%</option>
+            <option value="-15">-15%</option>
+            <option value="-10">-10%</option>
+            <option value="-5">-5%</option>
+            <option value="0" selected>0%</option>
+            <option value="5">+5%</option>
+            <option value="10">+10%</option>
+            <option value="15">+15%</option>
+            <option value="20">+20%</option>
+            <option value="30">+30%</option>
+            <option value="40">+40%</option>
+            <option value="50">+50%</option>
+          </select>
+        </label>
+
+      </section>
+
+
+      <section class="dashboard-section">
+
+        <div class="dashboard-heading">
+          문단
+        </div>
+
+
+        <label class="dashboard-field">
+          <span>줄 간격</span>
+
+          <select
+            id="lineHeight"
+            class="control selection-preserving"
+            title="줄 간격"
+          >
+            <option value="0.2">0.2</option>
+            <option value="0.5">0.5</option>
+            <option value="0.7">0.7</option>
+            <option value="1">1.0</option>
+            <option value="1.15">1.15</option>
+            <option value="1.3">1.3</option>
+            <option value="1.5">1.5</option>
+            <option value="1.7" selected>1.7</option>
+            <option value="1.85">1.85</option>
+            <option value="2">2.0</option>
+            <option value="2.5">2.5</option>
+            <option value="3">3.0</option>
+          </select>
+        </label>
+
+
+        <div class="dashboard-label">
+          정렬
+        </div>
+
+
+        <div class="dashboard-tool-grid">
+
+          <button
+            class="tool-btn align selection-preserving"
+            data-align="left"
+            type="button"
+            title="왼쪽 정렬"
+          >
+            ≡
+          </button>
+
+
+          <button
+            class="tool-btn align center-icon selection-preserving"
+            data-align="center"
+            type="button"
+            title="가운데 정렬"
+          >
+            ≡
+          </button>
+
+
+          <button
+            class="tool-btn align right-icon selection-preserving"
+            data-align="right"
+            type="button"
+            title="오른쪽 정렬"
+          >
+            ≡
+          </button>
+
+
+          <button
+            class="tool-btn align justify-icon selection-preserving"
+            data-align="justify"
+            type="button"
+            title="양쪽 정렬"
+          >
+            ≡
+          </button>
+
+        </div>
+
+
+        <div class="dashboard-button-stack two-column dashboard-list-tools">
+
+          <button class="btn compact selection-preserving" id="numberBtn" type="button" title="번호 매기기 (Ctrl+Shift+Insert)">1. 번호</button>
+
+          <button class="btn compact selection-preserving" id="bulletBtn" type="button" title="글머리표 (Ctrl+Shift+Delete)">• 글머리표</button>
+
+        </div>
+
+
+        <div class="dashboard-button-stack">
+
+          <button
+            class="btn compact selection-preserving"
+            id="formatCopyBtn"
+            type="button"
+            title="모양 복사 (Alt+C)"
+          >
+            모양 복사
+          </button>
+
+
+          <button
+            class="btn compact selection-preserving"
+            id="formatPasteBtn"
+            type="button"
+            title="모양 붙이기 (Alt+C)"
+          >
+            모양 붙이기
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <section class="dashboard-section">
+
+        <div class="dashboard-heading">
+          화면
+        </div>
+
+
+        <label class="dashboard-field">
+          <span>확대</span>
+
+          <input
+            id="zoomRange"
+            type="range"
+            min="55"
+            max="130"
+            step="5"
+            value="90"
+          />
+
+          <strong id="zoomValue">90%</strong>
+        </label>
+
+      </section>
+
     </aside>
 
-    <section class="canvas-area" id="canvasArea">
-      <div id="documentRoot" class="document-root"></div>
-      <button class="floating-add-page no-print" id="floatingAddPage" type="button">+ 새 A4 페이지</button>
+
+    <!-- ===================================================
+         CANVAS
+    ==================================================== -->
+    <section
+      class="canvas-area"
+      id="canvasArea"
+    >
+
+      <div
+        id="documentRoot"
+        class="document-root"
+      ></div>
+
+
+      <button
+        class="floating-add-page no-print"
+        id="floatingAddPage"
+        type="button"
+      >
+        + 새 A4 페이지
+      </button>
+
     </section>
+
+
+    <!-- ===================================================
+         RIGHT DASHBOARD
+         삽입 / 페이지 / 문서 요소
+    ==================================================== -->
+    <aside class="dashboard dashboard-right no-print">
+
+      <section class="dashboard-section">
+
+        <div class="dashboard-heading">
+          문서 요소
+        </div>
+
+
+        <div class="dashboard-chip-grid">
+
+          <button
+            class="chip selection-preserving"
+            data-block="title"
+            type="button"
+          >
+            문서 제목
+          </button>
+
+
+          <button
+            class="chip selection-preserving"
+            data-block="intro"
+            type="button"
+          >
+            개요 박스
+          </button>
+
+
+          <button
+            class="chip selection-preserving"
+            data-block="section"
+            type="button"
+          >
+            섹션 제목
+          </button>
+
+
+          <button
+            class="chip selection-preserving"
+            data-block="subtitle"
+            type="button"
+          >
+            중제목
+          </button>
+
+
+          <button
+            class="chip selection-preserving"
+            data-block="note"
+            type="button"
+          >
+            각주
+          </button>
+
+
+          <button
+            class="chip selection-preserving"
+            data-block="callout"
+            type="button"
+          >
+            안내 박스
+          </button>
+
+
+          <button
+            class="chip selection-preserving"
+            data-block="signature"
+            type="button"
+          >
+            서명부
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <section class="dashboard-section">
+
+        <div class="dashboard-heading">
+          삽입
+        </div>
+
+
+        <div class="dashboard-chip-grid">
+
+          <button
+            class="btn compact selection-preserving"
+            id="insertTableBtn"
+            type="button"
+          >
+            표
+          </button>
+
+
+          <button
+            class="btn compact selection-preserving"
+            id="insertCheckboxBtn"
+            type="button"
+          >
+            체크박스
+          </button>
+
+
+          <button
+            class="btn compact selection-preserving"
+            id="insertTextboxBtn"
+            type="button"
+          >
+            텍스트박스
+          </button>
+
+
+          <button
+            class="btn compact selection-preserving"
+            id="insertImageBtn"
+            type="button"
+          >
+            이미지
+          </button>
+
+
+          <input
+            id="imageFileInput"
+            type="file"
+            accept="image/*"
+            hidden
+          />
+
+
+          <button
+            class="btn compact selection-preserving"
+            id="insertDividerBtn"
+            type="button"
+          >
+            구분선
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <section class="dashboard-section">
+
+        <div class="dashboard-heading">
+          페이지
+        </div>
+
+
+        <label class="dashboard-toggle">
+
+          <input
+            id="autoPaginateToggle"
+            type="checkbox"
+            checked
+          />
+
+          <span>자동 페이지</span>
+
+        </label>
+
+
+        <button
+          class="chip page-lock-btn"
+          id="pageSizeLockBtn"
+          type="button"
+          aria-pressed="false"
+          title="화면의 페이지 크기를 A4로 고정"
+        >
+          🔓 페이지 크기
+        </button>
+
+
+        <div class="dashboard-button-stack two-column">
+
+          <button
+            class="chip page-action"
+            id="addPageBtn"
+            type="button"
+          >
+            + 페이지
+          </button>
+
+
+          <button
+            class="chip page-action danger"
+            id="deletePageBtn"
+            type="button"
+          >
+            삭제
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <section class="dashboard-section">
+
+        <div class="dashboard-heading">
+          편집
+        </div>
+
+
+        <div class="dashboard-button-stack two-column edit-utility-row">
+
+          <button class="btn compact selection-preserving" id="findBtn" type="button" title="찾기 (Ctrl+F / F2)">찾기</button>
+
+          <button class="btn compact" id="shortcutHelpBtn" type="button" title="한/글 호환 단축키">단축키</button>
+
+        </div>
+
+
+        <div class="dashboard-button-stack two-column">
+
+          <button
+            class="btn compact"
+            id="undoBtn"
+            type="button"
+            title="실행 취소"
+          >
+            ↶ 실행취소
+          </button>
+
+
+          <button
+            class="btn compact"
+            id="redoBtn"
+            type="button"
+            title="다시 실행"
+          >
+            ↷ 다시실행
+          </button>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =================================================
+           OBJECT TOOLS
+      ================================================== -->
+      <section
+        class="dashboard-section context-panel"
+        id="objectTools"
+        hidden
+      >
+
+        <div class="dashboard-heading">
+          개체 선택
+          <small id="objectTypeLabel">개체</small>
+        </div>
+
+        <div class="object-help">
+          개체는 본문에서 한 글자처럼 동작합니다. 개체 바로 앞에서 Delete,
+          바로 뒤에서 Backspace를 누르면 즉시 삭제됩니다. 외곽의 ⋮⋮ 핸들은
+          개체를 직접 선택해 이동·삭제할 때 사용합니다.
+        </div>
+
+        <button
+          class="chip danger-soft"
+          id="deleteObjectBtn"
+          type="button"
+        >
+          선택한 개체 삭제
+        </button>
+
+      </section>
+
+      <!-- =================================================
+           TABLE TOOLS
+      ================================================== -->
+      <section
+        class="dashboard-section context-panel"
+        id="tableTools"
+        hidden
+      >
+
+        <div class="dashboard-heading">
+          표 도구
+          <small id="tableSelectionCount">1셀 선택</small>
+        </div>
+
+        <label class="dashboard-field table-size-field">
+          <span>표 너비</span>
+          <div class="table-width-control">
+            <input
+              id="tableWidthRange"
+              type="range"
+              min="25"
+              max="100"
+              step="1"
+              value="100"
+            />
+            <strong id="tableWidthValue">100%</strong>
+          </div>
+        </label>
+
+        <div class="dashboard-button-stack two-column table-size-buttons">
+          <button class="chip" id="tableFitContentBtn" type="button">내용 맞춤</button>
+          <button class="chip" id="tableFullWidthBtn" type="button">쪽 너비</button>
+        </div>
+
+        <div class="dashboard-chip-grid">
+
+          <button
+            class="chip"
+            id="rowAboveBtn"
+            type="button"
+          >
+            행 위 추가
+          </button>
+
+
+          <button
+            class="chip"
+            id="rowBelowBtn"
+            type="button"
+          >
+            행 아래 추가
+          </button>
+
+
+          <button
+            class="chip danger-soft"
+            id="deleteRowBtn"
+            type="button"
+          >
+            행 삭제
+          </button>
+
+
+          <button
+            class="chip"
+            id="colLeftBtn"
+            type="button"
+          >
+            열 왼쪽 추가
+          </button>
+
+
+          <button
+            class="chip"
+            id="colRightBtn"
+            type="button"
+          >
+            열 오른쪽 추가
+          </button>
+
+
+          <button
+            class="chip danger-soft"
+            id="deleteColBtn"
+            type="button"
+          >
+            열 삭제
+          </button>
+
+
+          <button
+            class="chip emphasis"
+            id="mergeCellsBtn"
+            type="button"
+          >
+            셀 병합
+          </button>
+
+
+          <button
+            class="chip"
+            id="splitCellBtn"
+            type="button"
+          >
+            셀 나누기
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           IMAGE TOOLS
+      ================================================== -->
+      <section
+        class="dashboard-section context-panel"
+        id="imageTools"
+        hidden
+      >
+
+        <div class="dashboard-heading">
+          이미지 도구
+        </div>
+
+
+        <label class="dashboard-field">
+
+          <span>너비</span>
+
+          <select
+            id="imageWidth"
+            class="control"
+          >
+            <option value="25">25%</option>
+            <option value="50">50%</option>
+            <option value="75" selected>75%</option>
+            <option value="100">100%</option>
+          </select>
+
+        </label>
+
+
+        <button
+          class="chip danger-soft"
+          id="deleteImageBtn"
+          type="button"
+        >
+          이미지 삭제
+        </button>
+
+      </section>
+
+    </aside>
+
   </main>
 
-  <footer class="statusbar no-print">
-    <div><span id="pageStatus">1 / 1 페이지</span></div>
-    <div class="status-actions">
-      <span id="saveStatus">저장되지 않음</span>
-      <label class="zoom-label">확대
-        <input id="zoomRange" type="range" min="55" max="130" step="5" value="90" />
-        <span id="zoomValue">90%</span>
-      </label>
-    </div>
-  </footer>
 
-  <dialog id="tableDialog" class="dialog">
-    <form method="dialog" id="tableForm">
-      <div class="dialog-title">표 삽입</div>
+  <!-- =====================================================
+       TABLE DIALOG
+  ====================================================== -->
+  <dialog
+    id="tableDialog"
+    class="dialog"
+  >
+
+    <form
+      method="dialog"
+      id="tableForm"
+    >
+
+      <div class="dialog-title">
+        표 삽입
+      </div>
+
+
       <div class="dialog-grid">
-        <label>행 수<input id="tableRows" type="number" min="1" max="30" value="4" /></label>
-        <label>열 수<input id="tableCols" type="number" min="1" max="12" value="3" /></label>
+
+        <label>
+          행 수
+
+          <input
+            id="tableRows"
+            type="number"
+            min="1"
+            max="30"
+            value="4"
+          />
+        </label>
+
+
+        <label>
+          열 수
+
+          <input
+            id="tableCols"
+            type="number"
+            min="1"
+            max="12"
+            value="3"
+          />
+        </label>
+
       </div>
-      <label class="dialog-check"><input id="headerRow" type="checkbox" checked /> 첫 행을 제목행으로 사용</label>
+
+
+      <label class="dialog-check">
+
+        <input
+          id="headerRow"
+          type="checkbox"
+          checked
+        />
+
+        첫 행을 제목행으로 사용
+
+      </label>
+
+
       <div class="dialog-actions">
-        <button class="btn ghost" value="cancel" type="button" id="cancelTableBtn">취소</button>
-        <button class="btn primary" value="default" type="submit">삽입</button>
+
+        <button
+          class="btn ghost"
+          value="cancel"
+          type="button"
+          id="cancelTableBtn"
+        >
+          취소
+        </button>
+
+
+        <button
+          class="btn primary"
+          value="default"
+          type="submit"
+        >
+          삽입
+        </button>
+
       </div>
+
     </form>
+
   </dialog>
 
+
+  <!-- =====================================================
+       SCRIPTS
+  ====================================================== -->
   <script src="./js/editor.js"></script>
   <script src="./js/selection.js"></script>
   <script src="./js/format.js"></script>
+  <script src="./js/object-manager.js"></script>
   <script src="./js/table.js"></script>
   <script src="./js/textbox.js"></script>
   <script src="./js/image.js"></script>
@@ -236,6 +963,9 @@
   <script src="./js/storage.js"></script>
   <script src="./js/docx-export.js"></script>
   <script src="./js/print.js"></script>
+  <script src="./js/word-tools.js"></script>
+  <script src="./js/hwp-shortcuts.js"></script>
   <script src="./js/app.js"></script>
+
 </body>
 </html>
