@@ -5,16 +5,22 @@
   --blue-mid: #91B7CA;
   --blue-soft: #DDECF3;
   --blue-pale: #F3F8FB;
+
   --green: #5F8F80;
   --green-bg: #EDF6F2;
+
   --amber: #A97B42;
   --amber-bg: #FBF5EA;
+
   --gray-badge: #75828A;
   --gray-badge-bg: #F1F3F4;
+
   --ink: #34434D;
   --ink-strong: #273943;
+
   --text-sub: #607580;
   --text-muted: #87969E;
+
   --border: #D9E6EC;
   --border-strong: #C6D9E2;
 }
@@ -22,26 +28,22 @@
 
 /* =========================================================
    A4 PAGE
-
-   기본 상태:
-   - 최소 A4 크기
-   - 내용이 많아지면 아래로 확장
-
-   페이지 크기 잠금:
-   - 정확히 A4 크기로 고정
 ========================================================= */
 
 .a4-page {
   width: 210mm;
+
   min-height: 297mm;
   height: auto;
 
-  padding: 14mm 15mm;
+  padding:
+    14mm 15mm;
 
   background: #fff;
 
   box-shadow:
-    0 16px 45px rgba(51,86,105,.15);
+    0 16px 45px
+    rgba(51,86,105,.15);
 
   position: relative;
 
@@ -49,7 +51,8 @@
 
   flex: 0 0 auto;
 
-  zoom: var(--zoom, .9);
+  zoom:
+    var(--zoom, .9);
 }
 
 
@@ -58,12 +61,6 @@
 
   width: 100%;
 
-  /*
-   * A4 297mm
-   * - 상단 14mm
-   * - 하단 14mm
-   * = 실제 본문 영역 269mm
-   */
   min-height: 269mm;
 
   overflow: visible;
@@ -84,6 +81,7 @@
   line-height: 1.7;
 
   word-break: keep-all;
+
   overflow-wrap: break-word;
 
   caret-color: var(--blue-deep);
@@ -97,8 +95,10 @@
 
 .a4-page.active {
   box-shadow:
-    0 0 0 2px rgba(102,150,177,.55),
-    0 16px 45px rgba(51,86,105,.15);
+    0 0 0 2px
+    rgba(102,150,177,.55),
+    0 16px 45px
+    rgba(51,86,105,.15);
 }
 
 
@@ -112,11 +112,9 @@
 ========================================================= */
 
 .doc-header {
-  padding-bottom: 8mm;
-  margin-bottom: 8mm;
+  padding-bottom: 0;
 
-  border-bottom:
-    2px solid var(--blue-deep);
+  margin-bottom: 8mm;
 }
 
 
@@ -126,6 +124,7 @@
   color: var(--blue-main);
 
   font-size: 9.75pt;
+
   font-weight: 800;
 
   letter-spacing: .08em;
@@ -138,6 +137,7 @@
   color: var(--blue-deep);
 
   font-size: 27pt;
+
   font-weight: 850;
 
   line-height: 1.25;
@@ -152,7 +152,52 @@
   color: var(--text-sub);
 
   font-size: 12pt;
+
   font-weight: 600;
+}
+
+
+/*
+ * 문서 제목 하단선
+ *
+ * 기존 border-bottom 방식이 아니라
+ * 실제 DOM 문서 요소.
+ *
+ * 클릭 → 선택
+ * Delete / Backspace → 삭제
+ */
+.doc-header-line {
+  display: block;
+
+  width: 100%;
+
+  height: 2px;
+
+  margin-top: 8mm;
+
+  background: var(--blue-deep);
+
+  border: 0;
+
+  cursor: pointer;
+
+  user-select: none;
+
+  -webkit-user-select: none;
+
+  transition:
+    opacity .15s ease,
+    box-shadow .15s ease;
+}
+
+
+.doc-header-line:hover {
+  opacity: .78;
+}
+
+
+.doc-header-line:focus {
+  outline: none;
 }
 
 
@@ -176,6 +221,7 @@
   color: var(--text-sub);
 
   font-size: 11.25pt;
+
   font-weight: 500;
 
   line-height: 1.85;
@@ -198,11 +244,13 @@
 
   gap: 2.5mm;
 
-  margin: 0 0 4.5mm;
+  margin:
+    0 0 4.5mm;
 
   color: var(--blue-deep);
 
   font-size: 16.5pt;
+
   font-weight: 800;
 
   line-height: 1.4;
@@ -215,12 +263,15 @@
   display: inline-flex;
 
   align-items: center;
+
   justify-content: center;
 
   min-width: 8mm;
+
   height: 8mm;
 
-  padding: 0 2mm;
+  padding:
+    0 2mm;
 
   background: var(--blue-deep);
 
@@ -229,20 +280,23 @@
   border-radius: 2mm;
 
   font-size: 10.5pt;
+
   font-weight: 800;
 }
 
 
 /* =========================================================
-   SUB TITLES
+   SUB TITLE
 ========================================================= */
 
 .doc-subtitle {
-  margin: 7mm 0 2.5mm;
+  margin:
+    7mm 0 2.5mm;
 
   color: var(--blue-dark);
 
   font-size: 12.75pt;
+
   font-weight: 750;
 
   line-height: 1.45;
@@ -250,11 +304,13 @@
 
 
 .doc-mini-title {
-  margin: 4.5mm 0 2mm;
+  margin:
+    4.5mm 0 2mm;
 
   color: var(--ink-strong);
 
   font-size: 11.25pt;
+
   font-weight: 750;
 }
 
@@ -264,11 +320,13 @@
 ========================================================= */
 
 .doc-body {
-  margin: 0 0 4mm;
+  margin:
+    0 0 4mm;
 
   color: var(--ink);
 
   font-size: 11.25pt;
+
   font-weight: 400;
 
   line-height: 1.85;
@@ -280,7 +338,8 @@
 ========================================================= */
 
 .doc-note {
-  margin: 3mm 0 0;
+  margin:
+    3mm 0 0;
 
   padding-left: 5mm;
 
@@ -314,7 +373,8 @@
 .doc-divider {
   height: 1px;
 
-  margin: 8mm 0;
+  margin:
+    8mm 0;
 
   background: var(--border);
 }
@@ -325,9 +385,11 @@
 ========================================================= */
 
 .editor-table-wrap {
-  width: 100%;
+  width: var(--sd-table-width, 100%);
+  max-width: 100%;
 
-  margin: 4mm 0 5mm;
+  margin:
+    4mm 0 5mm;
 
   border:
     1px solid var(--border-strong);
@@ -351,7 +413,8 @@
 
 .editor-table th,
 .editor-table td {
-  padding: 2.8mm 3mm;
+  padding:
+    2.8mm 3mm;
 
   border-right:
     1px solid var(--border);
@@ -404,7 +467,8 @@
 
   gap: 2mm;
 
-  margin: 1mm 2mm 1mm 0;
+  margin:
+    1mm 2mm 1mm 0;
 
   color: var(--ink);
 }
@@ -412,9 +476,11 @@
 
 .doc-checkbox input[type="checkbox"] {
   appearance: none;
+
   -webkit-appearance: none;
 
   width: 4.5mm;
+
   height: 4.5mm;
 
   margin: 0;
@@ -430,7 +496,8 @@
 
   position: relative;
 
-  flex: 0 0 auto;
+  flex:
+    0 0 auto;
 }
 
 
@@ -449,24 +516,28 @@
   position: absolute;
 
   left: 50%;
+
   top: 47%;
 
   transform:
     translate(-50%,-50%);
 
   font-size: 9pt;
+
   font-weight: 900;
 }
 
 
 /* =========================================================
-   TEXT BOX
+   TEXTBOX
 ========================================================= */
 
 .doc-textbox {
-  margin: 4mm 0;
+  margin:
+    4mm 0;
 
-  padding: 4.5mm 5mm;
+  padding:
+    4.5mm 5mm;
 
   min-height: 18mm;
 
@@ -493,6 +564,7 @@
   color: var(--blue-deep);
 
   font-size: 9pt;
+
   font-weight: 800;
 }
 
@@ -502,9 +574,11 @@
 ========================================================= */
 
 .doc-callout {
-  margin: 4.5mm 0;
+  margin:
+    4.5mm 0;
 
-  padding: 4.5mm 5mm;
+  padding:
+    4.5mm 5mm;
 
   border:
     1px solid var(--blue-soft);
@@ -520,7 +594,8 @@
 
 
 .doc-callout-title {
-  margin: 0 0 1.5mm;
+  margin:
+    0 0 1.5mm;
 
   color: var(--blue-deep);
 
@@ -552,6 +627,7 @@
   color: var(--blue-deep);
 
   font-size: 15pt;
+
   font-weight: 800;
 
   letter-spacing: -.02em;
@@ -563,7 +639,8 @@
 
   margin-top: 2mm;
 
-  padding: 1mm 2.6mm;
+  padding:
+    1mm 2.6mm;
 
   border:
     1px solid var(--border);
@@ -573,17 +650,19 @@
   color: var(--text-muted);
 
   font-size: 8.25pt;
+
   font-weight: 700;
 }
 
 
 /* =========================================================
-   EDITOR MARKER
+   MARKER
 ========================================================= */
 
 .editor-marker {
   outline:
-    1px dashed rgba(102,150,177,.4);
+    1px dashed
+    rgba(102,150,177,.4);
 
   outline-offset: 2px;
 }
@@ -612,11 +691,13 @@
 ========================================================= */
 
 .doc-image-block {
-  margin: 5mm 0;
+  margin:
+    5mm 0;
 
   text-align: center;
 
   break-inside: avoid;
+
   page-break-inside: avoid;
 }
 
@@ -625,6 +706,7 @@
   display: inline-block;
 
   max-width: 100%;
+
   max-height: 245mm;
 
   height: auto;
@@ -634,7 +716,8 @@
   border-radius: 3mm;
 
   box-shadow:
-    0 3px 14px rgba(51,86,105,.10);
+    0 3px 14px
+    rgba(51,86,105,.10);
 
   vertical-align: top;
 
@@ -644,14 +727,15 @@
 
 .doc-image.selected {
   outline:
-    2px solid rgba(102,150,177,.75);
+    2px solid
+    rgba(102,150,177,.75);
 
   outline-offset: 2px;
 }
 
 
 /* =========================================================
-   A4 OVERFLOW WARNING
+   A4 OVERFLOW
 ========================================================= */
 
 .a4-page.overflowing::after {
@@ -661,7 +745,8 @@
 
   z-index: 4;
 
-  padding: 1mm 2mm;
+  padding:
+    1mm 2mm;
 
   border-radius: 999px;
 
@@ -673,19 +758,17 @@
     1px solid #e8c3c3;
 
   font-size: 8pt;
+
   font-weight: 700;
 
   pointer-events: none;
 }
 
 
-/*
- * 잠금이 해제된 상태에서는 페이지가
- * 내용만큼 아래로 늘어난다.
- *
- * 따라서 원래 A4가 끝나는 297mm 위치를
- * 빨간 점선으로 표시한다.
- */
+/* =========================================================
+   SCREEN — UNLOCKED
+========================================================= */
+
 @media screen {
 
   body:not(.page-size-locked)
@@ -698,10 +781,12 @@
     left: 0;
     right: 0;
 
-    top: calc(297mm - 1px);
+    top:
+      calc(297mm - 1px);
 
     border-top:
-      1px dashed rgba(169,95,95,.55);
+      1px dashed
+      rgba(169,95,95,.55);
 
     pointer-events: none;
 
@@ -725,19 +810,6 @@
 
 /* =========================================================
    PAGE SIZE LOCK
-
-   잠금 OFF
-   ---------------------------------
-   최소 높이 297mm
-   내용이 많으면 페이지가 아래로 확장
-
-   잠금 ON
-   ---------------------------------
-   정확히 297mm
-   A4를 넘어가는 내용은 화면에서 숨김
-
-   ※ @media screen 으로 제한하여
-      PDF 인쇄 CSS에는 영향을 주지 않는다.
 ========================================================= */
 
 @media screen {
@@ -750,6 +822,7 @@
     height: 297mm;
 
     min-height: 297mm;
+
     max-height: 297mm;
 
     overflow: hidden;
@@ -764,6 +837,7 @@
     height: 269mm;
 
     min-height: 269mm;
+
     max-height: 269mm;
 
     overflow: hidden;

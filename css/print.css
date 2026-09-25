@@ -1,46 +1,214 @@
-@page { size: A4; margin: 0; }
+@page {
+  size: A4;
+  margin: 0;
+}
 
-html, body {
+
+/* =========================================================
+   PRINT ROOT
+========================================================= */
+
+html,
+body {
+  width: 210mm !important;
+
   margin: 0 !important;
   padding: 0 !important;
+
   background: #fff !important;
+
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
 }
-.no-print { display: none !important; }
-.workspace, .canvas-area, .document-root {
-  display: block !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  background: #fff !important;
+
+
+body {
   overflow: visible !important;
 }
-.a4-page {
+
+
+.no-print {
+  display: none !important;
+}
+
+
+/*
+ * 편집 화면의 좌우 대시보드는 출력하지 않고
+ * 문서 캔버스만 A4 원점에 배치한다.
+ */
+.workspace,
+.canvas-area,
+.document-root {
+  display: block !important;
+
   width: 210mm !important;
+
+  height: auto !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  background: #fff !important;
+
+  overflow: visible !important;
+}
+
+
+/* =========================================================
+   A4 PAGE
+   편집 화면과 동일하게:
+   page 자체에 14mm / 15mm 패딩을 주고
+   page-inner는 그 안에서 width:100%를 사용한다.
+
+   기존 인쇄 CSS의
+   page-inner { position:absolute; inset:14mm 15mm; }
+   + width:100% 조합이 오른쪽으로 튀어나가던 원인이었다.
+========================================================= */
+
+.a4-page {
+  box-sizing: border-box !important;
+
+  position: relative !important;
+
+  width: 210mm !important;
+
   height: 297mm !important;
   min-height: 297mm !important;
+  max-height: 297mm !important;
+
   margin: 0 !important;
+
+  padding:
+    14mm 15mm !important;
+
+  background: #fff !important;
+
   box-shadow: none !important;
+
   transform: none !important;
+
   zoom: 1 !important;
+
+  overflow: hidden !important;
+
   page-break-after: always;
   break-after: page;
-  overflow: hidden !important;
 }
-.a4-page:last-child { page-break-after: auto; break-after: auto; }
+
+
+.a4-page:last-child {
+  page-break-after: auto;
+  break-after: auto;
+}
+
+
+/* =========================================================
+   PAGE CONTENT
+========================================================= */
+
 .page-inner {
-  position: absolute !important;
-  inset: 14mm 15mm !important;
+  box-sizing: border-box !important;
+
+  position: relative !important;
+
+  inset: auto !important;
+
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+
+  width: 100% !important;
+
+  height: 269mm !important;
+  min-height: 269mm !important;
+  max-height: 269mm !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
   overflow: hidden !important;
 }
-.editor-marker { outline: none !important; }
-.doc-section, .doc-callout, .doc-textbox, .editor-table-wrap, .doc-signature {
+
+
+/* =========================================================
+   EDITOR-ONLY VISUALS
+========================================================= */
+
+.editor-marker,
+.doc-header-line.selected,
+.sd-object-selected {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+/*
+ * 보호 객체 사이의 비어 있는 커서 삽입점은
+ * 편집용 UI이므로 PDF에는 출력하지 않는다.
+ * 글자가 입력된 anchor(data-empty="0")는 일반 문단처럼 출력된다.
+ */
+.sd-caret-anchor[data-empty="1"] {
+  display: none !important;
+}
+
+
+/* =========================================================
+   PAGE BREAK SAFETY
+========================================================= */
+
+.doc-section,
+.doc-callout,
+.doc-textbox,
+.editor-table-wrap,
+.doc-signature {
   break-inside: avoid;
   page-break-inside: avoid;
 }
-.doc-section-title { break-after: avoid; page-break-after: avoid; }
 
-.table-selected-cell { box-shadow: none !important; background-image: none !important; }
-.doc-image.selected { outline: none !important; }
-.a4-page.overflowing::after { display: none !important; }
-.doc-image-block { break-inside: avoid; page-break-inside: avoid; }
+
+.doc-section-title {
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+
+.doc-image-block {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+
+/* =========================================================
+   SELECTION / WARNING UI
+========================================================= */
+
+.table-selected-cell {
+  box-shadow: none !important;
+  background-image: none !important;
+}
+
+
+.doc-image.selected {
+  outline: none !important;
+}
+
+
+.a4-page.overflowing::before,
+.a4-page.overflowing::after {
+  display: none !important;
+}
+
+/* V8 editor-only object UI */
+.sd-object-handle,
+.sd-object-selected::before,
+#objectTools {
+  display: none !important;
+}
+
+.sd-object-selected {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.sd-object-handle, .sd-table-resize-handle { display: none !important; }
