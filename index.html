@@ -1,971 +1,1715 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#eef4f7" />
-  <title>SimpleDoc - A4 문서 편집기</title>
-  <link rel="stylesheet" href="./css/editor.css" />
-  <link rel="stylesheet" href="./css/document.css" />
-  <link rel="stylesheet" href="./css/print.css" media="print" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>법무법인 입찰서류 HTML 간편편집기</title>
+<style>
+:root{
+  --bg:#eef4f7;--panel:#fff;--line:#d8e5eb;--line2:#c7d8e1;
+  --blue:#315a73;--blue2:#6696b1;--soft:#ddebf2;--pale:#f4f8fa;
+  --ink:#31434d;--sub:#6a7d87;--danger:#a65353;--ok:#4f7f70;
+  --shadow:0 12px 34px rgba(44,76,93,.12);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Pretendard,"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;overflow:hidden}
+button,select,input,textarea{font:inherit}
+.app{height:100%;display:grid;grid-template-rows:auto auto 1fr}
+.topbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;padding:9px 12px;background:var(--panel);border-bottom:1px solid var(--line);box-shadow:0 3px 12px rgba(49,90,115,.05);z-index:3}
+.brand{display:flex;align-items:center;gap:9px;min-width:210px;flex:1 1 290px}
+.logo{width:31px;height:31px;display:grid;place-items:center;border-radius:9px;background:var(--blue);color:#fff;font-weight:900;font-size:14px;flex:0 0 auto}
+.brand-text{min-width:0}
+.brand-title{font-weight:850;color:var(--blue);font-size:15px;line-height:1.2}
+.brand-sub{font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:430px;margin-top:2px}
+.top-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:6px;min-width:0}
+.btn{height:32px;padding:0 10px;border:1px solid var(--line2);border-radius:8px;background:#fff;color:var(--ink);font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;flex:0 0 auto}
+.btn:hover{background:var(--pale);border-color:#acc6d3}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.primary:hover{background:#274d64}
+.btn.danger{color:var(--danger)}
+.btn.active{background:var(--soft);border-color:#9fc0d0;color:var(--blue)}
+.status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--sub);white-space:nowrap;min-height:32px;padding:0 4px;flex:0 0 auto}
+.dot{width:7px;height:7px;border-radius:50%;background:#9eabb1;flex:0 0 auto}
+.dot.dirty{background:#c48645}
+.dot.saved{background:var(--ok)}
+.toolbar{display:flex;align-items:center;align-content:center;flex-wrap:wrap;gap:6px;padding:7px 10px;background:#f9fbfc;border-bottom:1px solid var(--line);overflow:visible;white-space:normal;z-index:2}
+.tool-group{display:inline-flex;align-items:center;gap:3px;min-height:35px;padding:2px 4px;border:1px solid #e3edf2;border-radius:9px;background:rgba(255,255,255,.68);flex:0 0 auto}
+.tool-group.grow{flex:1 1 auto;min-width:0}
+.tool-group.mode-group{margin-left:auto}
+.sep{width:1px;height:23px;background:var(--line);margin:0 2px;flex:0 0 auto}
+.tool{height:29px;min-width:29px;padding:0 7px;border:1px solid transparent;border-radius:6px;background:transparent;color:var(--ink);font-weight:750;font-size:11.5px;cursor:pointer;white-space:nowrap;flex:0 0 auto}
+.tool:hover{background:#fff;border-color:var(--line)}
+.tool.active{background:var(--soft);color:var(--blue);border-color:#b8d2de}
+#fontSize{height:29px;min-width:88px;max-width:104px;padding:0 25px 0 7px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);font-size:11.5px;outline:none;flex:0 0 auto}
+#fontSize:focus{border-color:#8eb4c7;box-shadow:0 0 0 2px rgba(102,150,177,.12)}
+.workspace{min-height:0;display:grid;grid-template-columns:1fr;position:relative}
+.preview-pane,.source-pane{min-height:0;overflow:auto;padding:26px 24px 40px}
+.source-pane{display:none;background:#1f2b31;padding:0}
+.source-pane textarea{width:100%;height:100%;resize:none;border:0;outline:0;padding:18px 20px;background:#1f2b31;color:#e8f0f3;font:13px/1.65 ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;tab-size:2}
+.frame-shell{width:min(100%,930px);margin:0 auto;background:#fff;border:1px solid var(--line2);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+iframe{display:block;width:100%;height:calc(100vh - 135px);border:0;background:#fff}
+.empty{height:calc(100vh - 170px);display:grid;place-items:center;text-align:center;color:var(--sub)}
+.empty-card{width:min(520px,90%);padding:34px;background:#fff;border:1px dashed #b9ccd5;border-radius:16px}
+.empty-title{font-weight:850;color:var(--blue);font-size:19px;margin-bottom:8px}
+.empty-desc{font-size:13px;line-height:1.7}
+.drop{margin-top:18px;padding:18px;border:1px dashed #a9c3cf;border-radius:12px;background:var(--pale);font-size:12px;color:var(--sub)}
+.badge{display:inline-flex;align-items:center;padding:4px 7px;border-radius:999px;background:var(--soft);color:var(--blue);font-size:10px;font-weight:800}
+.help{position:fixed;right:14px;bottom:14px;z-index:5}
+.help-panel{display:none;position:absolute;right:0;bottom:42px;width:320px;padding:14px 16px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);font-size:12px;line-height:1.65;color:var(--sub)}
+.help:hover .help-panel{display:block}
+.mode-note{font-size:11px;color:var(--sub);padding:0 4px}
+.format-state{display:inline-flex;align-items:center;height:27px;min-width:0;padding:0 9px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--sub);font-size:11px;font-weight:700;white-space:nowrap}
+.format-state b{color:var(--blue);margin-right:4px}
+.cell-size-box{display:inline-flex;align-items:center;gap:4px;min-width:0}
+.cell-size-input{width:68px;height:29px;padding:0 6px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);font-size:11px;outline:none}
+.cell-size-input:focus{border-color:#8eb4c7;box-shadow:0 0 0 2px rgba(102,150,177,.12)}
+.cell-size-input::-webkit-inner-spin-button{opacity:.65}
+@media(max-width:1100px){
+  .topbar{align-items:flex-start}
+  .brand{flex-basis:240px}
+  .top-actions{flex:1 1 520px}
+  .tool-group.mode-group{margin-left:0}
+  .format-state{max-width:210px;overflow:hidden;text-overflow:ellipsis}
+}
+@media(max-width:760px){
+  .topbar{gap:6px;padding:7px 8px}
+  .brand{flex:1 1 100%;min-width:0}
+  .brand-sub{display:none}
+  .top-actions{width:100%;flex:1 1 100%;justify-content:flex-start;gap:5px}
+  .status{order:-1;min-height:28px;width:100%;padding:0 2px}
+  .btn{height:30px;padding:0 8px;font-size:11px}
+  .toolbar{padding:6px;gap:5px;align-items:stretch}
+  .tool-group{min-height:33px;padding:2px 3px;gap:2px;max-width:100%}
+  .tool{height:27px;min-width:27px;padding:0 6px;font-size:11px}
+  #fontSize{height:27px;min-width:82px;font-size:11px}
+  .cell-size-box{flex-wrap:wrap;max-width:100%}
+  .cell-size-input{width:64px;height:27px}
+  .format-state,.output-info,.mode-note{font-size:10px}
+  .format-state{max-width:165px}
+  .preview-pane{padding:12px 8px 28px}.frame-shell{border-radius:9px}.help{display:none}
+}
+@media(max-width:480px){
+  .top-actions .btn{flex:1 1 auto}
+  .toolbar{display:grid;grid-template-columns:1fr;align-items:start}
+  .tool-group{width:100%;overflow-x:auto;justify-content:flex-start;scrollbar-width:thin}
+  .tool-group.mode-group{margin-left:0}
+  .format-state{max-width:none;flex:1 1 auto}
+  .mode-note{display:none}
+}
+
+.output-info{display:inline-flex;align-items:center;height:27px;min-width:0;padding:0 9px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--sub);font-size:11px;font-weight:700;white-space:nowrap}
+.output-info strong{color:var(--blue);margin-right:4px}
+.output-modal-backdrop{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;background:rgba(28,43,51,.46);padding:20px}
+.output-modal-backdrop.open{display:flex}
+.output-modal{width:min(520px,100%);background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 24px 70px rgba(32,53,77,.28);overflow:hidden}
+.output-modal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+.output-modal-head h3{margin:0;font-size:15px;color:var(--blue)}
+.output-modal-body{padding:15px 16px}
+.output-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.output-field{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;color:var(--sub)}
+.output-field input[type=number]{width:78px;height:31px;padding:0 7px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink)}
+.output-check{display:flex;gap:8px;align-items:flex-start;margin-top:14px;padding:11px 12px;border-radius:9px;background:var(--pale);font-size:12px;line-height:1.55;color:var(--ink)}
+.output-note{margin-top:12px;padding:10px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;font-size:11px;line-height:1.65;color:var(--sub)}
+.output-pages{margin-top:12px;max-height:180px;overflow:auto;border-top:1px solid var(--line)}
+.output-page-row{display:grid;grid-template-columns:54px 72px 1fr;gap:8px;padding:7px 2px;border-bottom:1px solid #edf2f4;font-size:11px;color:var(--sub)}
+.output-page-row b{color:var(--ink)}
+.output-modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 16px;border-top:1px solid var(--line);background:#fbfcfd}
+#printRoot{display:none}
+@media print{
+  @page{size:210mm 297mm;margin:0}
+  html,body{margin:0!important;padding:0!important;background:#fff!important;width:auto!important;height:auto!important;overflow:visible!important}
+  .app,.help,.output-modal-backdrop{display:none!important}
+  #printRoot{display:block!important;margin:0!important;padding:0!important}
+  .pdf-page{position:relative!important;display:block!important;width:210mm!important;height:297mm!important;min-width:210mm!important;min-height:297mm!important;max-width:210mm!important;max-height:297mm!important;overflow:hidden!important;background:#fff!important;break-after:page!important;page-break-after:always!important;print-color-adjust:exact!important;-webkit-print-color-adjust:exact!important}
+  .pdf-page,.pdf-page *,.pdf-page *::before,.pdf-page *::after{print-color-adjust:exact!important;-webkit-print-color-adjust:exact!important}
+  .pdf-page>iframe{position:absolute!important;inset:0!important;display:block!important;width:210mm!important;height:297mm!important;border:0!important;margin:0!important;padding:0!important;background:#fff!important}
+  .pdf-page:last-child{break-after:auto!important;page-break-after:auto!important}
+}
+
+</style>
 </head>
-
 <body>
-
-  <!-- =====================================================
-       TOP HEADER
-       파일 작업만 상단에 유지
-  ====================================================== -->
-  <header class="app-header no-print">
-
-    <div class="brand-block">
-      <div class="brand-mark">S</div>
-
-      <div>
-        <div class="brand-title">SimpleDoc</div>
-        <div class="brand-subtitle">A4 문서 편집기 · v9</div>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">ED</div>
+      <div class="brand-text">
+        <div class="brand-title">HTML 간편편집기</div>
+        <div class="brand-sub" id="fileName">법무법인 입찰서류용 · 파일을 열어 편집하세요</div>
       </div>
     </div>
+    <div class="top-actions">
+      <div class="status"><span class="dot" id="statusDot"></span><span id="statusText">파일 없음</span></div>
+      <button class="btn" id="openBtn">열기</button>
+      <button class="btn" id="resetBtn" disabled>원본 복구</button>
+      <button class="btn" id="saveAsBtn" disabled>다른 이름으로 저장</button>
+      <button class="btn primary" id="saveBtn" disabled>저장</button>
+      <button class="btn" id="outputSettingsBtn" disabled>출력 설정</button>
+      <button class="btn" id="pdfSaveBtn" disabled>PDF 저장</button>
+      <input type="file" id="fileInput" accept=".html,.htm,text/html" hidden>
+    </div>
+  </div>
 
-
-    <div class="header-status">
-      <span id="saveStatus">저장되지 않음</span>
-      <span id="docStats">글자 0 · 단어 0</span>
-      <span class="header-page-status" id="pageStatus">1 / 1 페이지</span>
+  <div class="toolbar" id="toolbar">
+    <div class="tool-group" title="실행 기록">
+      <button class="tool" data-cmd="undo" title="실행 취소">↶</button>
+      <button class="tool" data-cmd="redo" title="다시 실행">↷</button>
     </div>
 
-
-    <div class="header-actions">
-
-      <button
-        class="btn ghost"
-        id="newDocBtn"
-        type="button"
-      >
-        새 문서
-      </button>
-
-
-      <label
-        class="btn ghost file-label"
-        for="loadFileInput"
-      >
-        불러오기
-      </label>
-
-
-      <input
-        id="loadFileInput"
-        type="file"
-        accept=".ykdoc,.json,.html,.htm"
-        hidden
-      />
-
-
-      <button
-        class="btn primary"
-        id="saveBtn"
-        type="button"
-      >
-        저장
-      </button>
-
-
-      <button
-        class="btn docx"
-        id="docxBtn"
-        type="button"
-      >
-        DOCX
-      </button>
-
-
-      <button
-        class="btn strong"
-        id="printBtn"
-        type="button"
-      >
-        PDF 출력
-      </button>
-
+    <div class="tool-group" title="글자 서식">
+      <button class="tool" data-cmd="bold" title="굵게"><b>B</b></button>
+      <button class="tool" data-cmd="italic" title="기울임"><i>I</i></button>
+      <button class="tool" data-cmd="underline" title="밑줄"><u>U</u></button>
+      <select id="fontSize" title="글자 크기">
+        <option value="">글자크기</option>
+        <option value="11">11px</option><option value="12">12px</option><option value="13">13px</option>
+        <option value="14">14px</option><option value="15">15px</option><option value="16">16px</option>
+        <option value="17">17px</option><option value="18">18px</option><option value="20">20px</option>
+        <option value="22">22px</option><option value="24">24px</option><option value="28">28px</option>
+        <option value="32">32px</option><option value="36">36px</option>
+      </select>
     </div>
 
-  </header>
+    <div class="tool-group" title="문단 정렬과 목록">
+      <button class="tool" data-cmd="justifyLeft" title="왼쪽 정렬">≡←</button>
+      <button class="tool" data-cmd="justifyCenter" title="가운데 정렬">≡</button>
+      <button class="tool" data-cmd="justifyRight" title="오른쪽 정렬">→≡</button>
+      <span class="sep"></span>
+      <button class="tool" data-cmd="insertUnorderedList" title="글머리표">• 목록</button>
+      <button class="tool" data-cmd="insertOrderedList" title="번호 목록">1. 목록</button>
+    </div>
 
+    <div class="tool-group" title="표 행·열 편집">
+      <button class="tool" id="cellSelectBtn" title="표 셀 선택 모드 · 드래그/클릭으로 복수선택">셀 선택</button>
+      <button class="tool" id="rowAddBtn" title="선택한 행 아래에 행 추가">행 +</button>
+      <button class="tool" id="rowDelBtn" title="선택한 행 삭제">행 −</button>
+      <button class="tool" id="colAddBtn" title="선택한 열 오른쪽에 열 추가">열 +</button>
+      <button class="tool" id="colDelBtn" title="선택한 열 삭제">열 −</button>
+    </div>
 
-  <!-- 파일명 UI는 제거하되 기존 저장 로직 호환을 위해 숨김 -->
-  <input
-    id="docTitle"
-    type="hidden"
-    value="새 문서"
-  />
+    <div class="tool-group" title="표 셀 크기">
+      <span class="cell-size-box" title="선택한 표 셀의 크기 조정">
+        <input class="cell-size-input" id="cellWidthInput" type="number" min="20" step="1" placeholder="너비 px" title="셀 너비(px)">
+        <input class="cell-size-input" id="cellHeightInput" type="number" min="18" step="1" placeholder="높이 px" title="셀 높이(px)">
+        <button class="tool" id="cellSizeApplyBtn" title="선택한 셀에 너비·높이 적용">크기 적용</button>
+        <button class="tool" id="cellSizeAutoBtn" title="선택한 셀의 지정 크기를 해제하고 자동 크기로 복원">자동</button>
+      </span>
+    </div>
 
+    <div class="tool-group grow" title="서식 복사와 현재 서식">
+      <button class="tool" id="formatCopyBtn" title="현재 서식 복사 · Alt+C">서식 복사</button>
+      <button class="tool" id="formatPasteBtn" title="복사한 서식 붙여넣기 · Alt+V">서식 붙여넣기</button>
+      <span class="format-state" id="formatState"><b>서식</b> -</span>
+    </div>
 
-  <!-- =====================================================
-       WORKSPACE
-  ====================================================== -->
-  <main class="workspace">
+    <div class="tool-group mode-group" title="편집 모드">
+      <button class="tool active" id="safeModeBtn" title="텍스트 중심 안전 편집">구조 보호</button>
+      <button class="tool" id="freeModeBtn" title="문서 전체 자유 편집">자유 편집</button>
+      <button class="tool" id="sourceBtn" title="HTML 소스 직접 편집">HTML</button>
+      <span class="mode-note" id="modeNote">텍스트와 표 셀만 편집</span>
+    </div>
+  </div>
 
-    <!-- ===================================================
-         LEFT DASHBOARD
-         문자 / 문단 관련 도구
-    ==================================================== -->
-    <aside class="dashboard dashboard-left no-print">
-
-      <section class="dashboard-section">
-
-        <div class="dashboard-heading">
-          글자
+  <div class="workspace">
+    <div class="preview-pane" id="previewPane">
+      <div class="empty" id="emptyState">
+        <div class="empty-card">
+          <div class="empty-title">편집할 HTML 파일을 열어주세요</div>
+          <div class="empty-desc">앞서 만든 입찰공고·세부현황서·별지서식·평가표 HTML을 그대로 불러와 편집할 수 있습니다.</div>
+          <div class="drop" id="dropZone"><span class="badge">TIP</span> 파일을 이 영역에 끌어다 놓아도 됩니다.</div>
         </div>
-
-
-        <label class="dashboard-field">
-          <span>글꼴</span>
-
-          <select
-            id="fontFamily"
-            class="control dashboard-select selection-preserving"
-            title="글꼴"
-          >
-            <option value="Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">Pretendard</option>
-            <option value="'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">Noto Sans KR</option>
-            <option value="'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">Apple SD Gothic Neo</option>
-            <option value="'Malgun Gothic', sans-serif">맑은 고딕</option>
-            <option value="Batang, serif">바탕</option>
-            <option value="Gulim, sans-serif">굴림</option>
-            <option value="Dotum, sans-serif">돋움</option>
-            <option value="Arial, sans-serif">Arial</option>
-            <option value="'Times New Roman', serif">Times New Roman</option>
-          </select>
-        </label>
-
-
-        <div class="dashboard-row">
-
-          <label class="dashboard-field grow">
-            <span>크기</span>
-
-            <select
-              id="fontSize"
-              class="control selection-preserving"
-              title="글자 크기"
-            >
-              <option>9</option>
-              <option>10</option>
-              <option selected>11</option>
-              <option>12</option>
-              <option>13</option>
-              <option>14</option>
-              <option>15</option>
-              <option>16</option>
-              <option>18</option>
-              <option>20</option>
-              <option>22</option>
-              <option>24</option>
-              <option>28</option>
-              <option>32</option>
-              <option>36</option>
-              <option>40</option>
-            </select>
-          </label>
-
-
-          <span class="field-unit">pt</span>
-
-        </div>
-
-
-        <div class="dashboard-tool-grid">
-
-          <button
-            class="tool-btn selection-preserving"
-            id="boldBtn"
-            type="button"
-            title="굵게"
-          >
-            <strong>B</strong>
-          </button>
-
-
-          <button
-            class="tool-btn italic selection-preserving"
-            id="italicBtn"
-            type="button"
-            title="기울임"
-          >
-            I
-          </button>
-
-
-          <button
-            class="tool-btn underline selection-preserving"
-            id="underlineBtn"
-            type="button"
-            title="밑줄"
-          >
-            U
-          </button>
-
-
-          <label
-            class="color-tool selection-preserving"
-            title="글자색"
-          >
-            <span>A</span>
-
-            <input
-              id="textColor"
-              type="color"
-              value="#34434d"
-            />
-          </label>
-
-        </div>
-
-
-        <div class="dashboard-tool-grid dashboard-tool-grid-three">
-
-          <button class="tool-btn text-icon selection-preserving" id="superscriptBtn" type="button" title="위 첨자 (Alt+Shift+P)">x<sup>2</sup></button>
-
-          <button class="tool-btn text-icon selection-preserving" id="subscriptBtn" type="button" title="아래 첨자 (Alt+Shift+S)">x<sub>2</sub></button>
-
-          <button class="tool-btn text-icon selection-preserving" id="clearFormatBtn" type="button" title="보통 모양 (Alt+Shift+C)">기본</button>
-
-        </div>
-
-
-        <label class="dashboard-field">
-          <span>자간</span>
-
-          <select
-            id="quickCharSpacing"
-            class="control selection-preserving"
-            title="자간"
-          >
-            <option value="-20">-20%</option>
-            <option value="-15">-15%</option>
-            <option value="-10">-10%</option>
-            <option value="-5">-5%</option>
-            <option value="0" selected>0%</option>
-            <option value="5">+5%</option>
-            <option value="10">+10%</option>
-            <option value="15">+15%</option>
-            <option value="20">+20%</option>
-            <option value="30">+30%</option>
-            <option value="40">+40%</option>
-            <option value="50">+50%</option>
-          </select>
-        </label>
-
-      </section>
-
-
-      <section class="dashboard-section">
-
-        <div class="dashboard-heading">
-          문단
-        </div>
-
-
-        <label class="dashboard-field">
-          <span>줄 간격</span>
-
-          <select
-            id="lineHeight"
-            class="control selection-preserving"
-            title="줄 간격"
-          >
-            <option value="0.2">0.2</option>
-            <option value="0.5">0.5</option>
-            <option value="0.7">0.7</option>
-            <option value="1">1.0</option>
-            <option value="1.15">1.15</option>
-            <option value="1.3">1.3</option>
-            <option value="1.5">1.5</option>
-            <option value="1.7" selected>1.7</option>
-            <option value="1.85">1.85</option>
-            <option value="2">2.0</option>
-            <option value="2.5">2.5</option>
-            <option value="3">3.0</option>
-          </select>
-        </label>
-
-
-        <div class="dashboard-label">
-          정렬
-        </div>
-
-
-        <div class="dashboard-tool-grid">
-
-          <button
-            class="tool-btn align selection-preserving"
-            data-align="left"
-            type="button"
-            title="왼쪽 정렬"
-          >
-            ≡
-          </button>
-
-
-          <button
-            class="tool-btn align center-icon selection-preserving"
-            data-align="center"
-            type="button"
-            title="가운데 정렬"
-          >
-            ≡
-          </button>
-
-
-          <button
-            class="tool-btn align right-icon selection-preserving"
-            data-align="right"
-            type="button"
-            title="오른쪽 정렬"
-          >
-            ≡
-          </button>
-
-
-          <button
-            class="tool-btn align justify-icon selection-preserving"
-            data-align="justify"
-            type="button"
-            title="양쪽 정렬"
-          >
-            ≡
-          </button>
-
-        </div>
-
-
-        <div class="dashboard-button-stack two-column dashboard-list-tools">
-
-          <button class="btn compact selection-preserving" id="numberBtn" type="button" title="번호 매기기 (Ctrl+Shift+Insert)">1. 번호</button>
-
-          <button class="btn compact selection-preserving" id="bulletBtn" type="button" title="글머리표 (Ctrl+Shift+Delete)">• 글머리표</button>
-
-        </div>
-
-
-        <div class="dashboard-button-stack">
-
-          <button
-            class="btn compact selection-preserving"
-            id="formatCopyBtn"
-            type="button"
-            title="모양 복사 (Alt+C)"
-          >
-            모양 복사
-          </button>
-
-
-          <button
-            class="btn compact selection-preserving"
-            id="formatPasteBtn"
-            type="button"
-            title="모양 붙이기 (Alt+C)"
-          >
-            모양 붙이기
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <section class="dashboard-section">
-
-        <div class="dashboard-heading">
-          화면
-        </div>
-
-
-        <label class="dashboard-field">
-          <span>확대</span>
-
-          <input
-            id="zoomRange"
-            type="range"
-            min="55"
-            max="130"
-            step="5"
-            value="90"
-          />
-
-          <strong id="zoomValue">90%</strong>
-        </label>
-
-      </section>
-
-    </aside>
-
-
-    <!-- ===================================================
-         CANVAS
-    ==================================================== -->
-    <section
-      class="canvas-area"
-      id="canvasArea"
-    >
-
-      <div
-        id="documentRoot"
-        class="document-root"
-      ></div>
-
-
-      <button
-        class="floating-add-page no-print"
-        id="floatingAddPage"
-        type="button"
-      >
-        + 새 A4 페이지
-      </button>
-
-    </section>
-
-
-    <!-- ===================================================
-         RIGHT DASHBOARD
-         삽입 / 페이지 / 문서 요소
-    ==================================================== -->
-    <aside class="dashboard dashboard-right no-print">
-
-      <section class="dashboard-section">
-
-        <div class="dashboard-heading">
-          문서 요소
-        </div>
-
-
-        <div class="dashboard-chip-grid">
-
-          <button
-            class="chip selection-preserving"
-            data-block="title"
-            type="button"
-          >
-            문서 제목
-          </button>
-
-
-          <button
-            class="chip selection-preserving"
-            data-block="intro"
-            type="button"
-          >
-            개요 박스
-          </button>
-
-
-          <button
-            class="chip selection-preserving"
-            data-block="section"
-            type="button"
-          >
-            섹션 제목
-          </button>
-
-
-          <button
-            class="chip selection-preserving"
-            data-block="subtitle"
-            type="button"
-          >
-            중제목
-          </button>
-
-
-          <button
-            class="chip selection-preserving"
-            data-block="note"
-            type="button"
-          >
-            각주
-          </button>
-
-
-          <button
-            class="chip selection-preserving"
-            data-block="callout"
-            type="button"
-          >
-            안내 박스
-          </button>
-
-
-          <button
-            class="chip selection-preserving"
-            data-block="signature"
-            type="button"
-          >
-            서명부
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <section class="dashboard-section">
-
-        <div class="dashboard-heading">
-          삽입
-        </div>
-
-
-        <div class="dashboard-chip-grid">
-
-          <button
-            class="btn compact selection-preserving"
-            id="insertTableBtn"
-            type="button"
-          >
-            표
-          </button>
-
-
-          <button
-            class="btn compact selection-preserving"
-            id="insertCheckboxBtn"
-            type="button"
-          >
-            체크박스
-          </button>
-
-
-          <button
-            class="btn compact selection-preserving"
-            id="insertTextboxBtn"
-            type="button"
-          >
-            텍스트박스
-          </button>
-
-
-          <button
-            class="btn compact selection-preserving"
-            id="insertImageBtn"
-            type="button"
-          >
-            이미지
-          </button>
-
-
-          <input
-            id="imageFileInput"
-            type="file"
-            accept="image/*"
-            hidden
-          />
-
-
-          <button
-            class="btn compact selection-preserving"
-            id="insertDividerBtn"
-            type="button"
-          >
-            구분선
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <section class="dashboard-section">
-
-        <div class="dashboard-heading">
-          페이지
-        </div>
-
-
-        <label class="dashboard-toggle">
-
-          <input
-            id="autoPaginateToggle"
-            type="checkbox"
-            checked
-          />
-
-          <span>자동 페이지</span>
-
-        </label>
-
-
-        <button
-          class="chip page-lock-btn"
-          id="pageSizeLockBtn"
-          type="button"
-          aria-pressed="false"
-          title="화면의 페이지 크기를 A4로 고정"
-        >
-          🔓 페이지 크기
-        </button>
-
-
-        <div class="dashboard-button-stack two-column">
-
-          <button
-            class="chip page-action"
-            id="addPageBtn"
-            type="button"
-          >
-            + 페이지
-          </button>
-
-
-          <button
-            class="chip page-action danger"
-            id="deletePageBtn"
-            type="button"
-          >
-            삭제
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <section class="dashboard-section">
-
-        <div class="dashboard-heading">
-          편집
-        </div>
-
-
-        <div class="dashboard-button-stack two-column edit-utility-row">
-
-          <button class="btn compact selection-preserving" id="findBtn" type="button" title="찾기 (Ctrl+F / F2)">찾기</button>
-
-          <button class="btn compact" id="shortcutHelpBtn" type="button" title="한/글 호환 단축키">단축키</button>
-
-        </div>
-
-
-        <div class="dashboard-button-stack two-column">
-
-          <button
-            class="btn compact"
-            id="undoBtn"
-            type="button"
-            title="실행 취소"
-          >
-            ↶ 실행취소
-          </button>
-
-
-          <button
-            class="btn compact"
-            id="redoBtn"
-            type="button"
-            title="다시 실행"
-          >
-            ↷ 다시실행
-          </button>
-
-        </div>
-
-      </section>
-
-
-
-      <!-- =================================================
-           OBJECT TOOLS
-      ================================================== -->
-      <section
-        class="dashboard-section context-panel"
-        id="objectTools"
-        hidden
-      >
-
-        <div class="dashboard-heading">
-          개체 선택
-          <small id="objectTypeLabel">개체</small>
-        </div>
-
-        <div class="object-help">
-          개체는 본문에서 한 글자처럼 동작합니다. 개체 바로 앞에서 Delete,
-          바로 뒤에서 Backspace를 누르면 즉시 삭제됩니다. 외곽의 ⋮⋮ 핸들은
-          개체를 직접 선택해 이동·삭제할 때 사용합니다.
-        </div>
-
-        <button
-          class="chip danger-soft"
-          id="deleteObjectBtn"
-          type="button"
-        >
-          선택한 개체 삭제
-        </button>
-
-      </section>
-
-      <!-- =================================================
-           TABLE TOOLS
-      ================================================== -->
-      <section
-        class="dashboard-section context-panel"
-        id="tableTools"
-        hidden
-      >
-
-        <div class="dashboard-heading">
-          표 도구
-          <small id="tableSelectionCount">1셀 선택</small>
-        </div>
-
-        <label class="dashboard-field table-size-field">
-          <span>표 너비</span>
-          <div class="table-width-control">
-            <input
-              id="tableWidthRange"
-              type="range"
-              min="25"
-              max="100"
-              step="1"
-              value="100"
-            />
-            <strong id="tableWidthValue">100%</strong>
-          </div>
-        </label>
-
-        <div class="dashboard-button-stack two-column table-size-buttons">
-          <button class="chip" id="tableFitContentBtn" type="button">내용 맞춤</button>
-          <button class="chip" id="tableFullWidthBtn" type="button">쪽 너비</button>
-        </div>
-
-        <div class="dashboard-chip-grid">
-
-          <button
-            class="chip"
-            id="rowAboveBtn"
-            type="button"
-          >
-            행 위 추가
-          </button>
-
-
-          <button
-            class="chip"
-            id="rowBelowBtn"
-            type="button"
-          >
-            행 아래 추가
-          </button>
-
-
-          <button
-            class="chip danger-soft"
-            id="deleteRowBtn"
-            type="button"
-          >
-            행 삭제
-          </button>
-
-
-          <button
-            class="chip"
-            id="colLeftBtn"
-            type="button"
-          >
-            열 왼쪽 추가
-          </button>
-
-
-          <button
-            class="chip"
-            id="colRightBtn"
-            type="button"
-          >
-            열 오른쪽 추가
-          </button>
-
-
-          <button
-            class="chip danger-soft"
-            id="deleteColBtn"
-            type="button"
-          >
-            열 삭제
-          </button>
-
-
-          <button
-            class="chip emphasis"
-            id="mergeCellsBtn"
-            type="button"
-          >
-            셀 병합
-          </button>
-
-
-          <button
-            class="chip"
-            id="splitCellBtn"
-            type="button"
-          >
-            셀 나누기
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <!-- =================================================
-           IMAGE TOOLS
-      ================================================== -->
-      <section
-        class="dashboard-section context-panel"
-        id="imageTools"
-        hidden
-      >
-
-        <div class="dashboard-heading">
-          이미지 도구
-        </div>
-
-
-        <label class="dashboard-field">
-
-          <span>너비</span>
-
-          <select
-            id="imageWidth"
-            class="control"
-          >
-            <option value="25">25%</option>
-            <option value="50">50%</option>
-            <option value="75" selected>75%</option>
-            <option value="100">100%</option>
-          </select>
-
-        </label>
-
-
-        <button
-          class="chip danger-soft"
-          id="deleteImageBtn"
-          type="button"
-        >
-          이미지 삭제
-        </button>
-
-      </section>
-
-    </aside>
-
-  </main>
-
-
-  <!-- =====================================================
-       TABLE DIALOG
-  ====================================================== -->
-  <dialog
-    id="tableDialog"
-    class="dialog"
-  >
-
-    <form
-      method="dialog"
-      id="tableForm"
-    >
-
-      <div class="dialog-title">
-        표 삽입
       </div>
-
-
-      <div class="dialog-grid">
-
-        <label>
-          행 수
-
-          <input
-            id="tableRows"
-            type="number"
-            min="1"
-            max="30"
-            value="4"
-          />
-        </label>
-
-
-        <label>
-          열 수
-
-          <input
-            id="tableCols"
-            type="number"
-            min="1"
-            max="12"
-            value="3"
-          />
-        </label>
-
+      <div class="frame-shell" id="frameShell" style="display:none">
+        <iframe id="editorFrame" title="HTML 문서 편집 화면"></iframe>
       </div>
+    </div>
+    <div class="source-pane" id="sourcePane"><textarea id="sourceEditor" spellcheck="false"></textarea></div>
+  </div>
+</div>
 
+<div class="help">
+  <button class="btn">도움말</button>
+  <div class="help-panel">
+    <b>권장 사용법</b><br>
+    1. <b>구조 보호</b> 상태에서 문구와 표 내용만 수정합니다.<br>
+    2. 표 셀은 클릭으로 1개 선택, <b>Ctrl/Cmd+클릭</b>으로 추가선택, <b>Shift+클릭</b>으로 범위선택할 수 있습니다.<br>
+    3. <b>셀 선택</b> 모드를 켜면 표 위를 드래그해 여러 셀을 한 번에 선택할 수 있습니다.<br>
+    4. 선택한 셀에 정렬·글자크기·서식 붙여넣기를 일괄 적용할 수 있습니다.<br>
+    5. <b>행 +/−, 열 +/−</b>로 표 구조를 수정합니다.<br>
+    6. 셀 선택 후 <b>너비·높이(px)</b>를 입력해 정확히 지정하거나, 셀의 <b>오른쪽/아래쪽 경계</b>를 드래그해 직접 크기를 조정할 수 있습니다.<br>
+    7. <b>자동</b>을 누르면 선택 셀의 직접 지정한 크기를 해제합니다.<br>
+    8. <b>서식 복사/붙여넣기</b>는 Alt+C / Alt+V 단축키도 지원합니다.<br>
+    9. 레이아웃 자체를 고칠 때만 <b>자유 편집</b>, HTML 코드를 직접 고칠 때는 <b>HTML</b>을 사용합니다.<br>
+    10. 완료 후 <b>저장</b> 또는 <b>다른 이름으로 저장</b>을 누릅니다.<br>
+    11. 편집 화면의 흰 종이는 <b>실제 A4 출력 비율</b>입니다. 긴 페이지는 자동으로 축소되며, 축소되는 만큼 편집 폭을 넓혀 불필요한 줄바꿈을 줄입니다.<br>
+    12. <b>출력 설정</b>에서 상·하·좌·우 여백과 긴 페이지의 가로폭 자동 확장 여부를 조절할 수 있습니다.<br>
+    13. <b>PDF 저장</b>은 별도 캔버스 렌더링을 하지 않고, 현재 편집 화면과 동일한 페이지 배치를 A4 인쇄 구조로 구성합니다. 인쇄창에서 <b>PDF로 저장</b>을 선택하세요.<br><br>
+    Chromium 계열 브라우저에서는 원본 HTML 파일에 직접 저장할 수 있고, Safari 등에서는 새 HTML 파일로 내려받습니다.
+  </div>
+</div>
 
-      <label class="dialog-check">
-
-        <input
-          id="headerRow"
-          type="checkbox"
-          checked
-        />
-
-        첫 행을 제목행으로 사용
-
-      </label>
-
-
-      <div class="dialog-actions">
-
-        <button
-          class="btn ghost"
-          value="cancel"
-          type="button"
-          id="cancelTableBtn"
-        >
-          취소
-        </button>
-
-
-        <button
-          class="btn primary"
-          value="default"
-          type="submit"
-        >
-          삽입
-        </button>
-
+<div class="output-modal-backdrop" id="outputModal">
+  <div class="output-modal" role="dialog" aria-modal="true" aria-labelledby="outputModalTitle">
+    <div class="output-modal-head"><h3 id="outputModalTitle">A4 출력 설정</h3><button class="btn" id="outputModalClose">닫기</button></div>
+    <div class="output-modal-body">
+      <div class="output-grid">
+        <label class="output-field">위 여백(mm)<input id="outputMarginTop" type="number" min="0" max="50" step="1" value="14"></label>
+        <label class="output-field">오른쪽 여백(mm)<input id="outputMarginRight" type="number" min="0" max="50" step="1" value="14"></label>
+        <label class="output-field">아래 여백(mm)<input id="outputMarginBottom" type="number" min="0" max="50" step="1" value="14"></label>
+        <label class="output-field">왼쪽 여백(mm)<input id="outputMarginLeft" type="number" min="0" max="50" step="1" value="14"></label>
       </div>
+      <label class="output-check"><input id="smartWidthExpand" type="checkbox" checked><span><b>긴 페이지 가로폭 자동 확장</b><br>세로 내용 때문에 축소되는 페이지는 축소율만큼 편집 폭을 넓혀, 최종 A4의 가로 공간을 더 활용합니다.</span></label>
+      <div class="output-note" id="outputNote">문서를 열면 페이지별 실제 출력 배율과 편집 폭을 계산합니다.</div>
+      <div class="output-pages" id="outputPageList"></div>
+    </div>
+    <div class="output-modal-actions"><button class="btn" id="outputResetBtn">문서 기준으로 복원</button><button class="btn primary" id="outputApplyBtn">적용</button></div>
+  </div>
+</div>
+<div id="printRoot" aria-hidden="true"></div>
 
-    </form>
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const frame = $('#editorFrame');
+  const fileInput = $('#fileInput');
+  const previewPane = $('#previewPane');
+  const sourcePane = $('#sourcePane');
+  const sourceEditor = $('#sourceEditor');
+  const emptyState = $('#emptyState');
+  const frameShell = $('#frameShell');
+  const fileName = $('#fileName');
+  const statusDot = $('#statusDot');
+  const statusText = $('#statusText');
+  const safeModeBtn = $('#safeModeBtn');
+  const freeModeBtn = $('#freeModeBtn');
+  const sourceBtn = $('#sourceBtn');
+  const modeNote = $('#modeNote');
+  const cellSelectBtn = $('#cellSelectBtn');
+  const formatState = $('#formatState');
+  const cellWidthInput = $('#cellWidthInput');
+  const cellHeightInput = $('#cellHeightInput');
+  const outputSettingsBtn = $('#outputSettingsBtn');
+  const outputModal = $('#outputModal');
+  const outputModalClose = $('#outputModalClose');
+  const outputMarginTop = $('#outputMarginTop');
+  const outputMarginRight = $('#outputMarginRight');
+  const outputMarginBottom = $('#outputMarginBottom');
+  const outputMarginLeft = $('#outputMarginLeft');
+  const smartWidthExpand = $('#smartWidthExpand');
+  const outputNote = $('#outputNote');
+  const outputPageList = $('#outputPageList');
+  const outputApplyBtn = $('#outputApplyBtn');
+  const outputResetBtn = $('#outputResetBtn');
+  const printRoot = $('#printRoot');
 
-  </dialog>
+  let originalHtml = '';
+  let currentName = 'document.html';
+  let fileHandle = null;
+  let dirty = false;
+  let mode = 'safe'; // safe | free | source
+  let lastRange = null;
+  let selectedCells = new Set();
+  let anchorCell = null;
+  let cellSelectMode = false;
+  let draggingCells = false;
+  let dragBaseCells = new Set();
+  let copiedFormat = null;
+  let cellResizeState = null;
+  const CELL_RESIZE_EDGE = 6;
+
+  const PX_PER_MM = 96 / 25.4;
+  const A4_OUTPUT = { widthMm:210, heightMm:297, widthPx:210*PX_PER_MM, heightPx:297*PX_PER_MM };
+  let outputMargins = {top:14,right:14,bottom:14,left:14};
+  let detectedMargins = {top:14,right:14,bottom:14,left:14};
+  let autoExpandLongPages = true;
+  let smartLayoutTimer = 0;
+  let smartLayoutBusy = false;
+  let pageLayoutState = [];
+  let smartLayoutGeneration = 0;
+
+  const editableSelector = [
+    'h1','h2','h3','h4','h5','h6','p','li','td','th',
+    '.eyebrow','.title','.title-sub','.intro','.body-text','.detail','.note',
+    '.info-label','.info-value','.meta-label','.meta-value','.callout-title',
+    '.condition-text','.signature-date','.signature-org','.signature-stamp',
+    '.process-step','.badge'
+  ].join(',');
+
+  function setStatus(text, state='') {
+    statusText.textContent = text;
+    statusDot.className = 'dot' + (state ? ' ' + state : '');
+  }
+
+  function markDirty() {
+    if (!originalHtml) return;
+    dirty = true;
+    setStatus('수정됨 · 저장 필요', 'dirty');
+    if (mode !== 'source') scheduleSmartPageLayout();
+  }
+
+  function markSaved() {
+    dirty = false;
+    setStatus('저장됨', 'saved');
+  }
+
+  function enableButtons(on=true) {
+    ['resetBtn','saveAsBtn','saveBtn','outputSettingsBtn','pdfSaveBtn'].forEach(id => $('#'+id).disabled = !on);
+  }
+
+  function getDoc() {
+    return frame.contentDocument || frame.contentWindow.document;
+  }
+
+  function cleanEditorClone(root, {restoreSmartStyles=true}={}) {
+    root.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+    root.querySelectorAll('[data-editor-outline],[data-editor-cell-selected],[data-editor-cell-select-mode]').forEach(el => {
+      el.removeAttribute('data-editor-outline');
+      el.removeAttribute('data-editor-cell-selected');
+      el.removeAttribute('data-editor-cell-select-mode');
+      el.style?.removeProperty('outline');
+      el.style?.removeProperty('outline-offset');
+      el.style?.removeProperty('box-shadow');
+    });
+    root.querySelectorAll('#html-easy-editor-style,#__editor_smart_output_style__').forEach(el => el.remove());
+    root.querySelectorAll('.__editor_output_badge').forEach(el => el.remove());
+
+    if (restoreSmartStyles) {
+      root.querySelectorAll('[data-editor-original-style]').forEach(el => {
+        const original = el.getAttribute('data-editor-original-style');
+        if (original === '__NONE__') el.removeAttribute('style');
+        else el.setAttribute('style', original || '');
+        el.removeAttribute('data-editor-original-style');
+        el.removeAttribute('data-editor-smart-page');
+        el.removeAttribute('data-editor-output-scale');
+        el.removeAttribute('data-editor-page-index');
+      });
+      root.querySelectorAll('.__editor_a4_shell').forEach(shell => {
+        const page = [...shell.children].find(el => el.nodeType === 1 && el.classList && !el.classList.contains('__editor_output_badge'));
+        if (page) shell.replaceWith(page);
+        else shell.remove();
+      });
+    } else {
+      root.querySelectorAll('[data-editor-original-style]').forEach(el => el.removeAttribute('data-editor-original-style'));
+      root.querySelectorAll('[data-editor-smart-page]').forEach(el => {
+        el.removeAttribute('data-editor-smart-page');
+        el.removeAttribute('data-editor-page-index');
+      });
+    }
+    const body = root.querySelector('body');
+    if (body) {
+      body.removeAttribute('data-editor-cell-select-mode');
+      body.style.removeProperty('cursor');
+      body.style.removeProperty('user-select');
+      body.style.removeProperty('-webkit-user-select');
+    }
+  }
+
+  function serializeDoc() {
+    const doc = getDoc();
+    if (!doc) return '';
+    const clone = doc.documentElement.cloneNode(true);
+    cleanEditorClone(clone, {restoreSmartStyles:true});
+    return '<!DOCTYPE html>\n' + clone.outerHTML;
+  }
+
+  function attachDocListeners() {
+    const doc = getDoc();
+    if (!doc) return;
+    ensureEditorStyles();
+
+    doc.addEventListener('input', markDirty, true);
+    doc.addEventListener('change', markDirty, true);
+
+    doc.addEventListener('selectionchange', () => {
+      try {
+        const sel = doc.getSelection();
+        if (sel && sel.rangeCount) lastRange = sel.getRangeAt(0).cloneRange();
+        updateFormatState();
+      } catch(e) {}
+    });
+
+    doc.addEventListener('mousedown', e => {
+      const cell = closestCell(e.target);
+      if (!cell || e.button !== 0) return;
+
+      const resizeEdge = detectCellResizeEdge(cell, e.clientX, e.clientY);
+      if (resizeEdge) {
+        e.preventDefault();
+        e.stopPropagation();
+        startCellResize(cell, resizeEdge, e);
+        return;
+      }
+
+      if (cellSelectMode) {
+        e.preventDefault();
+        draggingCells = true;
+        const additive = e.ctrlKey || e.metaKey;
+        dragBaseCells = additive ? new Set(selectedCells) : new Set();
+        anchorCell = cell;
+        selectCellRange(anchorCell, cell, dragBaseCells);
+        frame.contentWindow.focus();
+      }
+    }, true);
+
+    doc.addEventListener('mouseover', e => {
+      if (!cellSelectMode || !draggingCells) return;
+      const cell = closestCell(e.target);
+      if (!cell || !anchorCell) return;
+      if (cell.closest('table') !== anchorCell.closest('table')) return;
+      selectCellRange(anchorCell, cell, dragBaseCells);
+    }, true);
+
+    doc.addEventListener('mousemove', e => {
+      if (cellResizeState) {
+        performCellResize(e);
+        return;
+      }
+      const cell = closestCell(e.target);
+      const edge = cell ? detectCellResizeEdge(cell, e.clientX, e.clientY) : null;
+      if (doc.body) doc.body.style.cursor = edge === 'width' ? 'col-resize' : edge === 'height' ? 'row-resize' : '';
+    }, true);
+
+    doc.addEventListener('mouseup', () => {
+      draggingCells = false;
+      if (cellResizeState) finishCellResize();
+    }, true);
+
+    doc.addEventListener('mouseleave', () => {
+      if (cellResizeState) finishCellResize();
+    }, true);
+
+    doc.addEventListener('click', e => {
+      const cell = closestCell(e.target);
+      if (!cell) {
+        if (!cellSelectMode) clearCellSelection();
+        return;
+      }
+
+      if (cellSelectMode) {
+        e.preventDefault();
+        return;
+      }
+
+      if (e.shiftKey && anchorCell && anchorCell.closest('table') === cell.closest('table')) {
+        e.preventDefault();
+        selectCellRange(anchorCell, cell);
+      } else if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        toggleCellSelection(cell);
+        anchorCell = cell;
+      } else {
+        setCellSelection([cell]);
+        anchorCell = cell;
+      }
+      updateFormatState();
+    }, true);
+  }
+
+  function applyMode(nextMode) {
+    if (!originalHtml) return;
+    const doc = getDoc();
+    if (!doc) return;
+    mode = nextMode;
+    ensureEditorStyles();
+
+    doc.designMode = 'off';
+    doc.body.removeAttribute('contenteditable');
+    doc.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+    doc.querySelectorAll('[data-editor-outline]').forEach(el => {
+      el.style.removeProperty('outline'); el.style.removeProperty('outline-offset'); el.removeAttribute('data-editor-outline');
+    });
+
+    if (nextMode === 'safe') {
+      doc.querySelectorAll(editableSelector).forEach(el => {
+        // 구조를 직접 감싸는 컨테이너는 제외하고 텍스트/셀 중심으로 편집
+        if (el.matches('table,tbody,thead,tr,section,main,div.table-wrap')) return;
+        el.setAttribute('contenteditable','true');
+      });
+      safeModeBtn.classList.add('active'); freeModeBtn.classList.remove('active'); sourceBtn.classList.remove('active');
+      modeNote.textContent = '텍스트와 표 셀만 편집';
+    } else if (nextMode === 'free') {
+      doc.body.setAttribute('contenteditable','true');
+      safeModeBtn.classList.remove('active'); freeModeBtn.classList.add('active'); sourceBtn.classList.remove('active');
+      modeNote.textContent = '문서 구조 전체 편집 가능';
+    }
+  }
 
 
-  <!-- =====================================================
-       SCRIPTS
-  ====================================================== -->
-  <script src="./js/editor.js"></script>
-  <script src="./js/selection.js"></script>
-  <script src="./js/format.js"></script>
-  <script src="./js/object-manager.js"></script>
-  <script src="./js/table.js"></script>
-  <script src="./js/textbox.js"></script>
-  <script src="./js/image.js"></script>
-  <script src="./js/pagination.js"></script>
-  <script src="./js/storage.js"></script>
-  <script src="./js/docx-export.js"></script>
-  <script src="./js/print.js"></script>
-  <script src="./js/word-tools.js"></script>
-  <script src="./js/hwp-shortcuts.js"></script>
-  <script src="./js/app.js"></script>
+  function waitFrameResources(doc, timeout=1500) {
+    const jobs = [];
+    if (doc?.fonts?.ready) jobs.push(Promise.resolve(doc.fonts.ready).catch(()=>{}));
+    doc?.querySelectorAll('img').forEach(img => {
+      if (img.complete) return;
+      jobs.push(new Promise(resolve => {
+        img.addEventListener('load', resolve, {once:true});
+        img.addEventListener('error', resolve, {once:true});
+      }));
+    });
+    if (!jobs.length) return Promise.resolve();
+    return Promise.race([Promise.all(jobs), new Promise(r=>setTimeout(r,timeout))]);
+  }
 
+  function getDocumentPages(doc=getDoc()) {
+    if (!doc) return [];
+    let pages = [...doc.querySelectorAll('.paper')].filter(el => !el.closest('.__editor_a4_shell .__editor_a4_shell'));
+    if (pages.length) return pages;
+    pages = [...doc.querySelectorAll('.page')].filter(el => {
+      if (el.closest('.__editor_a4_shell .__editor_a4_shell')) return false;
+      const r = el.getBoundingClientRect();
+      if (r.width < 300 || r.height < 400) return false;
+      const ratio = r.width / r.height;
+      return ratio > .58 && ratio < .82;
+    });
+    return pages;
+  }
+
+  function getPageInner(page) {
+    if (!page) return null;
+    return page.querySelector('.page-inner');
+  }
+
+  function rememberOriginalStyle(el) {
+    if (!el || el.hasAttribute('data-editor-original-style')) return;
+    el.setAttribute('data-editor-original-style', el.hasAttribute('style') ? el.getAttribute('style') : '__NONE__');
+  }
+
+  function ensureSmartOutputStyle(doc) {
+    if (!doc?.head || doc.getElementById('__editor_smart_output_style__')) return;
+    const style = doc.createElement('style');
+    style.id = '__editor_smart_output_style__';
+    style.textContent = `
+      html{background:#e9eff2!important;}
+      body{background:#e9eff2!important;overflow:auto!important;min-width:0!important;padding:18px 0 34px!important;}
+      .__editor_a4_shell{position:relative!important;width:${A4_OUTPUT.widthPx}px!important;height:${A4_OUTPUT.heightPx}px!important;min-width:${A4_OUTPUT.widthPx}px!important;min-height:${A4_OUTPUT.heightPx}px!important;max-width:${A4_OUTPUT.widthPx}px!important;max-height:${A4_OUTPUT.heightPx}px!important;margin:0 auto 22px!important;padding:0!important;overflow:hidden!important;background:#fff!important;box-shadow:0 8px 28px rgba(33,56,68,.16)!important;outline:1px solid rgba(49,90,115,.12)!important;}
+      .__editor_a4_shell>[data-editor-smart-page="1"]{margin:0!important;transform-origin:top left!important;}
+      .__editor_output_badge{position:absolute!important;z-index:2147483000!important;right:8px!important;top:8px!important;padding:4px 7px!important;border-radius:999px!important;background:rgba(32,53,77,.78)!important;color:#fff!important;font:700 10px/1.2 Pretendard,"Noto Sans KR",sans-serif!important;letter-spacing:0!important;pointer-events:none!important;user-select:none!important;white-space:nowrap!important;}
+    `;
+    doc.head.appendChild(style);
+  }
+
+  function unwrapSmartShellsLive() {
+    const doc = getDoc();
+    if (!doc) return;
+    doc.querySelectorAll('.__editor_a4_shell').forEach(shell => {
+      const page = [...shell.children].find(el => el.nodeType === 1 && el.classList && !el.classList.contains('__editor_output_badge'));
+      if (page) shell.replaceWith(page); else shell.remove();
+    });
+    doc.querySelectorAll('[data-editor-original-style]').forEach(el => {
+      const original = el.getAttribute('data-editor-original-style');
+      if (original === '__NONE__') el.removeAttribute('style'); else el.setAttribute('style', original || '');
+      el.removeAttribute('data-editor-original-style');
+      el.removeAttribute('data-editor-smart-page');
+      el.removeAttribute('data-editor-output-scale');
+      el.removeAttribute('data-editor-page-index');
+    });
+    doc.getElementById('__editor_smart_output_style__')?.remove();
+  }
+
+  function clampMargin(v, fallback=0) {
+    v = Number(v);
+    return Number.isFinite(v) ? Math.max(0, Math.min(50, v)) : fallback;
+  }
+
+  function syncOutputInputs() {
+    outputMarginTop.value = Math.round(outputMargins.top*10)/10;
+    outputMarginRight.value = Math.round(outputMargins.right*10)/10;
+    outputMarginBottom.value = Math.round(outputMargins.bottom*10)/10;
+    outputMarginLeft.value = Math.round(outputMargins.left*10)/10;
+    smartWidthExpand.checked = autoExpandLongPages;
+  }
+
+  function detectOutputMargins(doc=getDoc()) {
+    const pages = getDocumentPages(doc);
+    const page = pages[0];
+    const inner = getPageInner(page);
+    let m = {top:14,right:14,bottom:14,left:14};
+    if (page && inner) {
+      const pr = page.getBoundingClientRect(), ir = inner.getBoundingClientRect();
+      if (pr.width > 100 && pr.height > 100) {
+        const left = (ir.left-pr.left)/pr.width*210;
+        const right = (pr.right-ir.right)/pr.width*210;
+        const top = (ir.top-pr.top)/pr.height*297;
+        if ([left,right,top].every(Number.isFinite) && left>=0 && right>=0 && top>=0 && left<50 && right<50 && top<50) {
+          m = {top:Math.round(top*10)/10,right:Math.round(right*10)/10,bottom:Math.round(top*10)/10,left:Math.round(left*10)/10};
+        }
+      }
+    } else if (page) {
+      m = {top:0,right:0,bottom:0,left:0};
+    }
+    detectedMargins = {...m};
+    outputMargins = {...m};
+    syncOutputInputs();
+  }
+
+  function targetOutputBox() {
+    const left=outputMargins.left*PX_PER_MM, right=outputMargins.right*PX_PER_MM;
+    const top=outputMargins.top*PX_PER_MM, bottom=outputMargins.bottom*PX_PER_MM;
+    return {left,right,top,bottom,w:Math.max(40,A4_OUTPUT.widthPx-left-right),h:Math.max(40,A4_OUTPUT.heightPx-top-bottom)};
+  }
+
+  function measureInnerContentHeight(inner) {
+    if (!inner) return 0;
+    const base = inner.getBoundingClientRect();
+    let h = Math.max(inner.scrollHeight || 0, inner.offsetHeight || 0, base.height || 0);
+    const els = inner.querySelectorAll('*');
+    for (const el of els) {
+      const r = el.getBoundingClientRect();
+      if (!r.width && !r.height) continue;
+      h = Math.max(h, r.bottom - base.top);
+    }
+    return Math.max(1,h);
+  }
+
+  function applySmartCandidate(page, inner, scale, box) {
+    const pageW = A4_OUTPUT.widthPx / scale;
+    const pageH = A4_OUTPUT.heightPx / scale;
+    page.style.setProperty('box-sizing','border-box','important');
+    page.style.setProperty('position','relative','important');
+    page.style.setProperty('width',pageW+'px','important');
+    page.style.setProperty('min-width',pageW+'px','important');
+    page.style.setProperty('max-width',pageW+'px','important');
+    page.style.setProperty('height',pageH+'px','important');
+    page.style.setProperty('min-height',pageH+'px','important');
+    page.style.setProperty('max-height',pageH+'px','important');
+    page.style.setProperty('padding','0','important');
+    page.style.setProperty('overflow','hidden','important');
+    page.style.setProperty('margin','0','important');
+    page.style.setProperty('border','0','important');
+    page.style.setProperty('border-radius','0','important');
+    page.style.setProperty('box-shadow','none','important');
+    page.style.setProperty('background','#fff','important');
+    page.style.setProperty('transform','none','important');
+    page.style.setProperty('transform-origin','top left','important');
+    if (inner) {
+      inner.style.setProperty('position','absolute','important');
+      inner.style.setProperty('box-sizing','border-box','important');
+      inner.style.setProperty('left',(box.left/scale)+'px','important');
+      inner.style.setProperty('top',(box.top/scale)+'px','important');
+      inner.style.setProperty('width',(box.w/scale)+'px','important');
+      inner.style.setProperty('min-width',(box.w/scale)+'px','important');
+      inner.style.setProperty('max-width',(box.w/scale)+'px','important');
+      inner.style.setProperty('height','auto','important');
+      inner.style.setProperty('min-height','0','important');
+      inner.style.setProperty('max-height','none','important');
+      inner.style.setProperty('transform','none','important');
+      inner.style.setProperty('transform-origin','top left','important');
+    }
+  }
+
+  function pageFitsAtScale(page, inner, scale, box) {
+    applySmartCandidate(page, inner, scale, box);
+    // layout flush
+    void page.offsetHeight;
+    if (!inner) {
+      const h = Math.max(page.scrollHeight,page.offsetHeight);
+      return {fit:h*scale <= A4_OUTPUT.heightPx+1, contentHeight:h};
+    }
+    const h = measureInnerContentHeight(inner);
+    return {fit:h*scale <= box.h+1, contentHeight:h};
+  }
+
+  function layoutOneSmartPage(page, index, box) {
+    const inner = getPageInner(page);
+    if (!inner) return null;
+    rememberOriginalStyle(page); rememberOriginalStyle(inner);
+    page.setAttribute('data-editor-smart-page','1');
+    page.setAttribute('data-editor-page-index',String(index));
+
+    let scale = 1;
+    const atOne = pageFitsAtScale(page, inner, 1, box);
+    if (!atOne.fit) {
+      if (autoExpandLongPages) {
+        let low=.14;
+        let lowResult=pageFitsAtScale(page,inner,low,box);
+        if (!lowResult.fit) scale=low;
+        else {
+          let lo=low, hi=1;
+          for(let n=0;n<13;n++){
+            const mid=(lo+hi)/2;
+            const r=pageFitsAtScale(page,inner,mid,box);
+            if(r.fit) lo=mid; else hi=mid;
+          }
+          scale=lo;
+        }
+      } else {
+        // 폭은 출력 폭 그대로 두고, 높이 초과분만 전체 페이지를 축소한다.
+        applySmartCandidate(page,inner,1,box);
+        const h=measureInnerContentHeight(inner);
+        scale=Math.max(.14,Math.min(1,box.h/Math.max(1,h)));
+        // 가로폭 자동 확장을 끈 경우 inner 폭은 100% 기준 폭을 유지한다.
+        applySmartCandidate(page,inner,scale,box);
+        inner.style.setProperty('width',box.w+'px','important');
+        inner.style.setProperty('min-width',box.w+'px','important');
+        inner.style.setProperty('max-width',box.w+'px','important');
+        inner.style.setProperty('left',(box.left/scale)+'px','important');
+      }
+    }
+    if (autoExpandLongPages || scale===1) applySmartCandidate(page,inner,scale,box);
+    page.style.setProperty('transform',`scale(${scale})`,'important');
+    page.setAttribute('data-editor-output-scale',String(scale));
+
+    let shell = page.parentElement?.classList?.contains('__editor_a4_shell') ? page.parentElement : null;
+    if (!shell) {
+      shell = page.ownerDocument.createElement('div');
+      shell.className='__editor_a4_shell';
+      page.parentNode.insertBefore(shell,page);
+      shell.appendChild(page);
+    }
+    let badge=shell.querySelector(':scope > .__editor_output_badge');
+    if(!badge){badge=page.ownerDocument.createElement('div');badge.className='__editor_output_badge';badge.setAttribute('contenteditable','false');shell.appendChild(badge)}
+    const editWidthMm=(box.w/PX_PER_MM)/scale;
+    badge.textContent=`${index+1}쪽 · ${Math.round(scale*100)}% · 편집폭 ${editWidthMm.toFixed(1)}mm`;
+    return {index,scale,editWidthMm,visualWidthMm:box.w/PX_PER_MM,contentHeight:measureInnerContentHeight(inner),page,inner};
+  }
+
+  async function applySmartPageLayout(force=false) {
+    if (!originalHtml || mode==='source' || smartLayoutBusy) return;
+    const generation=++smartLayoutGeneration;
+    const doc=getDoc(); if(!doc) return;
+    smartLayoutBusy=true;
+    try {
+      ensureSmartOutputStyle(doc);
+      const pages=getDocumentPages(doc);
+      if(!pages.length){pageLayoutState=[];renderOutputPageList();return;}
+      const box=targetOutputBox();
+      const states=[];
+      pages.forEach((page,i)=>{const st=layoutOneSmartPage(page,i,box);if(st)states.push(st)});
+      if(generation===smartLayoutGeneration){pageLayoutState=states;renderOutputPageList()}
+    } finally {smartLayoutBusy=false}
+  }
+
+  function scheduleSmartPageLayout(delay=420) {
+    clearTimeout(smartLayoutTimer);
+    smartLayoutTimer=setTimeout(()=>applySmartPageLayout(),delay);
+  }
+
+  function smartScaleForElement(el) {
+    const page=el?.closest?.('[data-editor-smart-page="1"]');
+    const s=Number(page?.getAttribute('data-editor-output-scale'));
+    return Number.isFinite(s)&&s>0?s:1;
+  }
+
+  function renderOutputPageList() {
+    if(!outputPageList||!outputNote)return;
+    if(!pageLayoutState.length){
+      outputPageList.innerHTML='';
+      outputNote.textContent='A4 .paper/.page 구조를 찾지 못한 문서는 PDF 저장 시 자동 페이지 구분 방식으로 처리합니다.';
+      return;
+    }
+    const shrunk=pageLayoutState.filter(p=>p.scale<.999).length;
+    outputNote.textContent=`총 ${pageLayoutState.length}페이지 · ${shrunk?`${shrunk}페이지 자동 축소/가로폭 확장`:'모든 페이지 100%'} · 편집 화면이 실제 A4 출력 비율입니다.`;
+    outputPageList.innerHTML=pageLayoutState.map(p=>`<div class="output-page-row"><b>${p.index+1}쪽</b><span>${Math.round(p.scale*100)}%</span><span>편집폭 ${p.editWidthMm.toFixed(1)}mm</span></div>`).join('');
+  }
+
+  function openOutputSettings(){
+    if(!originalHtml)return;
+    syncOutputInputs();renderOutputPageList();outputModal.classList.add('open');
+  }
+  function closeOutputSettings(){outputModal.classList.remove('open')}
+  async function applyOutputSettings(){
+    outputMargins={top:clampMargin(outputMarginTop.value,14),right:clampMargin(outputMarginRight.value,14),bottom:clampMargin(outputMarginBottom.value,14),left:clampMargin(outputMarginLeft.value,14)};
+    autoExpandLongPages=!!smartWidthExpand.checked;
+    closeOutputSettings();await applySmartPageLayout(true);
+    setStatus(dirty?'수정됨 · 저장 필요':'출력 배치 적용됨',dirty?'dirty':'saved');
+  }
+  async function resetOutputSettings(){
+    outputMargins={...detectedMargins};autoExpandLongPages=true;syncOutputInputs();await applySmartPageLayout(true);renderOutputPageList();
+  }
+
+  function loadHtml(html, name='document.html', handle=null) {
+    originalHtml = html;
+    currentName = name || 'document.html';
+    fileHandle = handle;
+    selectedCells = new Set(); anchorCell = null; cellSelectMode = false; draggingCells = false;
+    if (cellSelectBtn) cellSelectBtn.classList.remove('active');
+    frame.srcdoc = html;
+    fileName.textContent = currentName;
+    emptyState.style.display = 'none';
+    frameShell.style.display = 'block';
+    enableButtons(true);
+    dirty = false;
+    setStatus('불러오는 중…');
+    frame.onload = async () => {
+      attachDocListeners();
+      applyMode('safe');
+      await waitFrameResources(getDoc());
+      detectOutputMargins(getDoc());
+      await applySmartPageLayout(true);
+      setStatus('편집 가능 · A4 출력 비율', 'saved');
+    };
+  }
+
+  async function openFile() {
+    if ('showOpenFilePicker' in window) {
+      try {
+        const [handle] = await window.showOpenFilePicker({
+          types:[{description:'HTML 문서',accept:{'text/html':['.html','.htm']}}], multiple:false
+        });
+        const file = await handle.getFile();
+        loadHtml(await file.text(), file.name, handle);
+        return;
+      } catch(e) {
+        if (e && e.name === 'AbortError') return;
+      }
+    }
+    fileInput.click();
+  }
+
+  fileInput.addEventListener('change', async () => {
+    const f = fileInput.files && fileInput.files[0];
+    if (!f) return;
+    loadHtml(await f.text(), f.name, null);
+    fileInput.value = '';
+  });
+
+  async function saveDirect() {
+    if (!originalHtml) return;
+    const html = mode === 'source' ? sourceEditor.value : serializeDoc();
+    if (fileHandle && fileHandle.createWritable) {
+      try {
+        const writable = await fileHandle.createWritable();
+        await writable.write(html);
+        await writable.close();
+        originalHtml = html;
+        markSaved();
+        return;
+      } catch(e) {}
+    }
+    await saveAs(html, currentName);
+  }
+
+  async function saveAs(htmlArg=null, nameArg=null) {
+    if (!originalHtml) return;
+    const html = htmlArg ?? (mode === 'source' ? sourceEditor.value : serializeDoc());
+    const name = nameArg || currentName || 'document.html';
+
+    if ('showSaveFilePicker' in window) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName:name,
+          types:[{description:'HTML 문서',accept:{'text/html':['.html']}}]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(html);
+        await writable.close();
+        fileHandle = handle;
+        currentName = handle.name || name;
+        fileName.textContent = currentName;
+        originalHtml = html;
+        markSaved();
+        return;
+      } catch(e) {
+        if (e && e.name === 'AbortError') return;
+      }
+    }
+
+    const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = name.endsWith('.html') ? name : name + '.html';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1200);
+    originalHtml = html;
+    markSaved();
+  }
+
+  function restoreOriginal() {
+    if (!originalHtml) return;
+    if (!confirm('마지막으로 저장/불러온 상태로 되돌릴까요? 현재 미저장 수정은 사라집니다.')) return;
+    frame.srcdoc = originalHtml;
+    frame.onload = async () => { attachDocListeners(); applyMode('safe'); await waitFrameResources(getDoc()); detectOutputMargins(getDoc()); await applySmartPageLayout(true); dirty=false; setStatus('원본 상태 · A4 출력 비율','saved'); };
+  }
+
+  function exec(cmd, value=null) {
+    if (!originalHtml || mode === 'source') return;
+    const doc = getDoc();
+    frame.contentWindow.focus();
+    try {
+      if (/^justify(Left|Center|Right)$/.test(cmd) && selectedCells.size) {
+        const align = cmd === 'justifyCenter' ? 'center' : (cmd === 'justifyRight' ? 'right' : 'left');
+        applyCellAlignment(align);
+        return;
+      }
+      if (lastRange) {
+        const sel = doc.getSelection(); sel.removeAllRanges(); sel.addRange(lastRange);
+      }
+      doc.execCommand(cmd, false, value);
+      markDirty();
+      updateFormatState();
+    } catch(e) {}
+  }
+
+  function setFontSize(px) {
+    if (!px || !originalHtml || mode === 'source') return;
+    const doc = getDoc();
+    frame.contentWindow.focus();
+    try {
+      if (selectedCells.size) {
+        selectedCells.forEach(cell => {
+          cell.style.fontSize = px + 'px';
+          cell.querySelectorAll('p,div,span,h1,h2,h3,h4,h5,h6,li,strong,b,em,i,u').forEach(el => el.style.fontSize = px + 'px');
+        });
+        markDirty();
+        updateFormatState();
+        return;
+      }
+      if (lastRange) { const sel=doc.getSelection(); sel.removeAllRanges(); sel.addRange(lastRange); }
+      doc.execCommand('fontSize', false, '7');
+      doc.querySelectorAll('font[size="7"]').forEach(font => {
+        const span = doc.createElement('span');
+        span.style.fontSize = px + 'px';
+        while (font.firstChild) span.appendChild(font.firstChild);
+        font.replaceWith(span);
+      });
+      markDirty();
+      updateFormatState();
+    } catch(e) {}
+  }
+
+  function ensureEditorStyles() {
+    const doc = getDoc();
+    if (!doc || !doc.head) return;
+    if (!doc.getElementById('html-easy-editor-style')) {
+      const style = doc.createElement('style');
+      style.id = 'html-easy-editor-style';
+      style.textContent = `
+        td[data-editor-cell-selected], th[data-editor-cell-selected]{
+          outline:2px solid #5d91ad !important;
+          outline-offset:-2px !important;
+          box-shadow:inset 0 0 0 9999px rgba(102,150,177,.14) !important;
+        }
+        body[data-editor-cell-select-mode="1"] td,
+        body[data-editor-cell-select-mode="1"] th{cursor:cell !important;user-select:none !important;-webkit-user-select:none !important}
+      `;
+      doc.head.appendChild(style);
+    }
+    if (doc.body) {
+      if (cellSelectMode) doc.body.setAttribute('data-editor-cell-select-mode','1');
+      else doc.body.removeAttribute('data-editor-cell-select-mode');
+    }
+    refreshCellSelection();
+  }
+
+  function closestCell(target) {
+    let node = target;
+    if (node && node.nodeType === 3) node = node.parentElement;
+    return node && node.closest ? node.closest('td,th') : null;
+  }
+
+  function refreshCellSelection() {
+    const doc = getDoc();
+    if (!doc) return;
+    doc.querySelectorAll('[data-editor-cell-selected]').forEach(el => el.removeAttribute('data-editor-cell-selected'));
+    selectedCells.forEach(cell => {
+      if (cell && cell.isConnected) cell.setAttribute('data-editor-cell-selected','1');
+    });
+  }
+
+  function clearCellSelection() {
+    selectedCells.clear();
+    anchorCell = null;
+    refreshCellSelection();
+    updateFormatState();
+  }
+
+  function setCellSelection(cells) {
+    selectedCells = new Set((cells || []).filter(Boolean));
+    refreshCellSelection();
+    updateFormatState();
+  }
+
+  function toggleCellSelection(cell) {
+    if (!cell) return;
+    const table = cell.closest('table');
+    const differentTable = [...selectedCells].some(c => c.closest('table') !== table);
+    if (differentTable) selectedCells.clear();
+    if (selectedCells.has(cell)) selectedCells.delete(cell); else selectedCells.add(cell);
+    refreshCellSelection();
+    updateFormatState();
+  }
+
+  function buildTableGrid(table) {
+    const grid = [];
+    const meta = new Map();
+    const rows = [...table.rows];
+    rows.forEach((row, r) => {
+      grid[r] = grid[r] || [];
+      let c = 0;
+      [...row.cells].forEach(cell => {
+        while (grid[r][c]) c++;
+        const rs = Math.max(1, Number(cell.rowSpan) || 1);
+        const cs = Math.max(1, Number(cell.colSpan) || 1);
+        meta.set(cell, {row:r, col:c, rowSpan:rs, colSpan:cs, right:c+cs-1, bottom:r+rs-1});
+        for (let rr=r; rr<r+rs; rr++) {
+          grid[rr] = grid[rr] || [];
+          for (let cc=c; cc<c+cs; cc++) grid[rr][cc] = cell;
+        }
+        c += cs;
+      });
+    });
+    return {grid, meta, rows};
+  }
+
+  function selectCellRange(fromCell, toCell, base=new Set()) {
+    if (!fromCell || !toCell) return;
+    const table = fromCell.closest('table');
+    if (!table || table !== toCell.closest('table')) return;
+    const {grid, meta} = buildTableGrid(table);
+    const a = meta.get(fromCell), b = meta.get(toCell);
+    if (!a || !b) return;
+    const top = Math.min(a.row, b.row), bottom = Math.max(a.bottom, b.bottom);
+    const left = Math.min(a.col, b.col), right = Math.max(a.right, b.right);
+    const next = new Set(base);
+    for (let r=top; r<=bottom; r++) {
+      for (let c=left; c<=right; c++) if (grid[r] && grid[r][c]) next.add(grid[r][c]);
+    }
+    selectedCells = next;
+    refreshCellSelection();
+    updateFormatState();
+  }
+
+  function currentCell() {
+    if (selectedCells.size) return [...selectedCells][selectedCells.size - 1];
+    const doc = getDoc();
+    const sel = doc.getSelection();
+    if (!sel || !sel.rangeCount) return null;
+    return closestCell(sel.anchorNode);
+  }
+
+  function selectedTable() {
+    const cell = currentCell();
+    return cell ? cell.closest('table') : null;
+  }
+
+  function selectedCellsInTable(table) {
+    return [...selectedCells].filter(c => c && c.isConnected && c.closest('table') === table);
+  }
+
+  function blankCell(cell) {
+    cell.innerHTML = '&nbsp;';
+    cell.removeAttribute('rowspan');
+    cell.removeAttribute('colspan');
+    if (mode === 'safe') cell.setAttribute('contenteditable','true');
+    return cell;
+  }
+
+  function addRow() {
+    if (!originalHtml || mode === 'source') return;
+    const cell = currentCell();
+    if (!cell) return alert('표 안의 셀을 먼저 클릭하거나 선택하세요.');
+    const table = cell.closest('table');
+    const picked = selectedCellsInTable(table);
+    const rows = picked.length ? [...new Set(picked.map(c => c.closest('tr')))] : [cell.closest('tr')];
+    const allRows = [...table.rows];
+    const targetRow = rows.sort((a,b) => allRows.indexOf(a)-allRows.indexOf(b)).at(-1);
+    const clone = targetRow.cloneNode(true);
+    clone.querySelectorAll('td,th').forEach(blankCell);
+    targetRow.parentNode.insertBefore(clone, targetRow.nextSibling);
+    setCellSelection([...clone.cells]);
+    anchorCell = clone.cells[0] || null;
+    markDirty();
+  }
+
+  function deleteRow() {
+    if (!originalHtml || mode === 'source') return;
+    const cell = currentCell();
+    if (!cell) return alert('표 안의 셀을 먼저 클릭하거나 선택하세요.');
+    const table = cell.closest('table');
+    const picked = selectedCellsInTable(table);
+    const rows = picked.length ? [...new Set(picked.map(c => c.closest('tr')))] : [cell.closest('tr')];
+    const allRows = [...table.rows];
+    if (allRows.length - rows.length < 1) return alert('표에는 최소 1개의 행이 남아야 합니다.');
+    if (!confirm(rows.length > 1 ? `선택한 ${rows.length}개 행을 삭제할까요?` : '현재 행을 삭제할까요?')) return;
+    rows.forEach(r => r.remove());
+    clearCellSelection();
+    markDirty();
+  }
+
+  function selectedVisualColumns(table) {
+    const {meta} = buildTableGrid(table);
+    const cells = selectedCellsInTable(table);
+    const basis = cells.length ? cells : [currentCell()].filter(Boolean);
+    const cols = new Set();
+    basis.forEach(cell => {
+      const m = meta.get(cell);
+      if (!m) return;
+      for (let c=m.col; c<=m.right; c++) cols.add(c);
+    });
+    return [...cols].sort((a,b)=>a-b);
+  }
+
+  function addColumn() {
+    if (!originalHtml || mode === 'source') return;
+    const cell = currentCell();
+    if (!cell) return alert('표 안의 셀을 먼저 클릭하거나 선택하세요.');
+    const table = cell.closest('table');
+    const cols = selectedVisualColumns(table);
+    if (!cols.length) return;
+    const insertAt = Math.max(...cols) + 1;
+    const rows = [...table.rows];
+
+    rows.forEach((row, r) => {
+      const {grid, meta} = buildTableGrid(table);
+      const rowGrid = grid[r] || [];
+      const leftCell = insertAt > 0 ? rowGrid[insertAt - 1] : null;
+      const rightCell = rowGrid[insertAt] || null;
+      const leftMeta = leftCell ? meta.get(leftCell) : null;
+
+      if (leftCell && leftMeta && leftMeta.col < insertAt && leftMeta.right >= insertAt) {
+        leftCell.colSpan = leftMeta.colSpan + 1;
+        return;
+      }
+
+      const template = leftCell || rightCell || row.cells[row.cells.length - 1];
+      const newCell = blankCell(template ? template.cloneNode(true) : getDoc().createElement('td'));
+      if (rightCell && rightCell.parentElement === row) row.insertBefore(newCell, rightCell);
+      else row.appendChild(newCell);
+    });
+    clearCellSelection();
+    markDirty();
+  }
+
+  function deleteColumn() {
+    if (!originalHtml || mode === 'source') return;
+    const cell = currentCell();
+    if (!cell) return alert('표 안의 셀을 먼저 클릭하거나 선택하세요.');
+    const table = cell.closest('table');
+    let cols = selectedVisualColumns(table);
+    if (!cols.length) return;
+    const {grid} = buildTableGrid(table);
+    const maxCols = Math.max(0, ...grid.map(r => r ? r.length : 0));
+    if (maxCols - cols.length < 1) return alert('표에는 최소 1개의 열이 남아야 합니다.');
+    if (!confirm(cols.length > 1 ? `선택한 ${cols.length}개 열을 삭제할까요?` : '현재 열을 삭제할까요?')) return;
+
+    cols = cols.sort((a,b)=>b-a);
+    cols.forEach(col => {
+      [...table.rows].forEach((row, r) => {
+        const snapshot = buildTableGrid(table);
+        const hit = snapshot.grid[r] && snapshot.grid[r][col];
+        if (!hit || !hit.isConnected) return;
+        const m = snapshot.meta.get(hit);
+        if (!m) return;
+        if (m.colSpan > 1) hit.colSpan = m.colSpan - 1;
+        else hit.remove();
+      });
+    });
+    clearCellSelection();
+    markDirty();
+  }
+
+  function selectedCellsForSize() {
+    const cell = currentCell();
+    if (!cell) return [];
+    const table = cell.closest('table');
+    const picked = selectedCellsInTable(table);
+    return picked.length ? picked : [cell];
+  }
+
+  function updateCellSizeState() {
+    if (!cellWidthInput || !cellHeightInput || !originalHtml || mode === 'source') {
+      if (cellWidthInput) cellWidthInput.value = '';
+      if (cellHeightInput) cellHeightInput.value = '';
+      return;
+    }
+    const cell = currentCell();
+    if (!cell || !cell.isConnected) {
+      cellWidthInput.value = '';
+      cellHeightInput.value = '';
+      return;
+    }
+    const rect = cell.getBoundingClientRect();
+    cellWidthInput.value = Math.round(rect.width);
+    cellHeightInput.value = Math.round(rect.height);
+  }
+
+  function applyCellSize() {
+    if (!originalHtml || mode === 'source') return;
+    const cells = selectedCellsForSize();
+    if (!cells.length) return alert('크기를 조정할 표 셀을 먼저 클릭하거나 선택하세요.');
+
+    const width = Number(cellWidthInput.value);
+    const height = Number(cellHeightInput.value);
+    const hasWidth = Number.isFinite(width) && width >= 20;
+    const hasHeight = Number.isFinite(height) && height >= 18;
+    if (!hasWidth && !hasHeight) return alert('너비 또는 높이 값을 입력하세요.');
+
+    const rows = new Map();
+    cells.forEach(cell => {
+      const scale = smartScaleForElement(cell);
+      if (hasWidth) {
+        cell.style.width = Math.round(width / scale) + 'px';
+        cell.style.boxSizing = 'border-box';
+      }
+      if (hasHeight) {
+        cell.style.height = Math.round(height / scale) + 'px';
+        cell.style.boxSizing = 'border-box';
+        rows.set(cell.closest('tr'), scale);
+      }
+    });
+    if (hasHeight) rows.forEach((scale,row) => { if (row) row.style.height = Math.round(height / scale) + 'px'; });
+    markDirty();
+    requestAnimationFrame(updateCellSizeState);
+  }
+
+  function resetCellSize() {
+    if (!originalHtml || mode === 'source') return;
+    const cells = selectedCellsForSize();
+    if (!cells.length) return alert('자동 크기로 복원할 표 셀을 먼저 클릭하거나 선택하세요.');
+    const rows = new Set();
+    cells.forEach(cell => {
+      cell.style.removeProperty('width');
+      cell.style.removeProperty('height');
+      cell.style.removeProperty('min-width');
+      cell.style.removeProperty('max-width');
+      cell.style.removeProperty('min-height');
+      cell.style.removeProperty('max-height');
+      rows.add(cell.closest('tr'));
+    });
+    rows.forEach(row => {
+      if (!row) return;
+      row.style.removeProperty('height');
+      row.style.removeProperty('min-height');
+      row.style.removeProperty('max-height');
+    });
+    markDirty();
+    requestAnimationFrame(updateCellSizeState);
+  }
+
+  function detectCellResizeEdge(cell, clientX, clientY) {
+    if (!cell || mode === 'source') return null;
+    const r = cell.getBoundingClientRect();
+    const distRight = Math.abs(r.right - clientX);
+    const distBottom = Math.abs(r.bottom - clientY);
+    const withinY = clientY >= r.top && clientY <= r.bottom;
+    const withinX = clientX >= r.left && clientX <= r.right;
+    const nearRight = withinY && distRight <= CELL_RESIZE_EDGE;
+    const nearBottom = withinX && distBottom <= CELL_RESIZE_EDGE;
+    if (nearRight && nearBottom) return distRight <= distBottom ? 'width' : 'height';
+    if (nearRight) return 'width';
+    if (nearBottom) return 'height';
+    return null;
+  }
+
+  function startCellResize(cell, type, e) {
+    const rect = cell.getBoundingClientRect();
+    const row = cell.closest('tr');
+    const rowRect = row ? row.getBoundingClientRect() : rect;
+    const scale = smartScaleForElement(cell);
+    cellResizeState = {
+      type,
+      cell,
+      row,
+      scale,
+      startX:e.clientX,
+      startY:e.clientY,
+      startWidth:rect.width,
+      startHeight:rowRect.height
+    };
+    const doc = getDoc();
+    if (doc && doc.body) {
+      doc.body.style.userSelect = 'none';
+      doc.body.style.webkitUserSelect = 'none';
+      doc.body.style.cursor = type === 'width' ? 'col-resize' : 'row-resize';
+    }
+  }
+
+  function performCellResize(e) {
+    const st = cellResizeState;
+    if (!st || !st.cell || !st.cell.isConnected) return;
+    if (st.type === 'width') {
+      const next = Math.max(20, Math.round(st.startWidth + (e.clientX - st.startX)));
+      st.cell.style.width = Math.round(next / st.scale) + 'px';
+      st.cell.style.boxSizing = 'border-box';
+      if (cellWidthInput) cellWidthInput.value = next;
+    } else {
+      const next = Math.max(18, Math.round(st.startHeight + (e.clientY - st.startY)));
+      if (st.row) st.row.style.height = Math.round(next / st.scale) + 'px';
+      st.cell.style.height = Math.round(next / st.scale) + 'px';
+      st.cell.style.boxSizing = 'border-box';
+      if (cellHeightInput) cellHeightInput.value = next;
+    }
+  }
+
+  function finishCellResize() {
+    const doc = getDoc();
+    if (doc && doc.body) {
+      doc.body.style.removeProperty('user-select');
+      doc.body.style.removeProperty('-webkit-user-select');
+      doc.body.style.removeProperty('cursor');
+    }
+    if (cellResizeState) {
+      cellResizeState = null;
+      markDirty();
+      updateCellSizeState();
+    }
+  }
+
+  function applyCellAlignment(align) {
+    if (!selectedCells.size) return;
+    selectedCells.forEach(cell => {
+      cell.style.textAlign = align;
+      cell.querySelectorAll('p,div,h1,h2,h3,h4,h5,h6,li').forEach(el => el.style.textAlign = align);
+    });
+    markDirty();
+    updateFormatState();
+  }
+
+  function rgbToHex(color) {
+    if (!color) return '-';
+    const m = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+    if (!m) return color;
+    return '#' + [m[1],m[2],m[3]].map(v => Number(v).toString(16).padStart(2,'0')).join('').toUpperCase();
+  }
+
+  function formatSourceElement() {
+    const doc = getDoc();
+    if (!doc) return null;
+    if (selectedCells.size) return [...selectedCells][0];
+    const sel = doc.getSelection();
+    if (!sel || !sel.rangeCount) return null;
+    let node = sel.focusNode || sel.anchorNode;
+    if (node && node.nodeType === 3) node = node.parentElement;
+    return node && node.nodeType === 1 ? node : null;
+  }
+
+  function readFormat(el) {
+    if (!el) return null;
+    const win = frame.contentWindow;
+    const s = win.getComputedStyle(el);
+    return {
+      fontFamily:s.fontFamily,
+      fontSize:s.fontSize,
+      fontWeight:s.fontWeight,
+      fontStyle:s.fontStyle,
+      textDecorationLine:s.textDecorationLine,
+      color:s.color,
+      backgroundColor:s.backgroundColor,
+      textAlign:s.textAlign,
+      lineHeight:s.lineHeight,
+      letterSpacing:s.letterSpacing
+    };
+  }
+
+  function updateFormatState() {
+    updateCellSizeState();
+    if (!formatState || !originalHtml || mode === 'source') {
+      if (formatState) formatState.innerHTML = '<b>서식</b> -';
+      return;
+    }
+    const f = readFormat(formatSourceElement());
+    if (!f) { formatState.innerHTML = '<b>서식</b> -'; return; }
+    const weight = Number(f.fontWeight) >= 600 ? '굵게' : '보통';
+    const style = f.fontStyle === 'italic' ? ' · 기울임' : '';
+    const deco = f.textDecorationLine && f.textDecorationLine.includes('underline') ? ' · 밑줄' : '';
+    const alignMap = {left:'왼쪽',center:'가운데',right:'오른쪽',justify:'양쪽'};
+    const color = rgbToHex(f.color);
+    const summary = `${f.fontSize} · ${color} · ${weight}${style}${deco} · ${alignMap[f.textAlign] || f.textAlign}`;
+    formatState.innerHTML = '<b>서식</b> ' + summary;
+    formatState.title = `글꼴: ${f.fontFamily}\n크기: ${f.fontSize}\n색상: ${color}\n굵기: ${f.fontWeight}\n기울임: ${f.fontStyle}\n밑줄: ${f.textDecorationLine}\n정렬: ${f.textAlign}\n줄간격: ${f.lineHeight}\n자간: ${f.letterSpacing}`;
+  }
+
+  function copyFormat() {
+    if (!originalHtml || mode === 'source') return;
+    const el = formatSourceElement();
+    copiedFormat = readFormat(el);
+    if (!copiedFormat) return alert('서식을 복사할 글자나 표 셀을 먼저 클릭하세요.');
+    const prev = dirty;
+    setStatus('서식 복사됨 · Alt+V로 붙여넣기', prev ? 'dirty' : 'saved');
+    setTimeout(() => setStatus(prev ? '수정됨 · 저장 필요' : '편집 가능', prev ? 'dirty' : 'saved'), 1200);
+  }
+
+  function applyFormatToElement(el, f) {
+    if (!el || !f) return;
+    const props = ['fontFamily','fontSize','fontWeight','fontStyle','color','backgroundColor','textAlign','lineHeight','letterSpacing'];
+    props.forEach(p => { if (f[p]) el.style[p] = f[p]; });
+    el.style.textDecorationLine = f.textDecorationLine || 'none';
+  }
+
+  function pasteFormat() {
+    if (!originalHtml || mode === 'source') return;
+    if (!copiedFormat) return alert('먼저 [서식 복사]를 실행하세요.');
+    const doc = getDoc();
+
+    if (selectedCells.size) {
+      selectedCells.forEach(cell => {
+        applyFormatToElement(cell, copiedFormat);
+        cell.querySelectorAll('p,div,span,h1,h2,h3,h4,h5,h6,li,strong,b,em,i,u').forEach(el => applyFormatToElement(el, copiedFormat));
+      });
+      markDirty();
+      updateFormatState();
+      return;
+    }
+
+    const sel = doc.getSelection();
+    if (!sel || !sel.rangeCount) return alert('서식을 적용할 글자나 영역을 선택하세요.');
+    if (lastRange) { sel.removeAllRanges(); sel.addRange(lastRange); }
+
+    try {
+      doc.execCommand('styleWithCSS', false, true);
+      doc.execCommand('fontName', false, copiedFormat.fontFamily.split(',')[0].replace(/["']/g,''));
+      doc.execCommand('foreColor', false, copiedFormat.color);
+      if (copiedFormat.backgroundColor && copiedFormat.backgroundColor !== 'rgba(0, 0, 0, 0)' && copiedFormat.backgroundColor !== 'transparent') {
+        doc.execCommand('hiliteColor', false, copiedFormat.backgroundColor);
+      }
+      doc.execCommand('fontSize', false, '7');
+      doc.querySelectorAll('font[size="7"]').forEach(font => {
+        const span = doc.createElement('span');
+        span.style.fontSize = copiedFormat.fontSize;
+        while (font.firstChild) span.appendChild(font.firstChild);
+        font.replaceWith(span);
+      });
+      const shouldBold = Number(copiedFormat.fontWeight) >= 600;
+      if (!!doc.queryCommandState('bold') !== shouldBold) doc.execCommand('bold');
+      const shouldItalic = copiedFormat.fontStyle === 'italic';
+      if (!!doc.queryCommandState('italic') !== shouldItalic) doc.execCommand('italic');
+      const shouldUnderline = copiedFormat.textDecorationLine && copiedFormat.textDecorationLine.includes('underline');
+      if (!!doc.queryCommandState('underline') !== !!shouldUnderline) doc.execCommand('underline');
+      const alignCmd = copiedFormat.textAlign === 'center' ? 'justifyCenter' : copiedFormat.textAlign === 'right' ? 'justifyRight' : copiedFormat.textAlign === 'justify' ? 'justifyFull' : 'justifyLeft';
+      doc.execCommand(alignCmd);
+      markDirty();
+      updateFormatState();
+    } catch(e) {
+      alert('이 선택 영역에는 서식을 붙여넣을 수 없습니다. 표 셀을 선택한 뒤 다시 시도해보세요.');
+    }
+  }
+
+  function toggleCellSelectMode() {
+    if (!originalHtml || mode === 'source') return;
+    cellSelectMode = !cellSelectMode;
+    cellSelectBtn.classList.toggle('active', cellSelectMode);
+    const doc = getDoc();
+    if (doc && doc.body) {
+      if (cellSelectMode) doc.body.setAttribute('data-editor-cell-select-mode','1');
+      else doc.body.removeAttribute('data-editor-cell-select-mode');
+    }
+    modeNote.textContent = cellSelectMode ? '셀 선택 모드 · 드래그로 복수선택' : (mode === 'free' ? '문서 구조 전체 편집 가능' : '텍스트와 표 셀만 편집');
+  }
+
+  function enterSourceMode() {
+    if (!originalHtml) return;
+    if (mode === 'source') {
+      // 적용 후 미리보기 복귀
+      const html = sourceEditor.value;
+      frame.srcdoc = html;
+      frame.onload = async () => { attachDocListeners(); applyMode('safe'); await waitFrameResources(getDoc()); detectOutputMargins(getDoc()); await applySmartPageLayout(true); markDirty(); };
+      sourcePane.style.display = 'none'; previewPane.style.display = 'block';
+      sourceBtn.classList.remove('active'); safeModeBtn.classList.add('active');
+      mode='safe'; cellSelectMode=false; cellSelectBtn.classList.remove('active'); modeNote.textContent='텍스트와 표 셀만 편집'; updateFormatState();
+      return;
+    }
+    sourceEditor.value = serializeDoc();
+    previewPane.style.display = 'none'; sourcePane.style.display = 'block';
+    safeModeBtn.classList.remove('active'); freeModeBtn.classList.remove('active'); sourceBtn.classList.add('active');
+    mode='source'; cellSelectMode=false; cellSelectBtn.classList.remove('active'); modeNote.textContent='HTML 소스 직접 편집 · 다시 HTML 버튼을 누르면 적용'; updateFormatState();
+    sourceEditor.focus();
+  }
+
+  sourceEditor.addEventListener('input', markDirty);
+
+  function transformMediaCss(css) {
+    return (css||'').replace(/@media\s+print\b/gi,'@media not all').replace(/@media\s+screen\b/gi,'@media all');
+  }
+
+  function cleanPrintPageClone(pageClone) {
+    pageClone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+    pageClone.querySelectorAll('[data-editor-cell-selected],[data-editor-outline]').forEach(el=>{
+      el.removeAttribute('data-editor-cell-selected');el.removeAttribute('data-editor-outline');
+      el.style?.removeProperty('outline');el.style?.removeProperty('outline-offset');el.style?.removeProperty('box-shadow');
+    });
+    pageClone.querySelectorAll('.__editor_output_badge').forEach(el=>el.remove());
+    pageClone.querySelectorAll('[data-editor-original-style]').forEach(el=>el.removeAttribute('data-editor-original-style'));
+    pageClone.removeAttribute('data-editor-smart-page');
+    pageClone.removeAttribute('data-editor-page-index');
+    pageClone.removeAttribute('data-editor-output-scale');
+  }
+
+  function printPageHtmlFromLive(page) {
+    const doc=getDoc();
+    const head=doc.head.cloneNode(true);
+    head.querySelectorAll('#html-easy-editor-style,#__editor_smart_output_style__').forEach(el=>el.remove());
+    head.querySelectorAll('style').forEach(st=>st.textContent=transformMediaCss(st.textContent));
+    head.querySelectorAll('[media]').forEach(el=>{
+      let m=el.getAttribute('media')||'';m=m.replace(/\bprint\b/gi,'not all').replace(/\bscreen\b/gi,'all');el.setAttribute('media',m);
+    });
+    const clone=page.cloneNode(true);cleanPrintPageClone(clone);
+    const style=doc.createElement('style');
+    style.textContent=`
+      html,body{margin:0!important;padding:0!important;width:${A4_OUTPUT.widthPx}px!important;height:${A4_OUTPUT.heightPx}px!important;min-width:${A4_OUTPUT.widthPx}px!important;min-height:${A4_OUTPUT.heightPx}px!important;overflow:hidden!important;background:#fff!important;}
+      body{position:relative!important;}
+      body>*{margin-top:0!important;margin-left:0!important;}
+      html,body,*,*::before,*::after{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+    `;
+    head.appendChild(style);
+    return '<!doctype html><html>'+head.outerHTML+`<body>${clone.outerHTML}</body></html>`;
+  }
+
+  function printableColorFallback(frame) {
+    const doc=frame.contentDocument,win=frame.contentWindow;if(!doc||!win)return;
+    const style=doc.createElement('style');style.textContent='html,body,*,*::before,*::after{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}';doc.head.appendChild(style);
+    for(const el of doc.body?.querySelectorAll('*')||[]){
+      const cs=win.getComputedStyle(el),bg=cs.backgroundColor,img=cs.backgroundImage;
+      if(!bg||bg==='transparent'||/^rgba?\(255,\s*255,\s*255(?:,\s*(?:1|1\.0+))?\)$/i.test(bg)||/^rgba\([^)]*,\s*0(?:\.0+)?\)$/i.test(bg))continue;
+      if(img&&img!=='none')continue;
+      const existing=cs.boxShadow&&cs.boxShadow!=='none'?cs.boxShadow+', ':'';
+      el.style.setProperty('box-shadow',`${existing}inset 0 0 0 1200px ${bg}`,'important');
+      el.style.setProperty('-webkit-print-color-adjust','exact','important');
+      el.style.setProperty('print-color-adjust','exact','important');
+    }
+  }
+
+  async function buildPrintRootFromSmartPages() {
+    printRoot.innerHTML='';
+    await applySmartPageLayout(true);
+    const pages=getDocumentPages(getDoc());
+    if(!pages.length)return false;
+    const loads=[];
+    pages.forEach(page=>{
+      const section=document.createElement('section');section.className='pdf-page';
+      const f=document.createElement('iframe');f.setAttribute('scrolling','no');f.setAttribute('sandbox','allow-same-origin');
+      f.srcdoc=printPageHtmlFromLive(page);section.appendChild(f);printRoot.appendChild(section);
+      loads.push(new Promise(resolve=>{f.onload=resolve}));
+    });
+    await Promise.all(loads);
+    for(const f of printRoot.querySelectorAll('iframe')){await waitFrameResources(f.contentDocument,1500);printableColorFallback(f)}
+    await new Promise(r=>setTimeout(r,80));
+    return true;
+  }
+
+  function prepareContinuousHtml(raw) {
+    const d=new DOMParser().parseFromString(raw,'text/html');
+    d.querySelectorAll('script,object,embed').forEach(n=>n.remove());
+    d.querySelectorAll('style').forEach(st=>st.textContent=transformMediaCss(st.textContent));
+    d.querySelectorAll('[media]').forEach(el=>{let m=el.getAttribute('media')||'';m=m.replace(/\bprint\b/gi,'not all').replace(/\bscreen\b/gi,'all');el.setAttribute('media',m)});
+    const color=d.createElement('style');color.textContent='html,body,*,*::before,*::after{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}';d.head.appendChild(color);
+    return '<!doctype html>\n'+d.documentElement.outerHTML;
+  }
+
+  async function buildPrintRootContinuous() {
+    printRoot.innerHTML='';
+    const html=prepareContinuousHtml(serializeDoc());
+    const measure=document.createElement('iframe');
+    measure.style.cssText='position:fixed;left:-100000px;top:0;border:0;visibility:hidden;';
+    measure.style.width=Math.round(A4_OUTPUT.widthPx)+'px';measure.style.height=Math.round(A4_OUTPUT.heightPx)+'px';document.body.appendChild(measure);
+    await new Promise(r=>{measure.onload=r;measure.srcdoc=html});await waitFrameResources(measure.contentDocument,1500);
+    const md=measure.contentDocument,de=md.documentElement,b=md.body;
+    let sourceWidth=Math.max(A4_OUTPUT.widthPx,de.scrollWidth||0,b.scrollWidth||0,de.offsetWidth||0,b.offsetWidth||0);
+    sourceWidth=Math.min(2400,Math.ceil(sourceWidth));measure.style.width=sourceWidth+'px';await new Promise(r=>setTimeout(r,80));
+    const sourceHeight=Math.max(A4_OUTPUT.heightPx,de.scrollHeight||0,b.scrollHeight||0,de.offsetHeight||0,b.offsetHeight||0);
+    const box=targetOutputBox();let base=Math.min(box.w/sourceWidth,1),cap=box.h/Math.max(.05,base);
+    const pts=[0];for(let p=cap;p<sourceHeight-40;p+=cap)pts.push(Math.round(p));pts.push(sourceHeight);
+    const loads=[];
+    for(let i=0;i<pts.length-1;i++){
+      const start=pts[i],segH=pts[i+1]-start,scale=Math.min(1,box.w/sourceWidth,box.h/segH);
+      const section=document.createElement('section');section.className='pdf-page';
+      const viewport=document.createElement('div');viewport.style.cssText=`position:absolute;left:${box.left}px;top:${box.top}px;width:${sourceWidth*scale}px;height:${segH*scale}px;overflow:hidden;background:#fff;`;
+      const layer=document.createElement('div');layer.style.cssText=`position:absolute;left:0;top:0;width:${sourceWidth}px;height:${segH}px;transform:scale(${scale});transform-origin:top left;`;
+      const f=document.createElement('iframe');f.setAttribute('scrolling','no');f.setAttribute('sandbox','allow-same-origin');f.style.cssText=`position:absolute;left:0;top:${-start}px;width:${sourceWidth}px;height:${sourceHeight}px;border:0;background:#fff;`;f.srcdoc=html;
+      layer.appendChild(f);viewport.appendChild(layer);section.appendChild(viewport);printRoot.appendChild(section);loads.push(new Promise(r=>{f.onload=r}));
+    }
+    measure.remove();await Promise.all(loads);for(const f of printRoot.querySelectorAll('iframe')){await waitFrameResources(f.contentDocument,1200);printableColorFallback(f)}await new Promise(r=>setTimeout(r,80));
+  }
+
+  async function savePdf() {
+    if(!originalHtml)return;
+    if(mode==='source')return alert('HTML 모드를 먼저 적용한 뒤 PDF로 저장하세요.');
+    const btn=$('#pdfSaveBtn'),old=btn.textContent;btn.disabled=true;btn.textContent='PDF 준비 중…';
+    try{
+      setStatus('현재 편집 배치로 A4 페이지 구성 중…');
+      const smart=await buildPrintRootFromSmartPages();
+      if(!smart)await buildPrintRootContinuous();
+      setStatus('인쇄창에서 “PDF로 저장”을 선택하세요.');
+      btn.textContent='PDF 저장';
+      window.print();
+    }catch(e){console.error(e);alert('PDF 저장용 페이지를 구성하지 못했습니다.\n\n'+(e?.message||'알 수 없는 오류'));setStatus(dirty?'수정됨 · 저장 필요':'편집 가능',dirty?'dirty':'saved')}
+    finally{btn.disabled=false;btn.textContent=old}
+  }
+
+  window.addEventListener('afterprint',()=>{
+    printRoot.innerHTML='';
+    setStatus(dirty?'수정됨 · 저장 필요':'편집 가능 · A4 출력 비율',dirty?'dirty':'saved');
+  });
+
+  $('#openBtn').addEventListener('click', openFile);
+  $('#saveBtn').addEventListener('click', saveDirect);
+  $('#saveAsBtn').addEventListener('click', () => saveAs());
+  $('#resetBtn').addEventListener('click', restoreOriginal);
+  $('#outputSettingsBtn').addEventListener('click', openOutputSettings);
+  $('#pdfSaveBtn').addEventListener('click', savePdf);
+  outputModalClose.addEventListener('click', closeOutputSettings);
+  outputModal.addEventListener('click', e => { if (e.target === outputModal) closeOutputSettings(); });
+  outputApplyBtn.addEventListener('click', applyOutputSettings);
+  outputResetBtn.addEventListener('click', resetOutputSettings);
+  safeModeBtn.addEventListener('click', () => { if(mode==='source') enterSourceMode(); applyMode('safe'); });
+  freeModeBtn.addEventListener('click', () => { if(mode==='source') enterSourceMode(); applyMode('free'); });
+  sourceBtn.addEventListener('click', enterSourceMode);
+  cellSelectBtn.addEventListener('click', toggleCellSelectMode);
+  $('#rowAddBtn').addEventListener('click', addRow);
+  $('#rowDelBtn').addEventListener('click', deleteRow);
+  $('#colAddBtn').addEventListener('click', addColumn);
+  $('#colDelBtn').addEventListener('click', deleteColumn);
+  $('#cellSizeApplyBtn').addEventListener('click', applyCellSize);
+  $('#cellSizeAutoBtn').addEventListener('click', resetCellSize);
+  [cellWidthInput, cellHeightInput].forEach(input => input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); applyCellSize(); }
+  }));
+  $('#formatCopyBtn').addEventListener('click', copyFormat);
+  $('#formatPasteBtn').addEventListener('click', pasteFormat);
+  $('#fontSize').addEventListener('change', e => { setFontSize(e.target.value); e.target.value=''; });
+
+  document.querySelectorAll('[data-cmd]').forEach(btn => {
+    btn.addEventListener('click', () => exec(btn.dataset.cmd));
+  });
+
+  // Drag & drop
+  ['dragenter','dragover'].forEach(ev => previewPane.addEventListener(ev, e => { e.preventDefault(); e.dataTransfer.dropEffect='copy'; }));
+  previewPane.addEventListener('drop', async e => {
+    e.preventDefault();
+    const f = [...e.dataTransfer.files].find(x => /\.html?$/i.test(x.name));
+    if (!f) return alert('HTML 파일(.html/.htm)을 놓아주세요.');
+    loadHtml(await f.text(), f.name, null);
+  });
+
+  window.addEventListener('keydown', e => { if (e.key === 'Escape' && outputModal.classList.contains('open')) closeOutputSettings(); });
+
+  window.addEventListener('beforeunload', e => {
+    if (!dirty) return;
+    e.preventDefault(); e.returnValue='';
+  });
+
+  // 단축키: 저장 / 서식 복사·붙여넣기
+  window.addEventListener('keydown', e => {
+    const key = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && key === 's') {
+      e.preventDefault(); saveDirect(); return;
+    }
+    if (e.altKey && !e.ctrlKey && !e.metaKey && key === 'c') {
+      e.preventDefault(); copyFormat(); return;
+    }
+    if (e.altKey && !e.ctrlKey && !e.metaKey && key === 'v') {
+      e.preventDefault(); pasteFormat(); return;
+    }
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && key === 'c') {
+      e.preventDefault(); copyFormat(); return;
+    }
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && key === 'v') {
+      e.preventDefault(); pasteFormat();
+    }
+  });
+
+  // iframe 내부에서도 동일한 서식 단축키가 동작하도록 캡처
+  frame.addEventListener('load', () => {
+    const doc = getDoc();
+    if (!doc) return;
+    doc.addEventListener('keydown', e => {
+      const key = e.key.toLowerCase();
+      if (e.altKey && !e.ctrlKey && !e.metaKey && key === 'c') { e.preventDefault(); copyFormat(); }
+      else if (e.altKey && !e.ctrlKey && !e.metaKey && key === 'v') { e.preventDefault(); pasteFormat(); }
+      else if ((e.ctrlKey || e.metaKey) && e.shiftKey && key === 'c') { e.preventDefault(); copyFormat(); }
+      else if ((e.ctrlKey || e.metaKey) && e.shiftKey && key === 'v') { e.preventDefault(); pasteFormat(); }
+    }, true);
+  });
+})();
+</script>
 </body>
 </html>
