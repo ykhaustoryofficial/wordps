@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>역곡지구 하우스토리 공식문서 견본양식</title>
+
+<!--
+============================================================
+역곡지구 하우스토리 입주예정자협의회 공식문서 HTML 견본양식
+============================================================
+
+[사용 목적]
+추후 새 문서를 만들 때 이 파일을 견본으로 제공하고,
+"아래 텍스트를 이 견본양식에 맞춰 HTML 파일로 만들어줘"
+라고 요청하기 위한 기준 파일입니다.
+
+[새 문서 작성 시 원칙]
+1. 아래 CSS 디자인 토큰과 공통 클래스는 그대로 유지합니다.
+2. 실제 문서 내용은 <main class="document"> 내부만 교체합니다.
+3. 문서 구조에 따라 아래 클래스를 사용합니다.
+
+   문서 상단
+   - .eyebrow       : 기관명 / 문서 종류
+   - .title         : 문서의 대표 제목
+   - .title-sub     : 필요한 경우 부제
+   - .intro         : 문서 목적·개요·안내문
+
+   본문 제목 체계
+   - .section-title : 대항목
+   - .section-no    : 대항목 번호
+   - .sub-title     : 중항목
+   - .mini-title    : 소항목
+
+   본문
+   - .body-text     : 일반 문단
+   - .rule-line     : 번호형 규정/원칙
+   - .bullet-line   : 글머리표 항목
+   - .note          : 주석/※ 안내
+   - .lead-strong   : 중요 안내 박스
+   - .document-org  : 기관명 등 오른쪽 정렬 표시
+
+   표
+   - .table-wrap 안에 table 사용
+   - th             : 연한 파란색 표 머리
+   - td.center      : 가운데 정렬 셀
+   - .cell-line     : 셀 내부 한 줄
+   - .badge.required / .conditional / .optional : 구분 배지
+
+   별지/서식
+   - .annex-label   : [별지서식 제○호] 같은 표기
+   - .form-title    : 별도 서식 제목
+
+   마무리
+   - .signature-block
+   - .signature-date
+   - .signature-org
+   - .signature-stamp
+
+4. 문서 자체 외곽 여백은 넣지 않습니다.
+   실제 A4 여백은 html-page-setup-style의 설정을 따릅니다.
+5. 기본 편집용지:
+   - A4 세로 210 × 297 mm
+   - 위/아래 20mm
+   - 왼쪽/오른쪽 10mm
+   - 머리말/꼬리말 위치 10mm
+6. 새 문서를 만들 때 html-header-footer-config의 [문서명]을
+   실제 문서명으로 반드시 바꿉니다.
+7. 꼬리말은 기본적으로 {page} / {pages}를 유지합니다.
+8. 텍스트 내용은 사용자가 준 원문을 임의로 추가·삭제·수정하지 않고,
+   구조와 의미에 맞춰 위 클래스만 적용합니다.
+============================================================
+-->
+
+<style>
+
+:root {
+  --blue-deep:#315A73; --blue-dark:#426D86; --blue-main:#6696B1;
+  --blue-mid:#91B7CA; --blue-soft:#DDECF3; --blue-pale:#F3F8FB;
+  --green:#5F8F80; --green-bg:#EDF6F2; --amber:#A97B42; --amber-bg:#FBF5EA;
+  --gray-badge:#75828A; --gray-badge-bg:#F1F3F4;
+  --ink:#34434D; --ink-strong:#273943; --text-sub:#607580; --text-muted:#87969E;
+  --border:#D9E6EC; --border-strong:#C6D9E2; --white:#FFF; --page-bg:#EDF4F7;
+  --radius-sm:8px; --radius-md:12px; --radius-lg:18px;
+  --shadow:0 14px 40px rgba(51,86,105,.10);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;padding:48px 20px;background:#fff;color:var(--ink);font-family:"Pretendard","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+.document{width:100%;max-width:860px;margin:0 auto;padding:64px 68px;background:transparent;border:none;border-radius:0;box-shadow:none}
+.document-header{padding-bottom:32px;margin-bottom:34px;border-bottom:2px solid var(--blue-deep)}
+.eyebrow{margin-bottom:10px;color:var(--blue-main);font-size:13px;font-weight:800;letter-spacing:.08em}
+.title{margin:0;color:var(--blue-deep);font-size:36px;font-weight:850;line-height:1.25;letter-spacing:-.045em}
+.title-sub{margin-top:10px;color:var(--text-sub);font-size:16px;font-weight:600}
+.intro{margin:0 0 38px;padding:22px 26px;background:var(--blue-pale);border-left:4px solid var(--blue-main);border-radius:0 var(--radius-md) var(--radius-md) 0;color:var(--text-sub);font-size:15px;font-weight:500;line-height:1.85}
+.section{margin-top:42px}
+.section-title{display:flex;align-items:center;gap:10px;margin:38px 0 18px;color:var(--blue-deep);font-size:22px;font-weight:800;line-height:1.4;letter-spacing:-.03em;break-after:avoid;page-break-after:avoid}
+.section-no{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;padding:0 8px;background:var(--blue-deep);color:#fff;border-radius:8px;font-size:14px;font-weight:800;flex:0 0 auto}
+.sub-title{margin:28px 0 10px;color:var(--blue-dark);font-size:17px;font-weight:750;line-height:1.45;break-after:avoid;page-break-after:avoid}
+.mini-title{margin:18px 0 8px;color:var(--ink-strong);font-size:15px;font-weight:750;break-after:avoid;page-break-after:avoid}
+.body-text{margin:0 0 12px;color:var(--ink);font-size:15px;font-weight:400;line-height:1.82}
+.rule-line{margin:0 0 11px;padding-left:8px;color:var(--ink);font-size:15px;line-height:1.75}
+.bullet-line{margin:0 0 7px;padding-left:2px;color:var(--ink);font-size:15px;line-height:1.72}
+.note{margin:8px 0 0;color:var(--text-sub);font-size:13px;line-height:1.7}
+.lead-strong{margin:14px 0;padding:14px 17px;background:var(--blue-pale);border:1px solid var(--blue-soft);border-radius:10px;color:var(--blue-deep);font-size:14px;font-weight:800;line-height:1.65}
+.form-title{margin:0 0 24px;color:var(--blue-deep);font-size:30px;font-weight:850;line-height:1.25;letter-spacing:-.035em}
+.annex-label{margin:0 0 10px;color:var(--blue-main);font-size:14px;font-weight:800;letter-spacing:.04em}
+.document-org{margin:12px 0 28px;color:var(--blue-deep);font-size:14px;font-weight:750;text-align:right}
+.table-wrap{width:100%;margin:14px 0 20px;overflow-x:auto;border:1px solid var(--border-strong);border-radius:var(--radius-md);background:#fff}
+table{width:100%;border-collapse:collapse;background:#fff;table-layout:auto}
+th,td{padding:10px 11px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);vertical-align:middle;font-size:13px;line-height:1.55;text-align:left}
+th:last-child,td:last-child{border-right:none}tr:last-child td{border-bottom:none}
+th{background:var(--blue-soft);color:var(--blue-deep);font-weight:800;text-align:center}
+td.center{text-align:center}.cell-line+.cell-line{margin-top:4px}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:46px;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800;line-height:1.3;white-space:nowrap}
+.badge.required{background:var(--blue-soft);color:var(--blue-deep)}.badge.conditional{background:var(--amber-bg);color:var(--amber)}.badge.optional{background:var(--gray-badge-bg);color:var(--gray-badge)}
+.signature-block{margin-top:42px;text-align:center}.signature-date{margin:8px 0 16px;color:var(--text-sub);font-size:14px}.signature-org{color:var(--blue-deep);font-size:20px;font-weight:800}.signature-stamp{display:inline-block;margin-top:8px;padding:4px 10px;border:1px solid var(--border);border-radius:999px;color:var(--text-muted);font-size:11px;font-weight:700}
+.divider{height:1px;margin:34px 0;background:var(--border)}
+.spacer{height:8px}
+@page{size:A4;margin:14mm 15mm}
+@media print{
+ html,body{margin:0;padding:0;background:#fff} body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .document{width:auto;max-width:none;margin:0;padding:0;border:none;border-radius:0;box-shadow:none}
+ .document-header{padding-bottom:18px;margin-bottom:22px}.title{font-size:26px}.eyebrow{font-size:11px}.intro{margin-bottom:22px;padding:14px 16px;font-size:11.5px}
+ .section-title{font-size:16px;margin:24px 0 10px}.section-no{min-width:24px;height:24px;font-size:11px;border-radius:6px}.sub-title{font-size:13px;margin:16px 0 6px}.mini-title{font-size:11.5px;margin:12px 0 5px}
+ .body-text,.rule-line,.bullet-line{font-size:10.5px;line-height:1.55;margin-bottom:6px}.note{font-size:9px;line-height:1.5}.lead-strong{font-size:10.5px;padding:9px 11px;margin:9px 0}.document-org{font-size:10px;margin:7px 0 16px}
+ .table-wrap{overflow:visible;border-radius:0;margin:8px 0 12px} table{font-size:9px} th,td{padding:5px 6px;font-size:8.8px;line-height:1.35} thead{display:table-header-group} tr{break-inside:avoid;page-break-inside:avoid}
+ .section-title,.sub-title,.mini-title{break-after:avoid;page-break-after:avoid}.annex-label.page-break{break-before:page;page-break-before:always}
+ .form-title{font-size:22px;margin-bottom:16px}.annex-label{font-size:10px}.signature-block{margin-top:24px}.signature-org{font-size:15px}
+}
+@media(max-width:700px){body{padding:14px 8px}.document{padding:30px 22px;border-radius:16px}.title{font-size:29px}.intro{padding:18px 20px;font-size:14px}.section-title{font-size:20px}.sub-title{font-size:16px}.body-text{font-size:14px}th,td{padding:9px 8px;font-size:12px}}
+
+/* ===== PDF 변환기용 외곽 배경/가상 페이지 제거 ===== */
+html,body{background:#fff !important;}
+.document{
+  background:transparent !important;
+  border:none !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+}
+
+/* ===== 편집기 연동용: 문서 자체 바깥 여백 완전 제거 ===== */
+html,
+body{
+  margin:0 !important;
+  padding:0 !important;
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+}
+
+.document{
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:none !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+}
+
+/* 문서 자체의 인쇄 여백 제거:
+   이후 편집기/출력기에서 지정한 여백만 사용 */
+@page{
+  size:A4;
+  margin:0 !important;
+}
+
+@media print{
+  html,
+  body{
+    margin:0 !important;
+    padding:0 !important;
+    width:100% !important;
+    max-width:none !important;
+  }
+
+  .document{
+    width:100% !important;
+    max-width:none !important;
+    margin:0 !important;
+    padding:0 !important;
+  }
+}
+
+/* 모바일/좁은 화면 규칙이 여백을 다시 넣지 못하게 차단 */
+@media(max-width:700px){
+  body{
+    margin:0 !important;
+    padding:0 !important;
+  }
+
+  .document{
+    width:100% !important;
+    max-width:none !important;
+    margin:0 !important;
+    padding:0 !important;
+    border-radius:0 !important;
+  }
+}
+
+
+</style>
+
+<style id="html-page-setup-style" data-preset="A4" data-width="210" data-height="297" data-orientation="portrait" data-top="20" data-bottom="20" data-left="10" data-right="10" data-header="10" data-footer="10" data-binding="none" data-gutter="0" data-screen-preview="1" data-header-footer-guide="1" data-target="body">
+:root{
+  --editor-page-width:210mm;
+  --editor-page-height:297mm;
+  --editor-page-margin-top:20mm;
+  --editor-page-margin-bottom:20mm;
+  --editor-page-margin-left:10mm;
+  --editor-page-margin-right:10mm;
+  --editor-page-header:10mm;
+  --editor-page-footer:10mm;
+}
+@page{
+  size:210mm 297mm;
+  margin:20mm 10mm 20mm 10mm;
+}
+
+.page-header{top:var(--editor-page-header) !important}
+.page-footer{bottom:var(--editor-page-footer) !important}
+@media screen{
+  html{background:#efeff4 !important;min-height:100%}
+  body{
+    width:210mm !important;
+    min-height:297mm !important;
+    margin:10mm auto !important;
+    padding:20mm 10mm 20mm 10mm !important;
+    box-sizing:border-box !important;
+    background:#fff !important;
+    box-shadow:0 8px 24px rgba(0,0,0,.10) !important;
+  }
+}
+@media print{
+  html,body{background:#fff !important}
+  body{
+    width:auto !important;
+    min-height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    box-shadow:none !important;
+  }
+}</style>
+
+<style id="html-header-footer-config"
+  data-header-enabled="1"
+  data-footer-enabled="1"
+  data-header-text="역곡지구 하우스토리 입주예정자협의회 - [문서명]"
+  data-footer-text="{page} / {pages}"
+  data-header-align="left"
+  data-footer-align="right"
+  data-hide-header-first="0"
+  data-hide-footer-first="0"
+  data-show-page-number-guide="1">/* editor header/footer config */</style>
+</head>
+
+<body>
+<main class="document">
+
+  <!-- ===== 1. 문서 대표 제목 영역 ===== -->
+  <header class="document-header">
+    <div class="eyebrow">역곡지구 하우스토리 입주예정자협의회</div>
+    <h1 class="title">[문서 제목]</h1>
+    <div class="title-sub">[필요한 경우 부제 또는 문서 성격]</div>
+  </header>
+
+  <!-- 도입 설명이 필요 없는 문서는 이 블록을 삭제 -->
+  <div class="intro">
+    [이 문서의 목적, 배경, 적용대상 또는 간단한 안내문을 작성하는 영역입니다.]
+  </div>
+
+  <!-- ===== 2. 일반 본문 예시 ===== -->
+  <h2 class="section-title">
+    <span class="section-no">1.</span>
+    <span>[대항목 제목]</span>
+  </h2>
+
+  <p class="body-text">
+    [일반 본문 문장입니다. 사용자가 제공한 원문을 내용 변경 없이 배치합니다.]
+  </p>
+
+  <h3 class="sub-title">가. [중항목 제목]</h3>
+  <p class="body-text">[중항목에 해당하는 본문 내용]</p>
+
+  <h4 class="mini-title">[소항목 제목]</h4>
+  <p class="body-text">[소항목의 설명 또는 세부 내용]</p>
+
+  <p class="rule-line">1. [번호가 붙는 규정·원칙·요건]</p>
+  <p class="rule-line">2. [번호가 붙는 다음 항목]</p>
+
+  <p class="bullet-line">● [글머리표 형식의 세부 항목]</p>
+  <p class="bullet-line">● [글머리표 형식의 세부 항목]</p>
+
+  <p class="note">※ [참고사항, 예외사항, 증빙안내 등 작은 안내문]</p>
+
+  <div class="lead-strong">
+    [특히 강조할 핵심 안내사항이나 반드시 확인해야 할 내용을 넣는 박스]
+  </div>
+
+  <!-- ===== 3. 표 예시 ===== -->
+  <h2 class="section-title">
+    <span class="section-no">2.</span>
+    <span>[표가 포함된 대항목]</span>
+  </h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th><div class="cell-line">구분</div></th>
+          <th><div class="cell-line">내용</div></th>
+          <th><div class="cell-line">비고</div></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="center"><div class="cell-line">항목 1</div></td>
+          <td><div class="cell-line">[표 안에 들어갈 내용]</div></td>
+          <td class="center"><div class="cell-line">-</div></td>
+        </tr>
+        <tr>
+          <td class="center"><div class="cell-line">항목 2</div></td>
+          <td><div class="cell-line">[필요한 내용을 표 구조에 맞게 배치]</div></td>
+          <td class="center"><div class="cell-line">-</div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===== 4. 배지형 표 예시 ===== -->
+  <h3 class="sub-title">[제출서류·체크리스트·상태표 등에 사용하는 예시]</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th><div class="cell-line">항목</div></th>
+          <th><div class="cell-line">구분</div></th>
+          <th><div class="cell-line">확인</div></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="cell-line">[필수 항목]</div></td>
+          <td class="center"><span class="badge required">필수</span></td>
+          <td class="center">□</td>
+        </tr>
+        <tr>
+          <td><div class="cell-line">[조건부 항목]</div></td>
+          <td class="center"><span class="badge conditional">해당 시</span></td>
+          <td class="center">□</td>
+        </tr>
+        <tr>
+          <td><div class="cell-line">[선택 항목]</div></td>
+          <td class="center"><span class="badge optional">선택</span></td>
+          <td class="center">□</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===== 5. 별지·서식형 문서에서 사용하는 예시 ===== -->
+  <div class="divider"></div>
+
+  <div class="annex-label">[별지서식 제○호]</div>
+  <h2 class="form-title">[별도 서식 제목]</h2>
+
+  <p class="body-text">
+    [신청서·확약서·동의서 등 서식 본문이 들어가는 영역입니다.]
+  </p>
+
+  <div class="document-org">역곡지구 하우스토리 입주예정자협의회</div>
+
+  <!-- ===== 6. 서명/문서 마무리 예시 ===== -->
+  <div class="signature-block">
+    <div class="signature-date">20____년 ____월 ____일</div>
+    <div class="signature-org">역곡지구 하우스토리 입주예정자협의회</div>
+    <div class="signature-stamp">[직인 또는 서명 표기]</div>
+  </div>
+
+</main>
+</body>
+</html>
