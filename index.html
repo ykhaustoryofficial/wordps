@@ -1773,6 +1773,7 @@ ${preview?`@media screen{
     return gap;
   }
 
+
   function buildPaginationGuideLayer(doc,setup,pageCount,{decorate=false}={}){
     const pageW=mmToPx(setup.width);
     const pageH=mmToPx(setup.height);
@@ -2035,9 +2036,9 @@ ${preview?`@media screen{
 
           let target=null;
 
-          if(idx>0 && r.top<cur.content.top-1){
+          if(idx>0 && r.top<cur.content.top-0.5){
             target=cur.content.top;
-          }else if(r.top>=cur.content.bottom-1 && next){
+          }else if(r.top>=cur.content.bottom-0.5 && next){
             target=next.content.top;
           }else if(r.bottom>cur.content.bottom+1 && h<=usableActual+1 && next){
             target=next.content.top;
@@ -2056,6 +2057,9 @@ ${preview?`@media screen{
         if(!fixed) break;
       }
 
+      // 최종 검증이 끝난 상태를 그대로 사용한다.
+      // 페이지 시작 요소의 위쪽 장식 margin은 오버레이 전용 CSS에서
+      // editor gap 바로 다음 요소에 한해 제거하므로, 별도의 gap 축소 보정은 하지 않는다.
       guide.remove();
 
     }finally{
@@ -2330,11 +2334,22 @@ ${preview?`@media screen{
         overflow:hidden !important;
         flex:none !important;
       }
+      /* 새 페이지 첫 요소는 본문 시작선에 밀착.
+         실제 사용자가 넣은 빈 문단은 요소 자체 높이가 남으므로 보존된다. */
+      [data-editor-page-flow-gap="1"] + *{
+        margin-top:0 !important;
+      }
       tr[data-editor-page-flow-gap-row="1"]{
         height:0;
         pointer-events:none !important;
         user-select:none !important;
         -webkit-user-select:none !important;
+      }
+      [data-editor-page-flow-gap="1"] + *{
+        margin-top:0 !important;
+      }
+      tr[data-editor-page-flow-gap-row="1"]{
+        height:0 !important;
       }
       tr[data-editor-page-flow-gap-row="1"] > td{
         height:var(--editor-gap-height,0px) !important;
@@ -2357,6 +2372,9 @@ ${preview?`@media screen{
         pointer-events:none !important;
         user-select:none !important;
         -webkit-user-select:none !important;
+      }
+      li[data-editor-page-flow-gap-li="1"] + li{
+        margin-top:0 !important;
       }
     `;
   }
@@ -2561,7 +2579,8 @@ ${preview?`@media screen{
 
     // 편집기 전용 오버레이/스타일은 출력 원본에서 제외
     doc.getElementById('html-page-overlay-layer')?.remove();
-    doc.getElementById('html-page-overlay-style')?.remove();
+    // 페이지 gap의 실제 화면 스타일은 PDF에서도 그대로 유지해야
+    // 비주얼과 동일한 줄바꿈/페이지 시작 위치가 재현된다.
     doc.getElementById('cute-html-editor-style')?.remove();
 
     // 중요:
@@ -2604,6 +2623,12 @@ ${preview?`@media screen{
         background:transparent !important;
         box-sizing:border-box !important;
       }
+      [data-editor-page-flow-gap="1"] + *{
+        margin-top:0 !important;
+      }
+      tr[data-editor-page-flow-gap-row="1"]{
+        height:0 !important;
+      }
       tr[data-editor-page-flow-gap-row="1"] > td{
         height:var(--editor-gap-height,0px) !important;
         min-height:var(--editor-gap-height,0px) !important;
@@ -2620,6 +2645,9 @@ ${preview?`@media screen{
         padding:0 !important;
         border:0 !important;
         list-style:none !important;
+      }
+      li[data-editor-page-flow-gap-li="1"] + li{
+        margin-top:0 !important;
       }
     `;
     doc.head.appendChild(fix);
@@ -2702,17 +2730,30 @@ ${preview?`@media screen{
     const doc=getDoc();
     if(!doc?.body) throw new Error('편집 문서를 찾을 수 없습니다.');
 
+    // PDF를 만들기 직전에 비주얼 페이지 엔진을 한 번 확정한다.
+    // 이 시점의 gap/페이지 수/페이지 높이를 PDF가 그대로 사용한다.
+    if(pageOverlayEnabled){
+      renderPageOverlay();
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    }
+
     headerFooterState=getHeaderFooterFromDocument();
     const setup=readPageSetupFromDocument();
-    const pageWpx=mmToPx(setup.width);
-    const pageHpx=mmToPx(setup.height);
+    const cssPageWpx=mmToPx(setup.width);
+    const cssPageHpx=mmToPx(setup.height);
     const printMargins=effectiveMargins(setup);
 
-    // 오버레이 자체 높이를 제외하고 "실제 연속 본문" 높이만 계산
-    const totalH=measureContinuousDocumentHeight(doc,pageHpx);
-    const pages=Math.max(1,Math.ceil(totalH/pageHpx));
+    const liveOverlay=doc.getElementById('html-page-overlay-layer');
+    const livePages=liveOverlay ? [...liveOverlay.querySelectorAll('.epo-page')] : [];
+    const livePageRect=livePages[0]?.getBoundingClientRect?.();
+    const pageWpx=livePageRect?.width || cssPageWpx;
+    const pageHpx=livePageRect?.height || cssPageHpx;
 
-    // 현재 비주얼 화면의 HTML을 그대로 복제하되, 화면용 media CSS를 고정
+    // 페이지 수 역시 비주얼 오버레이를 최우선 기준으로 사용한다.
+    const totalH=measureContinuousDocumentHeight(doc,pageHpx);
+    const pages=livePages.length || Math.max(1,Math.ceil(totalH/pageHpx));
+
+    // 현재 비주얼 화면의 HTML + 페이지 gap 스타일을 그대로 복제한다.
     const fullHtml=stripEditorOnlyArtifactsFromHtml(serializeDocForPrint());
 
     clearPrintRoot();
@@ -2888,7 +2929,10 @@ ${preview?`@media screen{
       el.style?.removeProperty('outline-offset');
       el.style?.removeProperty('box-shadow');
     });
-    root.querySelectorAll('#cute-html-editor-style,#html-page-overlay-style').forEach(el => el.remove());
+    root.querySelectorAll('#cute-html-editor-style').forEach(el => el.remove());
+    if(!preservePageGaps){
+      root.querySelectorAll('#html-page-overlay-style').forEach(el => el.remove());
+    }
     root.querySelectorAll('#html-page-overlay-layer').forEach(el => el.remove());
     if(!preservePageGaps){
       root.querySelectorAll(
@@ -3235,14 +3279,48 @@ pre{white-space:pre-wrap}
     ensureEditorStyles();
 
     doc.addEventListener('beforeinput',e=>{
-      if(e.isComposing || (e.inputType||'').startsWith('insert') || (e.inputType||'').startsWith('delete')){
+      const inputType=e.inputType||'';
+
+      if(e.isComposing || inputType.startsWith('insert') || inputType.startsWith('delete')){
         lastTypingAt=Date.now();
+      }
+
+      // Delete/Backspace가 편집기에서 임시 삽입한 페이지 spacer를
+      // 실제 문서 내용처럼 건드리지 않도록, 네이티브 삭제 직전에 제거한다.
+      // 삭제 후 페이지 엔진이 현재 내용 기준으로 spacer를 다시 계산한다.
+      if(inputType.startsWith('delete') && !pageFlowAdjusting){
+        let saved=null;
+        const sel=doc.getSelection?.();
+
+        if(sel&&sel.rangeCount){
+          try{ saved=sel.getRangeAt(0).cloneRange(); }catch(err){}
+        }
+
+        removePageFlowGaps(doc);
+        removePageOverlay(doc);
+
+        if(saved){
+          try{
+            const s=doc.getSelection();
+            s.removeAllRanges();
+            s.addRange(saved);
+            lastRange=saved.cloneRange();
+          }catch(err){}
+        }
       }
     },true);
 
     doc.addEventListener('input',e=>{
       lastTypingAt=Date.now();
       markDirty();
+
+      const inputType=e.inputType||'';
+      if(inputType.startsWith('delete')){
+        clearTimeout(pageOverlayResizeTimer);
+        pageOverlayResizeTimer=setTimeout(()=>{
+          if(pageOverlayEnabled && !pageFlowAdjusting) renderPageOverlay();
+        },90);
+      }
     },true);
 
     doc.addEventListener('compositionstart',()=>{ lastTypingAt=Date.now(); },true);
