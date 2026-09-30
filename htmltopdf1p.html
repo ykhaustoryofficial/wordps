@@ -1,8 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="ko">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>HTML 에디터 · 통합판</title>
 <style>
 :root{
@@ -706,447 +707,414 @@ body.fullscreen .workspace{border-radius:0}
 }
 
 </style>
-</head>
+<script crossorigin="anonymous" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script><script crossorigin="anonymous" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script></head>
 <body>
 <div class="app">
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo">✦</div>
-      <div>
-        <div class="brand-title">HTML 에디터</div>
-        <div class="brand-sub" id="fileName">새 문서</div>
-      </div>
-    </div>
-
-    <div class="tabs">
-      <button class="tab active" id="visualTab" type="button">✦ 비주얼</button>
-      <button class="tab" id="sourceTab" type="button">⌘ 소스</button>
-      <button class="tab" id="splitTab" type="button">◫ 분할</button>
-    </div>
-
-    <div class="status"><span class="dot saved" id="statusDot"></span><span id="statusText">새 문서 · 편집 가능</span></div>
-
-    <div class="top-actions">
-      <button class="btn" id="newBtn" type="button">＋ 새 문서</button>
-      <button class="btn" id="openBtn" type="button">📂 열기</button>
-      <button class="btn" id="restoreBtn" type="button">↺ 원본 복구</button>
-      <button class="btn" id="pageSetupBtn" type="button">▤ 편집용지</button>
-      <button class="btn" id="saveAsBtn" type="button">다른 이름</button>
-      <button class="btn primary" id="saveBtn" type="button">저장</button>
-      <button class="btn" id="pdfSaveBtn" type="button">PDF 내보내기</button>
-      <button class="btn" id="copyHtmlBtn" type="button">HTML 복사</button>
-      <button class="btn" id="fullscreenBtn" type="button">⛶</button>
-      <input type="file" id="fileInput" accept=".html,.htm,text/html" hidden>
-      <input type="file" id="imageInput" accept="image/*" hidden>
-    </div>
-  </header>
-
-  <section class="toolbar-shell">
-    <div class="toolbar" id="toolbar">
-      <div class="group" title="실행 기록">
-        <button class="tool" data-cmd="undo" title="실행 취소">↶</button>
-        <button class="tool" data-cmd="redo" title="다시 실행">↷</button>
-      </div>
-
-      <div class="group" title="문단과 글자">
-        <select class="tool-select" id="blockStyle" title="현재 문단 서식">
-          <option value="p">문단</option>
-          <option value="h1">제목 1</option>
-          <option value="h2">제목 2</option>
-          <option value="h3">제목 3</option>
-          <option value="h4">제목 4</option>
-          <option value="h5">제목 5</option>
-          <option value="h6">제목 6</option>
-          <option value="pre">정형 텍스트</option>
-          <option value="blockquote">인용</option>
-        </select>
-        <select class="tool-select" id="fontSize" title="글자 크기">
-          <option value="">크기</option>
-          <option value="10">10px</option><option value="11">11px</option><option value="12">12px</option>
-          <option value="13">13px</option><option value="14">14px</option><option value="15">15px</option>
-          <option value="16">16px</option><option value="17">17px</option><option value="18">18px</option>
-          <option value="20">20px</option><option value="22">22px</option><option value="24">24px</option>
-          <option value="28">28px</option><option value="32">32px</option><option value="36">36px</option>
-          <option value="40">40px</option>
-        </select>
-        <select class="tool-select" id="lineHeightSelect" title="줄간격">
-          <option value="">줄간격</option>
-          <option value="0.5">50%</option>
-          <option value="0.6">60%</option>
-          <option value="0.7">70%</option>
-          <option value="0.8">80%</option>
-          <option value="0.9">90%</option>
-          <option value="1">100%</option>
-          <option value="1.1">110%</option>
-          <option value="1.2">120%</option>
-          <option value="1.3">130%</option>
-          <option value="1.4">140%</option>
-          <option value="1.5">150%</option>
-          <option value="1.6">160%</option>
-          <option value="1.7">170%</option>
-          <option value="1.8">180%</option>
-          <option value="1.9">190%</option>
-          <option value="2">200%</option>
-        </select>
-        <select class="tool-select" id="letterSpacingSelect" title="자간">
-          <option value="">자간</option>
-          <option value="-0.2">-20%</option>
-          <option value="-0.19">-19%</option>
-          <option value="-0.18">-18%</option>
-          <option value="-0.17">-17%</option>
-          <option value="-0.16">-16%</option>
-          <option value="-0.15">-15%</option>
-          <option value="-0.14">-14%</option>
-          <option value="-0.13">-13%</option>
-          <option value="-0.12">-12%</option>
-          <option value="-0.11">-11%</option>
-          <option value="-0.1">-10%</option>
-          <option value="-0.09">-9%</option>
-          <option value="-0.08">-8%</option>
-          <option value="-0.07">-7%</option>
-          <option value="-0.06">-6%</option>
-          <option value="-0.05">-5%</option>
-          <option value="-0.04">-4%</option>
-          <option value="-0.03">-3%</option>
-          <option value="-0.02">-2%</option>
-          <option value="-0.01">-1%</option>
-          <option value="0">0%</option>
-          <option value="0.01">+1%</option>
-          <option value="0.02">+2%</option>
-          <option value="0.03">+3%</option>
-          <option value="0.04">+4%</option>
-          <option value="0.05">+5%</option>
-          <option value="0.06">+6%</option>
-          <option value="0.07">+7%</option>
-          <option value="0.08">+8%</option>
-          <option value="0.09">+9%</option>
-          <option value="0.1">+10%</option>
-          <option value="0.11">+11%</option>
-          <option value="0.12">+12%</option>
-          <option value="0.13">+13%</option>
-          <option value="0.14">+14%</option>
-          <option value="0.15">+15%</option>
-          <option value="0.16">+16%</option>
-          <option value="0.17">+17%</option>
-          <option value="0.18">+18%</option>
-          <option value="0.19">+19%</option>
-          <option value="0.2">+20%</option>
-        </select>
-        <button class="tool" data-cmd="bold" title="굵게"><b>B</b></button>
-        <button class="tool" data-cmd="italic" title="기울임"><i>I</i></button>
-        <button class="tool" data-cmd="underline" title="밑줄"><u>U</u></button>
-        <button class="tool" data-cmd="strikeThrough" title="취소선"><s>S</s></button>
-        <span class="tool color-tool" id="colorTool" title="글자색">A<input id="foreColor" type="color" value="#30354a"></span>
-        <button class="tool" data-cmd="removeFormat" title="서식 제거">Tx</button>
-      </div>
-
-      <div class="group" title="정렬과 목록">
-        <button class="tool" data-cmd="justifyLeft" title="왼쪽 정렬">≡←</button>
-        <button class="tool" data-cmd="justifyCenter" title="가운데 정렬">≡</button>
-        <button class="tool" data-cmd="justifyRight" title="오른쪽 정렬">→≡</button>
-        <button class="tool" data-cmd="justifyFull" title="양쪽 정렬">☰</button>
-        <span class="sep"></span>
-        <button class="tool" data-cmd="outdent" title="내어쓰기">|←</button>
-        <button class="tool" data-cmd="indent" title="들여쓰기">→|</button>
-        <button class="tool" data-cmd="insertUnorderedList" title="글머리 목록">•☰</button>
-        <button class="tool" data-cmd="insertOrderedList" title="번호 목록">1☰</button>
-      </div>
-
-      <div class="group" title="삽입">
-        <button class="tool" id="linkBtn" type="button" title="링크 삽입">🔗</button>
-        <button class="tool" id="tableBtn" type="button" title="표 삽입">▦</button>
-        <button class="tool" id="imageBtn" type="button" title="이미지 삽입">▧</button>
-        <button class="tool" data-cmd="insertHorizontalRule" title="가로선">―</button>
-        <button class="tool" id="specialBtn" type="button" title="특수문자">Ω</button>
-        <button class="tool" id="emojiBtn" type="button" title="이모지">☺</button>
-        <button class="tool" id="findBtn" type="button" title="찾기">⌕</button>
-      </div>
-
-      <div class="group" title="표 편집">
-        <button class="tool" id="cellSelectBtn" type="button" title="드래그/클릭 복수 셀 선택">셀 선택</button>
-        <button class="tool" id="rowAddBtn" type="button">행＋</button>
-        <button class="tool" id="rowDelBtn" type="button">행−</button>
-        <button class="tool" id="colAddBtn" type="button">열＋</button>
-        <button class="tool" id="colDelBtn" type="button">열−</button>
-        <input class="cell-input" id="cellWidthInput" type="number" min="20" step="1" placeholder="너비" title="선택 셀 너비(px)">
-        <input class="cell-input" id="cellHeightInput" type="number" min="8" step="1" placeholder="높이" title="선택 셀 높이(px)">
-        <button class="tool" id="cellSizeApplyBtn" type="button">크기 적용</button>
-        <button class="tool" id="cellSizeAutoBtn" type="button">크기 자동</button>
-        <span class="sep"></span>
-        <input class="cell-input" id="cellPaddingYInput" type="number" min="0" max="100" step="1" placeholder="상하" title="셀 안쪽 상하 여백(px)">
-        <input class="cell-input" id="cellPaddingXInput" type="number" min="0" max="100" step="1" placeholder="좌우" title="셀 안쪽 좌우 여백(px)">
-        <button class="tool" id="cellPaddingApplyBtn" type="button" title="선택한 셀에 안쪽 여백 적용">여백 적용</button>
-        <button class="tool" id="cellPaddingResetBtn" type="button" title="선택한 셀의 개별 안쪽 여백을 제거하고 문서 기본값으로 복원">여백 기본</button>
-        <span class="sep"></span>
-        <button class="tool" id="cellVAlignMiddleBtn" type="button" title="선택한 표 셀의 내용을 세로 기준 가운데 정렬">↕ 가운데</button>
-      </div>
-
-      <div class="group grow" title="서식 복사와 현재 서식">
-        <button class="tool" id="formatCopyBtn" type="button" title="Alt+C">서식 복사</button>
-        <button class="tool" id="formatPasteBtn" type="button" title="Alt+V">서식 붙여넣기</button>
-        <span class="format-state" id="formatState"><b>서식</b> -</span>
-      </div>
-
-      <div class="group" title="페이지 보기">
-        <button class="tool active" id="pageOverlayToggleBtn" type="button">페이지 보기</button>
-        <button class="tool" id="headerFooterBtn" type="button">머리말·꼬리말</button>
-        <span class="page-overlay-badge on" id="pageOverlayBadge">페이지 고정</span>
-      </div>
-
-      <div class="group" title="편집 보호">
-        <button class="tool active" id="safeModeBtn" type="button">구조 보호</button>
-        <button class="tool" id="freeModeBtn" type="button">자유 편집</button>
-        <span class="mode-note" id="modeNote">텍스트·표 중심 편집</span>
-      </div>
-    </div>
-  </section>
-
-  <main class="workspace" id="workspace">
-    <div class="split-label visual">비주얼</div>
-    <div class="split-label source">HTML 소스 · 입력 즉시 반영</div>
-    <div class="visual-pane" id="visualPane">
-      <div class="empty" id="emptyState">
-        <div class="empty-card">
-          <div class="empty-icon">✦</div>
-          <div class="empty-title">HTML 문서를 열거나 새로 작성하세요</div>
-          <div class="empty-desc">기존 HTML의 <b>&lt;head&gt;, CSS, 레이아웃</b>을 유지한 채 편집합니다.<br>새 문서는 바로 입력을 시작할 수 있습니다.</div>
-          <div class="drop" id="dropZone">HTML 파일을 여기에 끌어다 놓아도 됩니다.</div>
-        </div>
-      </div>
-      <div class="frame-shell" id="frameShell" style="display:none">
-        <iframe id="editorFrame" title="HTML 비주얼 편집"></iframe>
-      </div>
-    </div>
-    <div class="source-pane" id="sourcePane"><textarea id="sourceEditor" spellcheck="false"></textarea></div>
-    <div class="count-chip" id="countChip">0자 · 0단어</div>
-  </main>
+<header class="topbar">
+<div class="brand">
+<div class="logo">✦</div>
+<div>
+<div class="brand-title">HTML 에디터</div>
+<div class="brand-sub" id="fileName">새 문서</div>
 </div>
-
+</div>
+<div class="tabs">
+<button class="tab active" id="visualTab" type="button">✦ 비주얼</button>
+<button class="tab" id="sourceTab" type="button">⌘ 소스</button>
+<button class="tab" id="splitTab" type="button">◫ 분할</button>
+</div>
+<div class="status"><span class="dot saved" id="statusDot"></span><span id="statusText">새 문서 · 편집 가능</span></div>
+<div class="top-actions">
+<button class="btn" id="newBtn" type="button">＋ 새 문서</button>
+<button class="btn" id="openBtn" type="button">📂 열기</button>
+<button class="btn" id="restoreBtn" type="button">↺ 원본 복구</button>
+<button class="btn" id="pageSetupBtn" type="button">▤ 편집용지</button>
+<button class="btn" id="saveAsBtn" type="button">다른 이름</button>
+<button class="btn primary" id="saveBtn" type="button">저장</button>
+<button class="btn" id="pdfSaveBtn" type="button">PDF 내보내기</button>
+<button class="btn" id="copyHtmlBtn" type="button">HTML 복사</button>
+<button class="btn" id="fullscreenBtn" type="button">⛶</button>
+<input accept=".html,.htm,text/html" hidden="" id="fileInput" type="file"/>
+<input accept="image/*" hidden="" id="imageInput" type="file"/>
+</div>
+</header>
+<section class="toolbar-shell">
+<div class="toolbar" id="toolbar">
+<div class="group" title="실행 기록">
+<button class="tool" data-cmd="undo" title="실행 취소">↶</button>
+<button class="tool" data-cmd="redo" title="다시 실행">↷</button>
+</div>
+<div class="group" title="문단과 글자">
+<select class="tool-select" id="blockStyle" title="현재 문단 서식">
+<option value="p">문단</option>
+<option value="h1">제목 1</option>
+<option value="h2">제목 2</option>
+<option value="h3">제목 3</option>
+<option value="h4">제목 4</option>
+<option value="h5">제목 5</option>
+<option value="h6">제목 6</option>
+<option value="pre">정형 텍스트</option>
+<option value="blockquote">인용</option>
+</select>
+<select class="tool-select" id="fontSize" title="글자 크기">
+<option value="">크기</option>
+<option value="10">10px</option><option value="11">11px</option><option value="12">12px</option>
+<option value="13">13px</option><option value="14">14px</option><option value="15">15px</option>
+<option value="16">16px</option><option value="17">17px</option><option value="18">18px</option>
+<option value="20">20px</option><option value="22">22px</option><option value="24">24px</option>
+<option value="28">28px</option><option value="32">32px</option><option value="36">36px</option>
+<option value="40">40px</option>
+</select>
+<select class="tool-select" id="lineHeightSelect" title="줄간격">
+<option value="">줄간격</option>
+<option value="0.5">50%</option>
+<option value="0.6">60%</option>
+<option value="0.7">70%</option>
+<option value="0.8">80%</option>
+<option value="0.9">90%</option>
+<option value="1">100%</option>
+<option value="1.1">110%</option>
+<option value="1.2">120%</option>
+<option value="1.3">130%</option>
+<option value="1.4">140%</option>
+<option value="1.5">150%</option>
+<option value="1.6">160%</option>
+<option value="1.7">170%</option>
+<option value="1.8">180%</option>
+<option value="1.9">190%</option>
+<option value="2">200%</option>
+</select>
+<select class="tool-select" id="letterSpacingSelect" title="자간">
+<option value="">자간</option>
+<option value="-0.2">-20%</option>
+<option value="-0.19">-19%</option>
+<option value="-0.18">-18%</option>
+<option value="-0.17">-17%</option>
+<option value="-0.16">-16%</option>
+<option value="-0.15">-15%</option>
+<option value="-0.14">-14%</option>
+<option value="-0.13">-13%</option>
+<option value="-0.12">-12%</option>
+<option value="-0.11">-11%</option>
+<option value="-0.1">-10%</option>
+<option value="-0.09">-9%</option>
+<option value="-0.08">-8%</option>
+<option value="-0.07">-7%</option>
+<option value="-0.06">-6%</option>
+<option value="-0.05">-5%</option>
+<option value="-0.04">-4%</option>
+<option value="-0.03">-3%</option>
+<option value="-0.02">-2%</option>
+<option value="-0.01">-1%</option>
+<option value="0">0%</option>
+<option value="0.01">+1%</option>
+<option value="0.02">+2%</option>
+<option value="0.03">+3%</option>
+<option value="0.04">+4%</option>
+<option value="0.05">+5%</option>
+<option value="0.06">+6%</option>
+<option value="0.07">+7%</option>
+<option value="0.08">+8%</option>
+<option value="0.09">+9%</option>
+<option value="0.1">+10%</option>
+<option value="0.11">+11%</option>
+<option value="0.12">+12%</option>
+<option value="0.13">+13%</option>
+<option value="0.14">+14%</option>
+<option value="0.15">+15%</option>
+<option value="0.16">+16%</option>
+<option value="0.17">+17%</option>
+<option value="0.18">+18%</option>
+<option value="0.19">+19%</option>
+<option value="0.2">+20%</option>
+</select>
+<button class="tool" data-cmd="bold" title="굵게"><b>B</b></button>
+<button class="tool" data-cmd="italic" title="기울임"><i>I</i></button>
+<button class="tool" data-cmd="underline" title="밑줄"><u>U</u></button>
+<button class="tool" data-cmd="strikeThrough" title="취소선"><s>S</s></button>
+<span class="tool color-tool" id="colorTool" title="글자색">A<input id="foreColor" type="color" value="#30354a"/></span>
+<button class="tool" data-cmd="removeFormat" title="서식 제거">Tx</button>
+</div>
+<div class="group" title="정렬과 목록">
+<button class="tool" data-cmd="justifyLeft" title="왼쪽 정렬">≡←</button>
+<button class="tool" data-cmd="justifyCenter" title="가운데 정렬">≡</button>
+<button class="tool" data-cmd="justifyRight" title="오른쪽 정렬">→≡</button>
+<button class="tool" data-cmd="justifyFull" title="양쪽 정렬">☰</button>
+<span class="sep"></span>
+<button class="tool" data-cmd="outdent" title="내어쓰기">|←</button>
+<button class="tool" data-cmd="indent" title="들여쓰기">→|</button>
+<button class="tool" data-cmd="insertUnorderedList" title="글머리 목록">•☰</button>
+<button class="tool" data-cmd="insertOrderedList" title="번호 목록">1☰</button>
+</div>
+<div class="group" title="삽입">
+<button class="tool" id="linkBtn" title="링크 삽입" type="button">🔗</button>
+<button class="tool" id="tableBtn" title="표 삽입" type="button">▦</button>
+<button class="tool" id="imageBtn" title="이미지 삽입" type="button">▧</button>
+<button class="tool" data-cmd="insertHorizontalRule" title="가로선">―</button>
+<button class="tool" id="specialBtn" title="특수문자" type="button">Ω</button>
+<button class="tool" id="emojiBtn" title="이모지" type="button">☺</button>
+<button class="tool" id="findBtn" title="찾기" type="button">⌕</button>
+</div>
+<div class="group" title="표 편집">
+<button class="tool" id="cellSelectBtn" title="드래그/클릭 복수 셀 선택" type="button">셀 선택</button>
+<button class="tool" id="rowAddBtn" type="button">행＋</button>
+<button class="tool" id="rowDelBtn" type="button">행−</button>
+<button class="tool" id="colAddBtn" type="button">열＋</button>
+<button class="tool" id="colDelBtn" type="button">열−</button>
+<input class="cell-input" id="cellWidthInput" min="20" placeholder="너비" step="1" title="선택 셀 너비(px)" type="number"/>
+<input class="cell-input" id="cellHeightInput" min="8" placeholder="높이" step="1" title="선택 셀 높이(px)" type="number"/>
+<button class="tool" id="cellSizeApplyBtn" type="button">크기 적용</button>
+<button class="tool" id="cellSizeAutoBtn" type="button">크기 자동</button>
+<span class="sep"></span>
+<input class="cell-input" id="cellPaddingYInput" max="100" min="0" placeholder="상하" step="1" title="셀 안쪽 상하 여백(px)" type="number"/>
+<input class="cell-input" id="cellPaddingXInput" max="100" min="0" placeholder="좌우" step="1" title="셀 안쪽 좌우 여백(px)" type="number"/>
+<button class="tool" id="cellPaddingApplyBtn" title="선택한 셀에 안쪽 여백 적용" type="button">여백 적용</button>
+<button class="tool" id="cellPaddingResetBtn" title="선택한 셀의 개별 안쪽 여백을 제거하고 문서 기본값으로 복원" type="button">여백 기본</button>
+<span class="sep"></span>
+<button class="tool" id="cellVAlignMiddleBtn" title="선택한 표 셀의 내용을 세로 기준 가운데 정렬" type="button">↕ 가운데</button>
+</div>
+<div class="group grow" title="서식 복사와 현재 서식">
+<button class="tool" id="formatCopyBtn" title="Alt+C" type="button">서식 복사</button>
+<button class="tool" id="formatPasteBtn" title="Alt+V" type="button">서식 붙여넣기</button>
+<span class="format-state" id="formatState"><b>서식</b> -</span>
+</div>
+<div class="group" title="페이지 보기">
+<button class="tool active" id="pageOverlayToggleBtn" type="button">페이지 보기</button>
+<button class="tool" id="headerFooterBtn" type="button">머리말·꼬리말</button>
+<span class="page-overlay-badge on" id="pageOverlayBadge">페이지 고정</span>
+</div>
+<div class="group" title="편집 보호">
+<button class="tool active" id="safeModeBtn" type="button">구조 보호</button>
+<button class="tool" id="freeModeBtn" type="button">자유 편집</button>
+<span class="mode-note" id="modeNote">텍스트·표 중심 편집</span>
+</div>
+</div>
+</section>
+<main class="workspace" id="workspace">
+<div class="split-label visual">비주얼</div>
+<div class="split-label source">HTML 소스 · 입력 즉시 반영</div>
+<div class="visual-pane" id="visualPane">
+<div class="empty" id="emptyState">
+<div class="empty-card">
+<div class="empty-icon">✦</div>
+<div class="empty-title">HTML 문서를 열거나 새로 작성하세요</div>
+<div class="empty-desc">기존 HTML의 <b>&lt;head&gt;, CSS, 레이아웃</b>을 유지한 채 편집합니다.<br/>새 문서는 바로 입력을 시작할 수 있습니다.</div>
+<div class="drop" id="dropZone">HTML 파일을 여기에 끌어다 놓아도 됩니다.</div>
+</div>
+</div>
+<div class="frame-shell" id="frameShell" style="display:none">
+<iframe id="editorFrame" title="HTML 비주얼 편집"></iframe>
+</div>
+</div>
+<div class="source-pane" id="sourcePane"><textarea id="sourceEditor" spellcheck="false"></textarea></div>
+<div class="count-chip" id="countChip">0자 · 0단어</div>
+</main>
+</div>
 <div class="modal-backdrop" id="linkModal">
-  <div class="modal">
-    <h3>링크 삽입</h3>
-    <label for="linkUrl">주소</label>
-    <input id="linkUrl" placeholder="https://example.com">
-    <div class="modal-actions">
-      <button class="btn" data-close="linkModal">취소</button>
-      <button class="btn primary" id="insertLinkConfirm">삽입</button>
-    </div>
-  </div>
+<div class="modal">
+<h3>링크 삽입</h3>
+<label for="linkUrl">주소</label>
+<input id="linkUrl" placeholder="https://example.com"/>
+<div class="modal-actions">
+<button class="btn" data-close="linkModal">취소</button>
+<button class="btn primary" id="insertLinkConfirm">삽입</button>
 </div>
-
+</div>
+</div>
 <div class="modal-backdrop" id="tableModal">
-  <div class="modal">
-    <h3>표 삽입</h3>
-    <div class="modal-row">
-      <div><label for="tableRows">행</label><input id="tableRows" type="number" min="1" max="30" value="3"></div>
-      <div><label for="tableCols">열</label><input id="tableCols" type="number" min="1" max="20" value="3"></div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn" data-close="tableModal">취소</button>
-      <button class="btn primary" id="insertTableConfirm">삽입</button>
-    </div>
-  </div>
+<div class="modal">
+<h3>표 삽입</h3>
+<div class="modal-row">
+<div><label for="tableRows">행</label><input id="tableRows" max="30" min="1" type="number" value="3"/></div>
+<div><label for="tableCols">열</label><input id="tableCols" max="20" min="1" type="number" value="3"/></div>
 </div>
-
+<div class="modal-actions">
+<button class="btn" data-close="tableModal">취소</button>
+<button class="btn primary" id="insertTableConfirm">삽입</button>
+</div>
+</div>
+</div>
 <div class="modal-backdrop" id="charModal">
-  <div class="modal">
-    <h3 id="charTitle">문자 삽입</h3>
-    <div class="char-grid" id="charGrid"></div>
-    <div class="modal-actions"><button class="btn" data-close="charModal">닫기</button></div>
-  </div>
+<div class="modal">
+<h3 id="charTitle">문자 삽입</h3>
+<div class="char-grid" id="charGrid"></div>
+<div class="modal-actions"><button class="btn" data-close="charModal">닫기</button></div>
 </div>
-
-
+</div>
 <div class="modal-backdrop" id="pageSetupModal">
-  <div class="modal page-setup-modal">
-    <div class="page-setup-head">
-      <div>
-        <h3>편집용지</h3>
-        <div class="sub">용지 크기 · 방향 · 여백 · 제본을 문서에 저장합니다.</div>
-      </div>
-      <button class="btn" data-close="pageSetupModal" type="button">닫기</button>
-    </div>
-
-    <div class="page-setup-body">
-      <div class="ps-grid">
-        <div>
-          <section class="ps-section">
-            <div class="ps-section-title">용지 종류</div>
-
-            <div class="ps-row">
-              <div class="ps-label">종류</div>
-              <select class="ps-select" id="pagePreset">
-                <option value="A4">A4 (국배판) · 210 × 297 mm</option>
-                <option value="A3">A3 · 297 × 420 mm</option>
-                <option value="B5">B5 · 182 × 257 mm</option>
-                <option value="LETTER">Letter · 215.9 × 279.4 mm</option>
-                <option value="LEGAL">Legal · 215.9 × 355.6 mm</option>
-                <option value="EXECUTIVE">Executive · 184.2 × 266.7 mm</option>
-                <option value="CUSTOM">사용자 지정</option>
-              </select>
-            </div>
-
-            <div class="ps-row">
-              <div class="ps-label">크기</div>
-              <div class="ps-inline">
-                <div>
-                  <input class="ps-field" id="pageWidth" type="number" min="50" max="1000" step="0.1" value="210">
-                </div>
-                <span class="ps-unit">×</span>
-                <div>
-                  <input class="ps-field" id="pageHeight" type="number" min="50" max="1000" step="0.1" value="297">
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section class="ps-section">
-            <div class="ps-section-title">용지 방향</div>
-            <div class="ps-segment">
-              <button class="ps-choice active" id="portraitBtn" data-orientation="portrait" type="button">▯ 세로</button>
-              <button class="ps-choice" id="landscapeBtn" data-orientation="landscape" type="button">▭ 가로</button>
-            </div>
-          </section>
-
-          <section class="ps-section">
-            <div class="ps-section-title">용지 여백</div>
-            <div class="ps-margin-grid">
-              <div class="ps-margin-item"><label>위쪽</label><input class="ps-field" id="marginTop" type="number" min="0" max="150" step="0.1" value="20"></div>
-              <div class="ps-margin-item"><label>아래쪽</label><input class="ps-field" id="marginBottom" type="number" min="0" max="150" step="0.1" value="15"></div>
-              <div class="ps-margin-item"><label>왼쪽</label><input class="ps-field" id="marginLeft" type="number" min="0" max="150" step="0.1" value="30"></div>
-              <div class="ps-margin-item"><label>오른쪽</label><input class="ps-field" id="marginRight" type="number" min="0" max="150" step="0.1" value="30"></div>
-              <div class="ps-margin-item"><label>머리말</label><input class="ps-field" id="headerMargin" type="number" min="0" max="150" step="0.1" value="15"></div>
-              <div class="ps-margin-item"><label>꼬리말</label><input class="ps-field" id="footerMargin" type="number" min="0" max="150" step="0.1" value="15"></div>
-            </div>
-          </section>
-
-          <section class="ps-section">
-            <div class="ps-section-title">제본</div>
-            <div class="ps-segment four">
-              <button class="ps-choice active" data-binding="none" type="button">없음</button>
-              <button class="ps-choice" data-binding="left" type="button">왼쪽</button>
-              <button class="ps-choice" data-binding="right" type="button">오른쪽</button>
-              <button class="ps-choice" data-binding="top" type="button">위쪽</button>
-            </div>
-            <div class="ps-row" style="margin-top:10px">
-              <div class="ps-label">제본 여백</div>
-              <input class="ps-field" id="gutterMargin" type="number" min="0" max="100" step="0.1" value="0">
-            </div>
-          </section>
-
-          <section class="ps-section">
-            <div class="ps-section-title">적용 방식</div>
-            <label class="ps-check">
-              <input id="pageScreenPreview" type="checkbox" checked>
-              <span><b>화면에서도 용지 크기와 여백 표시</b><br>비주얼 편집창을 실제 용지에 가까운 모습으로 보여줍니다.</span>
-            </label>
-            <label class="ps-check">
-              <input id="pageHeaderFooterGuide" type="checkbox" checked>
-              <span><b>머리말·꼬리말 기준 저장</b><br><code>.page-header</code>, <code>.page-footer</code> 요소가 있으면 위치 기준으로 사용합니다.</span>
-            </label>
-          </section>
-        </div>
-
-        <div class="ps-preview-wrap">
-          <div class="ps-preview-card">
-            <div class="ps-preview-title">
-              <span>용지 미리보기</span>
-              <span class="ps-preview-size" id="pagePreviewSize">210 × 297 mm</span>
-            </div>
-            <div class="paper-stage">
-              <div class="paper-mini" id="paperMini">
-                <div class="content-box" id="paperContentBox"></div>
-                <div class="header-guide" id="paperHeaderGuide"><span>머리말</span></div>
-                <div class="footer-guide" id="paperFooterGuide"><span>꼬리말</span></div>
-                <div class="gutter-guide" id="paperGutterGuide"></div>
-              </div>
-            </div>
-            <div class="ps-summary" id="pageSetupSummary"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="ps-bottom">
-      <div class="ps-bottom-left">
-        <button class="btn" id="pageSetupA4Reset" type="button">A4 기본값</button>
-        <button class="btn" id="pageSetupReadDoc" type="button">현재 설정 다시 읽기</button>
-      </div>
-      <div class="ps-bottom-right">
-        <button class="btn" data-close="pageSetupModal" type="button">취소</button>
-        <button class="btn primary" id="pageSetupApply" type="button">적용</button>
-      </div>
-    </div>
-  </div>
+<div class="modal page-setup-modal">
+<div class="page-setup-head">
+<div>
+<h3>편집용지</h3>
+<div class="sub">용지 크기 · 방향 · 여백 · 제본을 문서에 저장합니다.</div>
 </div>
-
-
+<button class="btn" data-close="pageSetupModal" type="button">닫기</button>
+</div>
+<div class="page-setup-body">
+<div class="ps-grid">
+<div>
+<section class="ps-section">
+<div class="ps-section-title">용지 종류</div>
+<div class="ps-row">
+<div class="ps-label">종류</div>
+<select class="ps-select" id="pagePreset">
+<option value="A4">A4 (국배판) · 210 × 297 mm</option>
+<option value="A3">A3 · 297 × 420 mm</option>
+<option value="B5">B5 · 182 × 257 mm</option>
+<option value="LETTER">Letter · 215.9 × 279.4 mm</option>
+<option value="LEGAL">Legal · 215.9 × 355.6 mm</option>
+<option value="EXECUTIVE">Executive · 184.2 × 266.7 mm</option>
+<option value="CUSTOM">사용자 지정</option>
+</select>
+</div>
+<div class="ps-row">
+<div class="ps-label">크기</div>
+<div class="ps-inline">
+<div>
+<input class="ps-field" id="pageWidth" max="1000" min="50" step="0.1" type="number" value="210"/>
+</div>
+<span class="ps-unit">×</span>
+<div>
+<input class="ps-field" id="pageHeight" max="1000" min="50" step="0.1" type="number" value="297"/>
+</div>
+</div>
+</div>
+</section>
+<section class="ps-section">
+<div class="ps-section-title">용지 방향</div>
+<div class="ps-segment">
+<button class="ps-choice active" data-orientation="portrait" id="portraitBtn" type="button">▯ 세로</button>
+<button class="ps-choice" data-orientation="landscape" id="landscapeBtn" type="button">▭ 가로</button>
+</div>
+</section>
+<section class="ps-section">
+<div class="ps-section-title">용지 여백</div>
+<div class="ps-margin-grid">
+<div class="ps-margin-item"><label>위쪽</label><input class="ps-field" id="marginTop" max="150" min="0" step="0.1" type="number" value="20"/></div>
+<div class="ps-margin-item"><label>아래쪽</label><input class="ps-field" id="marginBottom" max="150" min="0" step="0.1" type="number" value="15"/></div>
+<div class="ps-margin-item"><label>왼쪽</label><input class="ps-field" id="marginLeft" max="150" min="0" step="0.1" type="number" value="30"/></div>
+<div class="ps-margin-item"><label>오른쪽</label><input class="ps-field" id="marginRight" max="150" min="0" step="0.1" type="number" value="30"/></div>
+<div class="ps-margin-item"><label>머리말</label><input class="ps-field" id="headerMargin" max="150" min="0" step="0.1" type="number" value="15"/></div>
+<div class="ps-margin-item"><label>꼬리말</label><input class="ps-field" id="footerMargin" max="150" min="0" step="0.1" type="number" value="15"/></div>
+</div>
+</section>
+<section class="ps-section">
+<div class="ps-section-title">제본</div>
+<div class="ps-segment four">
+<button class="ps-choice active" data-binding="none" type="button">없음</button>
+<button class="ps-choice" data-binding="left" type="button">왼쪽</button>
+<button class="ps-choice" data-binding="right" type="button">오른쪽</button>
+<button class="ps-choice" data-binding="top" type="button">위쪽</button>
+</div>
+<div class="ps-row" style="margin-top:10px">
+<div class="ps-label">제본 여백</div>
+<input class="ps-field" id="gutterMargin" max="100" min="0" step="0.1" type="number" value="0"/>
+</div>
+</section>
+<section class="ps-section">
+<div class="ps-section-title">적용 방식</div>
+<label class="ps-check">
+<input checked="" id="pageScreenPreview" type="checkbox"/>
+<span><b>화면에서도 용지 크기와 여백 표시</b><br/>비주얼 편집창을 실제 용지에 가까운 모습으로 보여줍니다.</span>
+</label>
+<label class="ps-check">
+<input checked="" id="pageHeaderFooterGuide" type="checkbox"/>
+<span><b>머리말·꼬리말 기준 저장</b><br/><code>.page-header</code>, <code>.page-footer</code> 요소가 있으면 위치 기준으로 사용합니다.</span>
+</label>
+</section>
+</div>
+<div class="ps-preview-wrap">
+<div class="ps-preview-card">
+<div class="ps-preview-title">
+<span>용지 미리보기</span>
+<span class="ps-preview-size" id="pagePreviewSize">210 × 297 mm</span>
+</div>
+<div class="paper-stage">
+<div class="paper-mini" id="paperMini">
+<div class="content-box" id="paperContentBox"></div>
+<div class="header-guide" id="paperHeaderGuide"><span>머리말</span></div>
+<div class="footer-guide" id="paperFooterGuide"><span>꼬리말</span></div>
+<div class="gutter-guide" id="paperGutterGuide"></div>
+</div>
+</div>
+<div class="ps-summary" id="pageSetupSummary"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="ps-bottom">
+<div class="ps-bottom-left">
+<button class="btn" id="pageSetupA4Reset" type="button">A4 기본값</button>
+<button class="btn" id="pageSetupReadDoc" type="button">현재 설정 다시 읽기</button>
+</div>
+<div class="ps-bottom-right">
+<button class="btn" data-close="pageSetupModal" type="button">취소</button>
+<button class="btn primary" id="pageSetupApply" type="button">적용</button>
+</div>
+</div>
+</div>
+</div>
 <div class="modal-backdrop" id="headerFooterModal">
-  <div class="modal hf-modal">
-    <h3>머리말 · 꼬리말</h3>
-    <div class="hf-grid">
-      <div class="hf-card">
-        <h4>머리말</h4>
-        <div class="hf-row">
-          <label>표시할 내용</label>
-          <input class="hf-input" id="headerText" placeholder="예: 역곡지구 하우스토리 입주예정자협의회">
-        </div>
-        <div class="hf-row">
-          <label>정렬</label>
-          <div class="hf-segment" id="headerAlignGroup">
-            <button class="hf-choice" data-halign="left" type="button">왼쪽</button>
-            <button class="hf-choice active" data-halign="center" type="button">가운데</button>
-            <button class="hf-choice" data-halign="right" type="button">오른쪽</button>
-          </div>
-        </div>
-        <label class="hf-check"><input id="headerEnabled" type="checkbox"> 머리말 표시</label>
-      </div>
-
-      <div class="hf-card">
-        <h4>꼬리말</h4>
-        <div class="hf-row">
-          <label>표시할 내용</label>
-          <input class="hf-input" id="footerText" placeholder="예: {page} / {pages}">
-        </div>
-        <div class="hf-row">
-          <label>정렬</label>
-          <div class="hf-segment" id="footerAlignGroup">
-            <button class="hf-choice" data-falign="left" type="button">왼쪽</button>
-            <button class="hf-choice active" data-falign="center" type="button">가운데</button>
-            <button class="hf-choice" data-falign="right" type="button">오른쪽</button>
-          </div>
-        </div>
-        <label class="hf-check"><input id="footerEnabled" type="checkbox"> 꼬리말 표시</label>
-      </div>
-    </div>
-
-    <div class="hf-grid" style="margin-top:12px">
-      <div class="hf-card">
-        <h4>페이지 표시 옵션</h4>
-        <label class="hf-check"><input id="hideHeaderFirst" type="checkbox"> 첫 페이지 머리말 숨김</label>
-        <label class="hf-check"><input id="hideFooterFirst" type="checkbox"> 첫 페이지 꼬리말 숨김</label>
-        <label class="hf-check"><input id="showPageNumberGuide" type="checkbox" checked> 페이지 번호 가이드 표시</label>
-      </div>
-      <div class="hf-card">
-        <h4>사용 가능한 기호</h4>
-        <div class="hf-tip">
-          <b>{page}</b> 현재 페이지 번호<br>
-          <b>{pages}</b> 전체 페이지 수<br><br>
-          예: <code>- {page} -</code> 또는 <code>{page} / {pages}</code>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn" data-close="headerFooterModal" type="button">취소</button>
-      <button class="btn primary" id="headerFooterApplyBtn" type="button">적용</button>
-    </div>
-  </div>
+<div class="modal hf-modal">
+<h3>머리말 · 꼬리말</h3>
+<div class="hf-grid">
+<div class="hf-card">
+<h4>머리말</h4>
+<div class="hf-row">
+<label>표시할 내용</label>
+<input class="hf-input" id="headerText" placeholder="예: 역곡지구 하우스토리 입주예정자협의회"/>
 </div>
-
-<div id="pagePrintRoot" aria-hidden="true"></div>
+<div class="hf-row">
+<label>정렬</label>
+<div class="hf-segment" id="headerAlignGroup">
+<button class="hf-choice" data-halign="left" type="button">왼쪽</button>
+<button class="hf-choice active" data-halign="center" type="button">가운데</button>
+<button class="hf-choice" data-halign="right" type="button">오른쪽</button>
+</div>
+</div>
+<label class="hf-check"><input id="headerEnabled" type="checkbox"/> 머리말 표시</label>
+</div>
+<div class="hf-card">
+<h4>꼬리말</h4>
+<div class="hf-row">
+<label>표시할 내용</label>
+<input class="hf-input" id="footerText" placeholder="예: {page} / {pages}"/>
+</div>
+<div class="hf-row">
+<label>정렬</label>
+<div class="hf-segment" id="footerAlignGroup">
+<button class="hf-choice" data-falign="left" type="button">왼쪽</button>
+<button class="hf-choice active" data-falign="center" type="button">가운데</button>
+<button class="hf-choice" data-falign="right" type="button">오른쪽</button>
+</div>
+</div>
+<label class="hf-check"><input id="footerEnabled" type="checkbox"/> 꼬리말 표시</label>
+</div>
+</div>
+<div class="hf-grid" style="margin-top:12px">
+<div class="hf-card">
+<h4>페이지 표시 옵션</h4>
+<label class="hf-check"><input id="hideHeaderFirst" type="checkbox"/> 첫 페이지 머리말 숨김</label>
+<label class="hf-check"><input id="hideFooterFirst" type="checkbox"/> 첫 페이지 꼬리말 숨김</label>
+<label class="hf-check"><input checked="" id="showPageNumberGuide" type="checkbox"/> 페이지 번호 가이드 표시</label>
+</div>
+<div class="hf-card">
+<h4>사용 가능한 기호</h4>
+<div class="hf-tip">
+<b>{page}</b> 현재 페이지 번호<br/>
+<b>{pages}</b> 전체 페이지 수<br/><br/>
+          예: <code>- {page} -</code> 또는 <code>{page} / {pages}</code>
+</div>
+</div>
+</div>
+<div class="modal-actions">
+<button class="btn" data-close="headerFooterModal" type="button">취소</button>
+<button class="btn primary" id="headerFooterApplyBtn" type="button">적용</button>
+</div>
+</div>
+</div>
+<div aria-hidden="true" id="pagePrintRoot"></div>
 <div class="toast" id="toast"></div>
-
 <script>
 (() => {
   'use strict';
@@ -2933,232 +2901,199 @@ ${preview?`@media screen{
   async function savePdfByPageOverlay(){
     const oldText=pdfSaveBtn.textContent;
     pdfSaveBtn.disabled=true;
-    pdfSaveBtn.textContent='PDF 준비 중…';
-    setStatus('PDF 내보내기 준비 중…');
+    pdfSaveBtn.textContent='PDF 생성 중…';
+    setStatus('PDF 생성 준비 중…');
 
     const doc=getDoc();
     const win=editorFrame?.contentWindow;
+    const isIOS=/iPad|iPhone|iPod/i.test(navigator.userAgent) ||
+      (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
 
-    if(!doc?.documentElement || !doc?.body || !win){
-      pdfSaveBtn.disabled=false;
-      pdfSaveBtn.textContent=oldText;
-      alert('PDF로 내보낼 문서를 찾을 수 없습니다.');
-      return;
+    let iosPreview=null;
+    if(isIOS){
+      try{
+        iosPreview=window.open('about:blank','_blank');
+        if(iosPreview){
+          iosPreview.document.write(
+            '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+
+            '<body style="font-family:-apple-system,sans-serif;padding:24px"><b>PDF 생성 중입니다.</b><br>잠시만 기다려 주세요.</body>'
+          );
+          iosPreview.document.close();
+        }
+      }catch(e){}
     }
 
+    let exportStyle=null;
+    let oldScrollY=0;
+
     const cleanup=()=>{
-      try{doc.documentElement.classList.remove('pdf-export');}catch(e){}
-      try{doc.getElementById('editorDynamicPdfPageStyle')?.remove();}catch(e){}
+      try{exportStyle?.remove();}catch(e){}
+      try{doc?.documentElement?.classList.remove('direct-pdf-export');}catch(e){}
+      try{win?.scrollTo(0,oldScrollY);}catch(e){}
       pdfSaveBtn.disabled=false;
       pdfSaveBtn.textContent=oldText;
-      setStatus(dirty?'수정됨 · 저장 필요':'편집 가능',dirty?'dirty':'saved');
-    };
-
-    const mmFromPx=px=>px*25.4/96;
-    const num=(v,fallback)=>{
-      const n=Number(v);
-      return Number.isFinite(n)?n:fallback;
     };
 
     try{
+      if(!doc?.body || !win) throw new Error('PDF로 내보낼 문서를 찾을 수 없습니다.');
+      if(typeof window.html2canvas!=='function') throw new Error('html2canvas를 불러오지 못했습니다.');
+      if(!window.jspdf?.jsPDF) throw new Error('jsPDF를 불러오지 못했습니다.');
+
       if(currentView==='source' || currentView==='split'){
         await applySourceBeforeSave();
       }
-
       await waitFrameResources(doc,2200);
 
-      /*
-       * 사용자가 제공한 작성용 HTML의 정상 동작 방식과 동일하게 처리한다.
-       * 별도의 출력용 iframe/팝업/페이지 복제를 만들지 않고
-       * 현재 편집 중인 문서 자체에 긴 @page를 잠시 적용한 뒤 그 문서를 바로 인쇄한다.
-       */
+      oldScrollY=win.scrollY||0;
 
-      // 이전 시도에서 남은 임시 출력 상태가 있으면 정리.
-      doc.documentElement.classList.remove('pdf-export');
-      doc.getElementById('editorDynamicPdfPageStyle')?.remove();
+      const setup=doc.getElementById('html-page-setup-style')?.dataset || {};
+      const num=(v,d)=>Number.isFinite(Number(v))?Number(v):d;
+      const pageWidthMm=Math.max(80,num(setup.width,210));
+      const mt=Math.max(0,num(setup.top,20));
+      const mb=Math.max(0,num(setup.bottom,20));
+      const ml=Math.max(0,num(setup.left,10));
+      const mr=Math.max(0,num(setup.right,10));
 
-      const setupEl=doc.getElementById('html-page-setup-style');
-      const ds=setupEl?.dataset || {};
+      doc.documentElement.classList.add('direct-pdf-export');
 
-      const pageWidth=Math.max(80,num(ds.width,210));
-      const marginTop=Math.max(0,num(ds.top,20));
-      const marginBottom=Math.max(0,num(ds.bottom,20));
-      const marginLeft=Math.max(0,num(ds.left,10));
-      const marginRight=Math.max(0,num(ds.right,10));
+      exportStyle=doc.createElement('style');
+      exportStyle.id='direct-pdf-export-style';
+      exportStyle.textContent=`
+        html.direct-pdf-export,
+        html.direct-pdf-export body{
+          width:${pageWidthMm}mm !important;
+          max-width:${pageWidthMm}mm !important;
+          min-width:${pageWidthMm}mm !important;
+          height:auto !important;
+          min-height:0 !important;
+          max-height:none !important;
+          margin:0 !important;
+          background:#fff !important;
+          box-shadow:none !important;
+          overflow:visible !important;
+        }
+        html.direct-pdf-export body{
+          padding:${mt}mm ${mr}mm ${mb}mm ${ml}mm !important;
+          box-sizing:border-box !important;
+        }
+        html.direct-pdf-export .provider-shell,
+        html.direct-pdf-export .provider-paper,
+        html.direct-pdf-export .form-page-shell,
+        html.direct-pdf-export .form-page,
+        html.direct-pdf-export [data-rp-root],
+        html.direct-pdf-export [data-rp-page],
+        html.direct-pdf-export [data-rp-body]{
+          position:static !important;inset:auto !important;transform:none !important;
+          width:100% !important;max-width:none !important;min-width:0 !important;
+          height:auto !important;min-height:0 !important;max-height:none !important;
+          margin:0 !important;padding:0 !important;border:0 !important;box-shadow:none !important;
+          overflow:visible !important;contain:none !important;
+        }
+        html.direct-pdf-export .document,
+        html.direct-pdf-export main.document{
+          width:100% !important;max-width:none !important;min-width:0 !important;
+          height:auto !important;min-height:0 !important;max-height:none !important;
+          margin:0 !important;padding:0 !important;overflow:visible !important;
+        }
+        html.direct-pdf-export #html-page-overlay-layer,
+        html.direct-pdf-export #pagePrintRoot,
+        html.direct-pdf-export .page-header,
+        html.direct-pdf-export .page-footer,
+        html.direct-pdf-export .no-print{display:none !important;}
+        html.direct-pdf-export [data-editor-cell-selected]{outline:none !important;box-shadow:none !important;}
+      `;
+      doc.head.appendChild(exportStyle);
 
-      /*
-       * 참고 코드처럼 "화면에 현재 보이는 종이 전체"의 높이를 그대로 사용한다.
-       * provider-paper가 있으면 그것을 최우선으로 쓰고,
-       * 없으면 document → body 순으로 실제 전체 높이를 측정한다.
-       */
-      const paper=
+      await new Promise(r=>win.requestAnimationFrame(()=>win.requestAnimationFrame(r)));
+
+      const target=
         doc.querySelector('.provider-paper') ||
         doc.querySelector('.form-page') ||
         doc.querySelector('main.document') ||
         doc.querySelector('.document') ||
         doc.body;
 
-      const rect=paper.getBoundingClientRect();
-      const px=Math.max(
-        paper.scrollHeight || 0,
-        paper.offsetHeight || 0,
-        rect.height || 0
-      );
+      const rect=target.getBoundingClientRect();
+      const sourceWidth=Math.ceil(Math.max(target.scrollWidth,target.offsetWidth,rect.width));
+      const sourceHeight=Math.ceil(Math.max(target.scrollHeight,target.offsetHeight,rect.height));
+      if(sourceWidth<10 || sourceHeight<10) throw new Error('문서 크기를 계산하지 못했습니다.');
 
-      // 참고 파일과 동일하게 소수점 렌더링 오차 방지용 12mm 여유만 추가.
-      let heightMm=Math.ceil(mmFromPx(px)+12);
+      // iOS Canvas 메모리 한계 대비
+      const maxPixels=isIOS ? 11_500_000 : 24_000_000;
+      const scale=Math.max(0.40,Math.min(1,Math.sqrt(maxPixels/(sourceWidth*sourceHeight))));
+      setStatus(`PDF 렌더링 중… ${Math.round(scale*100)}%`);
 
-      // 최소 A4 한 장보다 짧은 문서도 화면 레이아웃이 찌그러지지 않게 한다.
-      heightMm=Math.max(297,heightMm);
-
-      if(heightMm>5000){
-        throw new Error(
-          `문서 높이가 약 ${heightMm}mm로 브라우저의 단일 PDF 페이지 한도를 초과할 수 있습니다.`
-        );
-      }
-
-      const style=doc.createElement('style');
-      style.id='editorDynamicPdfPageStyle';
-      style.textContent=`
-        @page{
-          size:${pageWidth}mm ${heightMm}mm;
-          margin:0;
-
-          @top-left{content:none !important;}
-          @top-center{content:none !important;}
-          @top-right{content:none !important;}
-          @bottom-left{content:none !important;}
-          @bottom-center{content:none !important;}
-          @bottom-right{content:none !important;}
-        }
-
-        @media print{
-          .no-print,
-          #html-page-overlay-layer,
-          #pagePrintRoot,
-          .page-header,
-          .page-footer{
-            display:none !important;
-          }
-
-          html.pdf-export,
-          html.pdf-export body{
-            width:${pageWidth}mm !important;
-            max-width:${pageWidth}mm !important;
-            min-width:${pageWidth}mm !important;
-            min-height:0 !important;
-            height:auto !important;
-            margin:0 !important;
-            padding:0 !important;
-            background:#fff !important;
-            box-shadow:none !important;
-            overflow:visible !important;
-          }
-
-          /*
-           * 실제 작성용 HTML에서 한 페이지 출력이 잘 되는 구조와 맞춘다.
-           * 용지 여백은 body 한 곳에서만 적용하고, 내부 가상 종이 여백은 제거한다.
-           */
-          html.pdf-export body{
-            padding:${marginTop}mm ${marginRight}mm ${marginBottom}mm ${marginLeft}mm !important;
-            box-sizing:border-box !important;
-          }
-
-          html.pdf-export .provider-shell,
-          html.pdf-export .provider-paper,
-          html.pdf-export .form-page-shell,
-          html.pdf-export .form-page,
-          html.pdf-export [data-rp-root],
-          html.pdf-export [data-rp-page],
-          html.pdf-export [data-rp-body]{
-            position:static !important;
-            inset:auto !important;
-            transform:none !important;
-            width:100% !important;
-            max-width:none !important;
-            min-width:0 !important;
-            height:auto !important;
-            min-height:0 !important;
-            max-height:none !important;
-            margin:0 !important;
-            padding:0 !important;
-            border:0 !important;
-            box-shadow:none !important;
-            overflow:visible !important;
-            contain:none !important;
-          }
-
-          html.pdf-export .document,
-          html.pdf-export main.document{
-            width:100% !important;
-            max-width:none !important;
-            min-width:0 !important;
-            height:auto !important;
-            min-height:0 !important;
-            max-height:none !important;
-            margin:0 !important;
-            padding:0 !important;
-            overflow:visible !important;
-          }
-
-          /*
-           * 문서 내부에 남아 있는 A4 강제 나눔을 전부 무효화한다.
-           * 별지의 .doc-part + .doc-part 같은 규칙도 여기서 덮어쓴다.
-           */
-          html.pdf-export *,
-          html.pdf-export *::before,
-          html.pdf-export *::after{
-            break-before:auto !important;
-            page-break-before:auto !important;
-            break-after:auto !important;
-            page-break-after:auto !important;
-            break-inside:auto !important;
-            page-break-inside:auto !important;
-          }
-
-          html.pdf-export [data-editor-cell-selected]{
-            outline:none !important;
-            box-shadow:none !important;
-          }
-        }
-      `;
-      doc.head.appendChild(style);
-      doc.documentElement.classList.add('pdf-export');
-
-      // 출력 CSS 적용 완료 후 인쇄.
-      await new Promise(resolve=>{
-        win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve));
+      const canvas=await window.html2canvas(target,{
+        backgroundColor:'#ffffff',
+        scale,
+        useCORS:true,
+        allowTaint:false,
+        logging:false,
+        scrollX:0,
+        scrollY:0,
+        windowWidth:sourceWidth,
+        windowHeight:sourceHeight,
+        width:sourceWidth,
+        height:sourceHeight,
+        foreignObjectRendering:false
       });
 
-      setStatus('인쇄 창에서 PDF로 저장을 선택하세요.');
-      toast('인쇄 창에서 “PDF로 저장”을 선택하세요.');
+      if(!canvas?.width || !canvas?.height) throw new Error('문서 렌더링에 실패했습니다.');
 
-      const afterPrint=()=>{
-        cleanup();
-        try{win.removeEventListener('afterprint',afterPrint);}catch(e){}
-      };
-      try{win.addEventListener('afterprint',afterPrint,{once:true});}catch(e){}
+      const ratio=canvas.height/canvas.width;
+      let pdfWidthPt=595.28;
+      let pdfHeightPt=pdfWidthPt*ratio;
 
-      /*
-       * 핵심: 출력용 복제창이 아니라 현재 editorFrame 문서 자체를 print().
-       * 사용자가 준 정상 동작 HTML의 window.print() 방식과 동일한 구조다.
-       */
-      win.focus();
-      win.print();
+      // PDF 한 페이지 최대 크기 근처를 넘으면 전체 비율을 유지한 채 축소
+      if(pdfHeightPt>14350){
+        const f=14350/pdfHeightPt;
+        pdfWidthPt*=f;
+        pdfHeightPt=14350;
+      }
 
-      // Edge 환경에서 afterprint가 발생하지 않는 경우에만 늦게 정리.
-      setTimeout(()=>{
-        if(doc.documentElement.classList.contains('pdf-export')){
-          cleanup();
-          try{win.removeEventListener('afterprint',afterPrint);}catch(e){}
+      const {jsPDF}=window.jspdf;
+      const pdf=new jsPDF({
+        orientation:'portrait',
+        unit:'pt',
+        format:[pdfWidthPt,pdfHeightPt],
+        compress:true
+      });
+
+      const jpeg=canvas.toDataURL('image/jpeg',0.92);
+      pdf.addImage(jpeg,'JPEG',0,0,pdfWidthPt,pdfHeightPt,undefined,'FAST');
+
+      const blob=pdf.output('blob');
+      const url=URL.createObjectURL(blob);
+      const fileName=((currentName||'document.html').replace(/\.(html?|HTML?)$/,'')||'document')+'.pdf';
+
+      cleanup();
+
+      if(isIOS){
+        if(iosPreview && !iosPreview.closed){
+          iosPreview.location.replace(url);
+        }else{
+          const a=document.createElement('a');
+          a.href=url;a.target='_blank';a.rel='noopener';
+          document.body.appendChild(a);a.click();a.remove();
         }
-      },30000);
+        setTimeout(()=>URL.revokeObjectURL(url),120000);
+        setStatus('PDF 생성 완료');
+        toast('PDF가 새 화면에 열렸습니다.');
+      }else{
+        const a=document.createElement('a');
+        a.href=url;a.download=fileName;
+        document.body.appendChild(a);a.click();a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url),30000);
+        setStatus('PDF 생성 완료');
+        toast('PDF 파일을 생성했습니다.');
+      }
 
     }catch(err){
       console.error(err);
       cleanup();
-      setStatus('PDF 준비 실패','dirty');
-      alert('PDF 내보내기를 준비하지 못했습니다.\\n'+(err?.message||err));
+      try{iosPreview?.close();}catch(e){}
+      setStatus('PDF 생성 실패','dirty');
+      alert('PDF 내보내기를 완료하지 못했습니다.\n'+(err?.message||err));
     }
   }
 
