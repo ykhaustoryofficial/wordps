@@ -707,7 +707,7 @@ body.fullscreen .workspace{border-radius:0}
 }
 
 </style>
-<script crossorigin="anonymous" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script><script crossorigin="anonymous" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script><style id="iphone-ui-and-pdf-modal-style">
+<style id="iphone-ui-and-pdf-modal-style">
 /* ===== iPhone / 모바일 UI 보강 ===== */
 @media(max-width:700px){
   html,body{
@@ -984,6 +984,215 @@ body.fullscreen .workspace{border-radius:0}
   }
   .pdf-ready-actions .pdf-ready-btn.primary{
     grid-column:1 / -1;
+  }
+}
+</style><style id="iphone-ui-final-fix">
+/* ===== iPhone 최종 UI 보강 ===== */
+@supports (height:100dvh){
+  @media(max-width:700px){
+    .app{height:100dvh !important;min-height:100dvh !important}
+  }
+}
+@media(max-width:700px){
+  html,body{
+    width:100% !important;
+    height:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:hidden !important;
+    background:#f7f7fb !important;
+  }
+
+  .app{
+    width:100% !important;
+    height:100vh;
+    min-height:100vh;
+    padding:0 !important;
+    grid-template-rows:auto auto minmax(0,1fr) !important;
+    overflow:hidden !important;
+  }
+
+  .topbar{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    gap:5px 8px !important;
+    padding:7px 8px 6px !important;
+    min-height:0 !important;
+    border-bottom:1px solid #ebe8f1 !important;
+    background:#fff !important;
+  }
+
+  .brand{
+    min-width:0 !important;
+    width:auto !important;
+    margin:0 !important;
+  }
+  .brand-title{
+    font-size:14px !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+  .brand-sub{display:none !important}
+  .status{display:none !important}
+
+  .tabs{
+    grid-column:1 / -1 !important;
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    width:100% !important;
+    margin:0 !important;
+    padding:3px !important;
+    gap:3px !important;
+  }
+  .tab{
+    display:block !important;
+    min-width:0 !important;
+    width:100% !important;
+    height:30px !important;
+    padding:0 4px !important;
+    font-size:11px !important;
+  }
+
+  .top-actions{
+    grid-column:1 / -1 !important;
+    display:flex !important;
+    width:100% !important;
+    min-width:0 !important;
+    flex-wrap:nowrap !important;
+    justify-content:flex-start !important;
+    gap:5px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    padding:1px 0 2px !important;
+    -webkit-overflow-scrolling:touch !important;
+    scrollbar-width:none !important;
+  }
+  .top-actions::-webkit-scrollbar{display:none !important}
+  .top-actions .btn{
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    flex:0 0 auto !important;
+    height:32px !important;
+    padding:0 9px !important;
+    font-size:10.5px !important;
+  }
+
+  .toolbar-shell{
+    margin:0 !important;
+    padding:4px !important;
+    border:0 !important;
+    border-bottom:1px solid #ece9f2 !important;
+    border-radius:0 !important;
+    background:#fff !important;
+    box-shadow:none !important;
+  }
+  .toolbar{
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    width:100% !important;
+    min-width:0 !important;
+    gap:4px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+    scrollbar-width:none !important;
+  }
+  .toolbar::-webkit-scrollbar{display:none !important}
+  .group,.group.grow{
+    flex:0 0 auto !important;
+    min-width:auto !important;
+  }
+
+  .workspace{
+    position:relative !important;
+    width:100% !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    height:auto !important;
+    border:0 !important;
+    border-radius:0 !important;
+    background:#fff !important;
+    box-shadow:none !important;
+  }
+  .visual-pane,.source-pane{
+    min-width:0 !important;
+    min-height:0 !important;
+  }
+  .visual-pane{
+    display:flex !important;
+    padding:0 !important;
+    background:#fff !important;
+  }
+  .frame-shell{
+    display:block;
+    width:100% !important;
+    height:100% !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    border:0 !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+    background:#fff !important;
+  }
+  #editorFrame{
+    display:block !important;
+    width:100% !important;
+    height:100% !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    border:0 !important;
+    background:#fff !important;
+  }
+
+  .empty-card{
+    width:calc(100% - 24px) !important;
+    padding:22px 16px !important;
+  }
+
+  .pdf-ready-backdrop{
+    padding:max(12px,env(safe-area-inset-bottom)) 12px 12px !important;
+  }
+  .pdf-ready-card{
+    border-radius:18px !important;
+    padding:16px !important;
+  }
+}
+</style><style id="iphone-width-fix-v3">
+@media(max-width:700px){
+  html,body{
+    width:100% !important;
+    max-width:100vw !important;
+    min-width:0 !important;
+    overflow-x:hidden !important;
+  }
+  .app,
+  .topbar,
+  .toolbar-shell,
+  .workspace{
+    width:100% !important;
+    max-width:100vw !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+    overflow-x:hidden !important;
+  }
+  .topbar>*,
+  .toolbar-shell>*,
+  .workspace>*{
+    min-width:0 !important;
+  }
+  .tabs{
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+  .tab{
+    min-width:0 !important;
+    width:auto !important;
+  }
+  .top-actions,
+  .toolbar{
+    min-width:0 !important;
+    max-width:100% !important;
   }
 }
 </style></head>
@@ -3212,11 +3421,86 @@ ${preview?`@media screen{
     }
   }
 
+
+  let pdfLibraryPromise=null;
+
+  function loadRemoteScript(url,timeout=12000){
+    return new Promise((resolve,reject)=>{
+      const existing=[...document.scripts].find(s=>s.src===url);
+      if(existing){
+        if(existing.dataset.loaded==='1'){resolve();return;}
+        existing.addEventListener('load',()=>resolve(),{once:true});
+        existing.addEventListener('error',()=>reject(new Error('스크립트 로드 실패')), {once:true});
+        return;
+      }
+
+      const s=document.createElement('script');
+      s.src=url;
+      s.async=true;
+      const timer=setTimeout(()=>{
+        try{s.remove();}catch(e){}
+        reject(new Error('스크립트 로드 시간 초과'));
+      },timeout);
+
+      s.onload=()=>{
+        clearTimeout(timer);
+        s.dataset.loaded='1';
+        resolve();
+      };
+      s.onerror=()=>{
+        clearTimeout(timer);
+        try{s.remove();}catch(e){}
+        reject(new Error('스크립트 로드 실패'));
+      };
+      document.head.appendChild(s);
+    });
+  }
+
+  async function loadWithFallback(urls,test){
+    if(test()) return;
+    let lastErr=null;
+    for(const url of urls){
+      try{
+        await loadRemoteScript(url);
+        if(test()) return;
+      }catch(err){
+        lastErr=err;
+      }
+    }
+    throw lastErr || new Error('필요한 PDF 모듈을 불러오지 못했습니다.');
+  }
+
+  async function ensurePdfLibraries(){
+    if(window.html2canvas && window.jspdf?.jsPDF) return;
+    if(pdfLibraryPromise) return pdfLibraryPromise;
+
+    pdfLibraryPromise=(async()=>{
+      await loadWithFallback([
+        'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js',
+        'https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'
+      ],()=>typeof window.html2canvas==='function');
+
+      await loadWithFallback([
+        'https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js',
+        'https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js'
+      ],()=>!!window.jspdf?.jsPDF);
+    })();
+
+    try{
+      await pdfLibraryPromise;
+    }catch(err){
+      pdfLibraryPromise=null;
+      throw err;
+    }
+  }
+
   async function savePdfByPageOverlay(){
     const oldText=pdfSaveBtn.textContent;
     pdfSaveBtn.disabled=true;
-    pdfSaveBtn.textContent='PDF 생성 중…';
-    setStatus('PDF 생성 준비 중…');
+    pdfSaveBtn.textContent='PDF 준비 중…';
+    setStatus('PDF 모듈 확인 중…');
 
     const doc=getDoc();
     const win=editorFrame?.contentWindow;
@@ -3232,15 +3516,18 @@ ${preview?`@media screen{
     };
 
     try{
-      if(!doc?.body || !win) throw new Error('PDF로 내보낼 문서를 찾을 수 없습니다.');
-      if(typeof window.html2canvas!=='function') throw new Error('PDF 렌더링 모듈을 불러오지 못했습니다.');
-      if(!window.jspdf?.jsPDF) throw new Error('PDF 생성 모듈을 불러오지 못했습니다.');
+      if(!doc?.body || !win){
+        throw new Error('PDF로 내보낼 문서를 찾을 수 없습니다.');
+      }
+
+      // iPhone에서 cdnjs가 막히는 경우가 있어 jsDelivr → unpkg → cdnjs 순으로 자동 재시도.
+      await ensurePdfLibraries();
 
       if(currentView==='source' || currentView==='split'){
         await applySourceBeforeSave();
       }
 
-      await waitFrameResources(doc,2200);
+      await waitFrameResources(doc,2400);
       oldScrollY=win.scrollY||0;
 
       const setup=doc.getElementById('html-page-setup-style')?.dataset || {};
@@ -3269,10 +3556,12 @@ ${preview?`@media screen{
           box-shadow:none !important;
           overflow:visible !important;
         }
+
         html.direct-pdf-export body{
           padding:${mt}mm ${mr}mm ${mb}mm ${ml}mm !important;
           box-sizing:border-box !important;
         }
+
         html.direct-pdf-export .provider-shell,
         html.direct-pdf-export .provider-paper,
         html.direct-pdf-export .form-page-shell,
@@ -3280,18 +3569,36 @@ ${preview?`@media screen{
         html.direct-pdf-export [data-rp-root],
         html.direct-pdf-export [data-rp-page],
         html.direct-pdf-export [data-rp-body]{
-          position:static !important;inset:auto !important;transform:none !important;
-          width:100% !important;max-width:none !important;min-width:0 !important;
-          height:auto !important;min-height:0 !important;max-height:none !important;
-          margin:0 !important;padding:0 !important;border:0 !important;box-shadow:none !important;
-          overflow:visible !important;contain:none !important;
+          position:static !important;
+          inset:auto !important;
+          transform:none !important;
+          width:100% !important;
+          max-width:none !important;
+          min-width:0 !important;
+          height:auto !important;
+          min-height:0 !important;
+          max-height:none !important;
+          margin:0 !important;
+          padding:0 !important;
+          border:0 !important;
+          box-shadow:none !important;
+          overflow:visible !important;
+          contain:none !important;
         }
+
         html.direct-pdf-export .document,
         html.direct-pdf-export main.document{
-          width:100% !important;max-width:none !important;min-width:0 !important;
-          height:auto !important;min-height:0 !important;max-height:none !important;
-          margin:0 !important;padding:0 !important;overflow:visible !important;
+          width:100% !important;
+          max-width:none !important;
+          min-width:0 !important;
+          height:auto !important;
+          min-height:0 !important;
+          max-height:none !important;
+          margin:0 !important;
+          padding:0 !important;
+          overflow:visible !important;
         }
+
         html.direct-pdf-export #html-page-overlay-layer,
         html.direct-pdf-export #pagePrintRoot,
         html.direct-pdf-export .page-header,
@@ -3299,6 +3606,16 @@ ${preview?`@media screen{
         html.direct-pdf-export .no-print{
           display:none !important;
         }
+
+        html.direct-pdf-export *,
+        html.direct-pdf-export *::before,
+        html.direct-pdf-export *::after{
+          break-before:auto !important;
+          page-break-before:auto !important;
+          break-after:auto !important;
+          page-break-after:auto !important;
+        }
+
         html.direct-pdf-export [data-editor-cell-selected]{
           outline:none !important;
           box-shadow:none !important;
@@ -3323,23 +3640,22 @@ ${preview?`@media screen{
         throw new Error('문서 크기를 계산하지 못했습니다.');
       }
 
-      /*
-       * iPhone에서 긴 문서를 한 번에 거대한 Canvas로 만들면 WebKit 메모리 한계 때문에
-       * 흰 화면 후 실패할 수 있다. 따라서 세로 방향으로 잘게 나누어 캡처한 뒤
-       * 같은 PDF 1페이지 위에 순서대로 이어 붙인다.
-       */
-      const isIOS=/iPad|iPhone|iPod/i.test(navigator.userAgent) ||
+      const isIOS=
+        /iPad|iPhone|iPod/i.test(navigator.userAgent) ||
         (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
 
-      const chunkCssHeight=isIOS ? 1050 : 1800;
-      const renderScale=isIOS ? 1 : 1.15;
+      /*
+       * iPhone WebKit에서 긴 문서를 거대한 Canvas 하나로 만들면 메모리 초과가 나기 쉽다.
+       * 세로 조각 단위로 렌더링하고 같은 PDF 1페이지 위에 이어 붙인다.
+       */
+      const chunkHeight=isIOS ? 850 : 1400;
+      const renderScale=isIOS ? 1.05 : 1.25;
+      const totalChunks=Math.ceil(sourceHeight/chunkHeight);
 
-      // PDF 1페이지 비율 계산
-      const ratio=sourceHeight/sourceWidth;
       let pdfWidthPt=595.28;
-      let pdfHeightPt=pdfWidthPt*ratio;
+      let pdfHeightPt=pdfWidthPt*(sourceHeight/sourceWidth);
 
-      // PDF 표준 단일 페이지 크기 상한 근처를 넘으면 전체 크기를 비례 축소
+      // 단일 PDF 페이지 최대 크기 근처를 넘는 경우 전체 비율 유지하며 축소.
       if(pdfHeightPt>14350){
         const f=14350/pdfHeightPt;
         pdfWidthPt*=f;
@@ -3354,14 +3670,13 @@ ${preview?`@media screen{
         compress:true
       });
 
-      const totalChunks=Math.ceil(sourceHeight/chunkCssHeight);
       const pdfScale=pdfWidthPt/sourceWidth;
 
       for(let i=0;i<totalChunks;i++){
-        const y=i*chunkCssHeight;
-        const h=Math.min(chunkCssHeight,sourceHeight-y);
+        const y=i*chunkHeight;
+        const h=Math.min(chunkHeight,sourceHeight-y);
 
-        setStatus(`PDF 렌더링 중… ${i+1}/${totalChunks}`);
+        setStatus(`PDF 생성 중… ${i+1}/${totalChunks}`);
 
         const canvas=await window.html2canvas(target,{
           backgroundColor:'#ffffff',
@@ -3369,13 +3684,13 @@ ${preview?`@media screen{
           useCORS:true,
           allowTaint:false,
           logging:false,
-          imageTimeout:8000,
-          scrollX:0,
-          scrollY:0,
-          width:sourceWidth,
-          height:h,
+          imageTimeout:10000,
           x:0,
           y:y,
+          width:sourceWidth,
+          height:h,
+          scrollX:0,
+          scrollY:0,
           windowWidth:sourceWidth,
           windowHeight:sourceHeight,
           foreignObjectRendering:false,
@@ -3386,12 +3701,12 @@ ${preview?`@media screen{
           throw new Error(`문서 렌더링에 실패했습니다. (${i+1}/${totalChunks})`);
         }
 
-        const img=canvas.toDataURL('image/jpeg',0.90);
+        const imgData=canvas.toDataURL('image/jpeg',0.90);
         const yPt=y*pdfScale;
         const hPt=h*pdfScale;
 
         pdf.addImage(
-          img,
+          imgData,
           'JPEG',
           0,yPt,
           pdfWidthPt,hPt,
@@ -3399,7 +3714,6 @@ ${preview?`@media screen{
           'FAST'
         );
 
-        // iOS 메모리 회수 유도
         canvas.width=1;
         canvas.height=1;
         await new Promise(r=>setTimeout(r,0));
@@ -3408,19 +3722,20 @@ ${preview?`@media screen{
       setStatus('PDF 파일 생성 중…');
 
       const blob=pdf.output('blob');
-      const fileName=((currentName||'document.html').replace(/\.(html?|HTML?)$/,'')||'document')+'.pdf';
+      const fileName=
+        ((currentName||'document.html').replace(/\.(html?|HTML?)$/,'')||'document')+'.pdf';
 
       cleanup();
-      showPdfReady(blob,fileName);
 
+      // iPhone에서는 자동 새 창을 열지 않고 현재 화면에서 완료 안내 후,
+      // 사용자가 직접 "PDF 저장·공유"를 눌러 iOS 공유 시트를 연다.
+      showPdfReady(blob,fileName);
       setStatus('PDF 생성 완료');
       toast('PDF가 준비되었습니다.');
 
-      // PC/데스크톱에서는 기존처럼 자동 다운로드
       if(!isIOS){
-        const url=generatedPdfUrl;
         const a=document.createElement('a');
-        a.href=url;
+        a.href=generatedPdfUrl;
         a.download=fileName;
         document.body.appendChild(a);
         a.click();
@@ -3431,7 +3746,13 @@ ${preview?`@media screen{
       console.error(err);
       cleanup();
       setStatus('PDF 생성 실패','dirty');
-      alert('PDF 내보내기를 완료하지 못했습니다.\n'+(err?.message||err));
+
+      const msg=
+        'PDF 내보내기를 완료하지 못했습니다.\n'+
+        (err?.message||err)+
+        '\n\n인터넷 연결 상태에서 다시 시도해 주세요.';
+
+      alert(msg);
     }
   }
 
@@ -3611,6 +3932,7 @@ pre{white-space:pre-wrap}
     fileHandle = handle;
     if(asOriginal) originalHtml = raw;
     fileName.textContent = currentName;
+
     const keepSplit = currentView === 'split';
     sourcePane.style.display = keepSplit ? 'block' : 'none';
     visualPane.style.display = 'flex';
@@ -3619,26 +3941,59 @@ pre{white-space:pre-wrap}
     visualTab.classList.toggle('active', !keepSplit);
     sourceTab.classList.remove('active');
     splitTab.classList.toggle('active', keepSplit);
+
     selectedCells = new Set();
     anchorCell = null;
     cellSelectMode = false;
     draggingCells = false;
     cellSelectBtn.classList.remove('active');
+
     emptyState.style.display = 'none';
     frameShell.style.display = 'block';
+    frameShell.style.visibility = 'visible';
+    frame.style.display = 'block';
+    frame.style.visibility = 'visible';
+
     setStatus('불러오는 중…');
-    frame.srcdoc = raw;
+
+    // iOS에서 srcdoc 자체보다 "srcdoc 지정 전에 onload를 먼저 연결"하는 것이 중요하다.
+    // Blob URL은 iframe을 별도 origin으로 취급하는 환경이 있어 편집기 접근이 막힐 수 있으므로 사용하지 않는다.
     frame.onload = async () => {
-      attachDocListeners();
-      applyMode(editMode);
-      await waitFrameResources(getDoc());
-      if(asOriginal){ dirty=false; setStatus('편집 가능','saved'); }
-      else { markDirty(); }
-      updateCounts();
-      updateFormatState();
-      updateCurrentBlockStyle();
-      restorePageEngineAfterFrameReload();
+      try{
+        attachDocListeners();
+        applyMode(editMode);
+        await waitFrameResources(getDoc(),2200);
+
+        if(asOriginal){
+          dirty=false;
+          setStatus('편집 가능','saved');
+        }else{
+          markDirty();
+        }
+
+        updateCounts();
+        updateFormatState();
+        updateCurrentBlockStyle();
+        restorePageEngineAfterFrameReload();
+
+        frameShell.style.display='block';
+        frameShell.style.visibility='visible';
+        frame.style.display='block';
+        frame.style.visibility='visible';
+      }catch(err){
+        console.error(err);
+        setStatus('불러오기 오류','dirty');
+      }
     };
+
+    // 이전 Blob 방식의 흔적이 있다면 제거
+    if(frame._editorBlobUrl){
+      try{URL.revokeObjectURL(frame._editorBlobUrl);}catch(e){}
+      frame._editorBlobUrl='';
+    }
+
+    frame.removeAttribute('src');
+    frame.srcdoc=raw;
   }
 
   function waitFrameResources(doc,timeout=1200){
@@ -5838,7 +6193,6 @@ pre{white-space:pre-wrap}
   }catch(e){}
 })();
 </script>
-
 <div aria-hidden="true" class="pdf-ready-backdrop" id="pdfReadyBackdrop">
 <div aria-labelledby="pdfReadyTitle" aria-modal="true" class="pdf-ready-card" role="dialog">
 <div class="pdf-ready-title" id="pdfReadyTitle">PDF 생성 완료</div>
