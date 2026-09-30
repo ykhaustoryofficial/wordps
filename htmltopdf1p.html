@@ -707,7 +707,286 @@ body.fullscreen .workspace{border-radius:0}
 }
 
 </style>
-<script crossorigin="anonymous" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script><script crossorigin="anonymous" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script></head>
+<script crossorigin="anonymous" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script><script crossorigin="anonymous" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script><style id="iphone-ui-and-pdf-modal-style">
+/* ===== iPhone / 모바일 UI 보강 ===== */
+@media(max-width:700px){
+  html,body{
+    width:100%;
+    height:100%;
+    margin:0;
+    padding:0;
+    overflow:hidden;
+    background:#f6f7fb;
+    -webkit-text-size-adjust:100%;
+  }
+
+  .app{
+    height:100dvh;
+    min-height:100dvh;
+    padding:0;
+    display:grid;
+    grid-template-rows:auto auto minmax(0,1fr);
+    background:#f6f7fb;
+  }
+
+  .topbar{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:center;
+    gap:6px 8px;
+    min-height:0;
+    padding:7px 8px 6px;
+    background:rgba(255,255,255,.98);
+    border-bottom:1px solid #eceaf2;
+  }
+
+  .brand{
+    min-width:0;
+    width:auto;
+    flex:none;
+    gap:7px;
+  }
+
+  .logo{
+    width:30px;
+    height:30px;
+    border-radius:10px;
+    font-size:14px;
+  }
+
+  .brand-title{
+    font-size:13px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .brand-sub{display:none}
+
+  .status{
+    margin-left:0;
+    min-width:0;
+    max-width:128px;
+    justify-content:flex-end;
+    font-size:9.5px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .tabs{
+    grid-column:1 / -1;
+    order:3;
+    width:100%;
+    margin:0;
+    padding:3px;
+    border-radius:10px;
+  }
+
+  .tab{
+    flex:1 1 0;
+    min-width:0;
+    height:31px;
+    padding:0 6px;
+    font-size:11px;
+  }
+
+  .top-actions{
+    grid-column:1 / -1;
+    order:4;
+    width:100%;
+    display:flex;
+    flex-wrap:nowrap;
+    justify-content:flex-start;
+    gap:5px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding:1px 0 2px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+
+  .top-actions::-webkit-scrollbar{display:none}
+
+  .top-actions .btn{
+    flex:0 0 auto;
+    height:33px;
+    padding:0 9px;
+    border-radius:9px;
+    font-size:10.5px;
+  }
+
+  .toolbar-shell{
+    margin:0;
+    padding:4px;
+    border-left:0;
+    border-right:0;
+    border-radius:0;
+    box-shadow:none;
+    background:#fff;
+  }
+
+  .toolbar{
+    width:100%;
+    display:flex;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    overflow-y:hidden;
+    gap:4px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+
+  .toolbar::-webkit-scrollbar{display:none}
+
+  .group,
+  .group.grow{
+    flex:0 0 auto;
+    min-width:auto;
+    padding:2px 3px;
+  }
+
+  .tool{
+    min-width:31px;
+    height:31px;
+    padding:0 7px;
+    font-size:10.5px;
+  }
+
+  select.tool-select{
+    height:31px;
+    max-width:92px;
+    font-size:10.5px;
+  }
+
+  .format-state,
+  .mode-note{
+    display:none;
+  }
+
+  .workspace{
+    min-height:0;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+    background:#fff;
+  }
+
+  .visual-pane{
+    padding:0;
+    background:#fff;
+  }
+
+  .frame-shell{
+    width:100%;
+    height:100%;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+  }
+
+  .count-chip{
+    right:8px;
+    bottom:8px;
+    height:24px;
+    font-size:9px;
+  }
+
+  .source-pane textarea{
+    padding:12px;
+    font-size:12px;
+    line-height:1.55;
+  }
+
+  .workspace.split-mode .visual-pane{
+    left:0;
+    right:0;
+    top:0;
+    bottom:50%;
+    padding:0;
+  }
+
+  .workspace.split-mode .source-pane{
+    left:0;
+    right:0;
+    top:50%;
+    bottom:0;
+  }
+}
+
+/* ===== PDF 생성 완료 모달 ===== */
+.pdf-ready-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  padding:14px;
+  background:rgba(24,28,38,.36);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+.pdf-ready-backdrop.open{display:flex}
+
+.pdf-ready-card{
+  width:min(460px,100%);
+  border:1px solid #e7e3ee;
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 24px 70px rgba(28,31,45,.24);
+  padding:18px;
+}
+
+.pdf-ready-title{
+  font-size:17px;
+  font-weight:900;
+  color:#34394c;
+}
+
+.pdf-ready-desc{
+  margin-top:6px;
+  color:#7b8192;
+  font-size:12px;
+  line-height:1.55;
+}
+
+.pdf-ready-actions{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+  margin-top:15px;
+}
+
+.pdf-ready-btn{
+  min-height:46px;
+  border:1px solid #ddd7e8;
+  border-radius:13px;
+  background:#fff;
+  color:#383d50;
+  font-size:13px;
+  font-weight:850;
+}
+
+.pdf-ready-btn.primary{
+  border-color:transparent;
+  color:#fff;
+  background:linear-gradient(135deg,#ff7eae,#9d8df5);
+}
+
+.pdf-ready-btn.secondary{
+  background:#f8f7fb;
+}
+
+@media(min-width:701px){
+  .pdf-ready-backdrop{align-items:center}
+  .pdf-ready-actions{
+    grid-template-columns:1fr 1fr;
+  }
+  .pdf-ready-actions .pdf-ready-btn.primary{
+    grid-column:1 / -1;
+  }
+}
+</style></head>
 <body>
 <div class="app">
 <header class="topbar">
@@ -2898,6 +3177,41 @@ ${preview?`@media screen{
     return {pages,setup,totalH};
   }
 
+
+  let generatedPdfBlob=null;
+  let generatedPdfUrl='';
+  let generatedPdfFileName='document.pdf';
+
+  function clearGeneratedPdf(){
+    if(generatedPdfUrl){
+      try{URL.revokeObjectURL(generatedPdfUrl);}catch(e){}
+    }
+    generatedPdfBlob=null;
+    generatedPdfUrl='';
+    generatedPdfFileName='document.pdf';
+  }
+
+  function showPdfReady(blob,fileName){
+    clearGeneratedPdf();
+    generatedPdfBlob=blob;
+    generatedPdfFileName=fileName||'document.pdf';
+    generatedPdfUrl=URL.createObjectURL(blob);
+
+    const back=$('#pdfReadyBackdrop');
+    if(back){
+      back.classList.add('open');
+      back.setAttribute('aria-hidden','false');
+    }
+  }
+
+  function hidePdfReady(){
+    const back=$('#pdfReadyBackdrop');
+    if(back){
+      back.classList.remove('open');
+      back.setAttribute('aria-hidden','true');
+    }
+  }
+
   async function savePdfByPageOverlay(){
     const oldText=pdfSaveBtn.textContent;
     pdfSaveBtn.disabled=true;
@@ -2906,23 +3220,6 @@ ${preview?`@media screen{
 
     const doc=getDoc();
     const win=editorFrame?.contentWindow;
-    const isIOS=/iPad|iPhone|iPod/i.test(navigator.userAgent) ||
-      (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
-
-    let iosPreview=null;
-    if(isIOS){
-      try{
-        iosPreview=window.open('about:blank','_blank');
-        if(iosPreview){
-          iosPreview.document.write(
-            '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+
-            '<body style="font-family:-apple-system,sans-serif;padding:24px"><b>PDF 생성 중입니다.</b><br>잠시만 기다려 주세요.</body>'
-          );
-          iosPreview.document.close();
-        }
-      }catch(e){}
-    }
-
     let exportStyle=null;
     let oldScrollY=0;
 
@@ -2936,14 +3233,14 @@ ${preview?`@media screen{
 
     try{
       if(!doc?.body || !win) throw new Error('PDF로 내보낼 문서를 찾을 수 없습니다.');
-      if(typeof window.html2canvas!=='function') throw new Error('html2canvas를 불러오지 못했습니다.');
-      if(!window.jspdf?.jsPDF) throw new Error('jsPDF를 불러오지 못했습니다.');
+      if(typeof window.html2canvas!=='function') throw new Error('PDF 렌더링 모듈을 불러오지 못했습니다.');
+      if(!window.jspdf?.jsPDF) throw new Error('PDF 생성 모듈을 불러오지 못했습니다.');
 
       if(currentView==='source' || currentView==='split'){
         await applySourceBeforeSave();
       }
-      await waitFrameResources(doc,2200);
 
+      await waitFrameResources(doc,2200);
       oldScrollY=win.scrollY||0;
 
       const setup=doc.getElementById('html-page-setup-style')?.dataset || {};
@@ -2999,8 +3296,13 @@ ${preview?`@media screen{
         html.direct-pdf-export #pagePrintRoot,
         html.direct-pdf-export .page-header,
         html.direct-pdf-export .page-footer,
-        html.direct-pdf-export .no-print{display:none !important;}
-        html.direct-pdf-export [data-editor-cell-selected]{outline:none !important;box-shadow:none !important;}
+        html.direct-pdf-export .no-print{
+          display:none !important;
+        }
+        html.direct-pdf-export [data-editor-cell-selected]{
+          outline:none !important;
+          box-shadow:none !important;
+        }
       `;
       doc.head.appendChild(exportStyle);
 
@@ -3016,35 +3318,28 @@ ${preview?`@media screen{
       const rect=target.getBoundingClientRect();
       const sourceWidth=Math.ceil(Math.max(target.scrollWidth,target.offsetWidth,rect.width));
       const sourceHeight=Math.ceil(Math.max(target.scrollHeight,target.offsetHeight,rect.height));
-      if(sourceWidth<10 || sourceHeight<10) throw new Error('문서 크기를 계산하지 못했습니다.');
 
-      // iOS Canvas 메모리 한계 대비
-      const maxPixels=isIOS ? 11_500_000 : 24_000_000;
-      const scale=Math.max(0.40,Math.min(1,Math.sqrt(maxPixels/(sourceWidth*sourceHeight))));
-      setStatus(`PDF 렌더링 중… ${Math.round(scale*100)}%`);
+      if(sourceWidth<10 || sourceHeight<10){
+        throw new Error('문서 크기를 계산하지 못했습니다.');
+      }
 
-      const canvas=await window.html2canvas(target,{
-        backgroundColor:'#ffffff',
-        scale,
-        useCORS:true,
-        allowTaint:false,
-        logging:false,
-        scrollX:0,
-        scrollY:0,
-        windowWidth:sourceWidth,
-        windowHeight:sourceHeight,
-        width:sourceWidth,
-        height:sourceHeight,
-        foreignObjectRendering:false
-      });
+      /*
+       * iPhone에서 긴 문서를 한 번에 거대한 Canvas로 만들면 WebKit 메모리 한계 때문에
+       * 흰 화면 후 실패할 수 있다. 따라서 세로 방향으로 잘게 나누어 캡처한 뒤
+       * 같은 PDF 1페이지 위에 순서대로 이어 붙인다.
+       */
+      const isIOS=/iPad|iPhone|iPod/i.test(navigator.userAgent) ||
+        (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
 
-      if(!canvas?.width || !canvas?.height) throw new Error('문서 렌더링에 실패했습니다.');
+      const chunkCssHeight=isIOS ? 1050 : 1800;
+      const renderScale=isIOS ? 1 : 1.15;
 
-      const ratio=canvas.height/canvas.width;
+      // PDF 1페이지 비율 계산
+      const ratio=sourceHeight/sourceWidth;
       let pdfWidthPt=595.28;
       let pdfHeightPt=pdfWidthPt*ratio;
 
-      // PDF 한 페이지 최대 크기 근처를 넘으면 전체 비율을 유지한 채 축소
+      // PDF 표준 단일 페이지 크기 상한 근처를 넘으면 전체 크기를 비례 축소
       if(pdfHeightPt>14350){
         const f=14350/pdfHeightPt;
         pdfWidthPt*=f;
@@ -3059,39 +3354,82 @@ ${preview?`@media screen{
         compress:true
       });
 
-      const jpeg=canvas.toDataURL('image/jpeg',0.92);
-      pdf.addImage(jpeg,'JPEG',0,0,pdfWidthPt,pdfHeightPt,undefined,'FAST');
+      const totalChunks=Math.ceil(sourceHeight/chunkCssHeight);
+      const pdfScale=pdfWidthPt/sourceWidth;
+
+      for(let i=0;i<totalChunks;i++){
+        const y=i*chunkCssHeight;
+        const h=Math.min(chunkCssHeight,sourceHeight-y);
+
+        setStatus(`PDF 렌더링 중… ${i+1}/${totalChunks}`);
+
+        const canvas=await window.html2canvas(target,{
+          backgroundColor:'#ffffff',
+          scale:renderScale,
+          useCORS:true,
+          allowTaint:false,
+          logging:false,
+          imageTimeout:8000,
+          scrollX:0,
+          scrollY:0,
+          width:sourceWidth,
+          height:h,
+          x:0,
+          y:y,
+          windowWidth:sourceWidth,
+          windowHeight:sourceHeight,
+          foreignObjectRendering:false,
+          removeContainer:true
+        });
+
+        if(!canvas?.width || !canvas?.height){
+          throw new Error(`문서 렌더링에 실패했습니다. (${i+1}/${totalChunks})`);
+        }
+
+        const img=canvas.toDataURL('image/jpeg',0.90);
+        const yPt=y*pdfScale;
+        const hPt=h*pdfScale;
+
+        pdf.addImage(
+          img,
+          'JPEG',
+          0,yPt,
+          pdfWidthPt,hPt,
+          undefined,
+          'FAST'
+        );
+
+        // iOS 메모리 회수 유도
+        canvas.width=1;
+        canvas.height=1;
+        await new Promise(r=>setTimeout(r,0));
+      }
+
+      setStatus('PDF 파일 생성 중…');
 
       const blob=pdf.output('blob');
-      const url=URL.createObjectURL(blob);
       const fileName=((currentName||'document.html').replace(/\.(html?|HTML?)$/,'')||'document')+'.pdf';
 
       cleanup();
+      showPdfReady(blob,fileName);
 
-      if(isIOS){
-        if(iosPreview && !iosPreview.closed){
-          iosPreview.location.replace(url);
-        }else{
-          const a=document.createElement('a');
-          a.href=url;a.target='_blank';a.rel='noopener';
-          document.body.appendChild(a);a.click();a.remove();
-        }
-        setTimeout(()=>URL.revokeObjectURL(url),120000);
-        setStatus('PDF 생성 완료');
-        toast('PDF가 새 화면에 열렸습니다.');
-      }else{
+      setStatus('PDF 생성 완료');
+      toast('PDF가 준비되었습니다.');
+
+      // PC/데스크톱에서는 기존처럼 자동 다운로드
+      if(!isIOS){
+        const url=generatedPdfUrl;
         const a=document.createElement('a');
-        a.href=url;a.download=fileName;
-        document.body.appendChild(a);a.click();a.remove();
-        setTimeout(()=>URL.revokeObjectURL(url),30000);
-        setStatus('PDF 생성 완료');
-        toast('PDF 파일을 생성했습니다.');
+        a.href=url;
+        a.download=fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
       }
 
     }catch(err){
       console.error(err);
       cleanup();
-      try{iosPreview?.close();}catch(e){}
       setStatus('PDF 생성 실패','dirty');
       alert('PDF 내보내기를 완료하지 못했습니다.\n'+(err?.message||err));
     }
@@ -5120,7 +5458,66 @@ pre{white-space:pre-wrap}
   $('#openBtn').addEventListener('click',openFile);
   $('#restoreBtn').addEventListener('click',restoreOriginal);
   $('#saveBtn').addEventListener('click',saveDirect);
+
   pdfSaveBtn.addEventListener('click',savePdfByPageOverlay);
+
+  $('#pdfCloseBtn')?.addEventListener('click',()=>{
+    hidePdfReady();
+  });
+
+  $('#pdfOpenBtn')?.addEventListener('click',()=>{
+    if(!generatedPdfUrl) return;
+    const w=window.open(generatedPdfUrl,'_blank');
+    if(!w){
+      const a=document.createElement('a');
+      a.href=generatedPdfUrl;
+      a.target='_blank';
+      a.rel='noopener';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+  });
+
+  $('#pdfShareBtn')?.addEventListener('click',async()=>{
+    if(!generatedPdfBlob) return;
+
+    try{
+      const file=new File(
+        [generatedPdfBlob],
+        generatedPdfFileName||'document.pdf',
+        {type:'application/pdf'}
+      );
+
+      if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
+        await navigator.share({
+          files:[file],
+          title:generatedPdfFileName||'PDF'
+        });
+        return;
+      }
+    }catch(err){
+      // 사용자가 공유창을 닫은 경우에는 별도 오류 처리하지 않음
+      if(err?.name==='AbortError') return;
+      console.warn(err);
+    }
+
+    // Web Share가 없거나 파일 공유를 지원하지 않으면 사용자의 클릭 이벤트에서 PDF를 직접 연다.
+    if(generatedPdfUrl){
+      const w=window.open(generatedPdfUrl,'_blank');
+      if(!w){
+        const a=document.createElement('a');
+        a.href=generatedPdfUrl;
+        a.download=generatedPdfFileName||'document.pdf';
+        a.target='_blank';
+        a.rel='noopener';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+    }
+  });
+
   $('#saveAsBtn').addEventListener('click',()=>saveAs());
   $('#copyHtmlBtn').addEventListener('click',copyHtml);
   $('#fullscreenBtn').addEventListener('click',()=>{
@@ -5441,5 +5838,19 @@ pre{white-space:pre-wrap}
   }catch(e){}
 })();
 </script>
+
+<div aria-hidden="true" class="pdf-ready-backdrop" id="pdfReadyBackdrop">
+<div aria-labelledby="pdfReadyTitle" aria-modal="true" class="pdf-ready-card" role="dialog">
+<div class="pdf-ready-title" id="pdfReadyTitle">PDF 생성 완료</div>
+<div class="pdf-ready-desc" id="pdfReadyDesc">
+          한 페이지 PDF가 준비되었습니다. iPhone에서는 아래 버튼을 눌러 저장하거나 공유하세요.
+        </div>
+<div class="pdf-ready-actions">
+<button class="pdf-ready-btn primary" id="pdfShareBtn" type="button">PDF 저장·공유</button>
+<button class="pdf-ready-btn secondary" id="pdfOpenBtn" type="button">PDF 열기</button>
+<button class="pdf-ready-btn secondary" id="pdfCloseBtn" type="button">닫기</button>
+</div>
+</div>
+</div>
 </body>
 </html>
