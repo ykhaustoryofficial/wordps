@@ -3221,6 +3221,43 @@ ${preview?`@media screen{
           border:0 !important;
         }
 
+        /*
+         * 문서 하단의 서명/직인 영역에 템플릿 장식 배경이 남아
+         * 연속 PDF 하단에 삼각형/사선 배경처럼 보이는 경우가 있다.
+         * 하단 장식성 pseudo 요소와 배경 이미지는 PDF에서 제거한다.
+         */
+        html.direct-pdf-export footer,
+        html.direct-pdf-export [class*="footer" i],
+        html.direct-pdf-export [class*="sign" i],
+        html.direct-pdf-export [class*="seal" i],
+        html.direct-pdf-export [class*="stamp" i],
+        html.direct-pdf-export [class*="approval" i]{
+          background-image:none !important;
+        }
+
+        html.direct-pdf-export footer::before,
+        html.direct-pdf-export footer::after,
+        html.direct-pdf-export [class*="footer" i]::before,
+        html.direct-pdf-export [class*="footer" i]::after,
+        html.direct-pdf-export [class*="sign" i]::before,
+        html.direct-pdf-export [class*="sign" i]::after,
+        html.direct-pdf-export [class*="seal" i]::before,
+        html.direct-pdf-export [class*="seal" i]::after,
+        html.direct-pdf-export [class*="stamp" i]::before,
+        html.direct-pdf-export [class*="stamp" i]::after,
+        html.direct-pdf-export [class*="approval" i]::before,
+        html.direct-pdf-export [class*="approval" i]::after{
+          content:none !important;
+          display:none !important;
+          background:none !important;
+          background-image:none !important;
+          box-shadow:none !important;
+          border:0 !important;
+          clip-path:none !important;
+          mask:none !important;
+          -webkit-mask:none !important;
+        }
+
         html.direct-pdf-export *,
         html.direct-pdf-export *::before,
         html.direct-pdf-export *::after{
