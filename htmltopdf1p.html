@@ -3087,9 +3087,11 @@ ${preview?`@media screen{
     const doc=getDoc();
     const win=editorFrame?.contentWindow;
     let exportStyle=null;
+    let exportEndGuard=null;
     let oldScrollY=0;
 
     const cleanup=()=>{
+      try{exportEndGuard?.remove();}catch(e){}
       try{exportStyle?.remove();}catch(e){}
       try{doc?.documentElement?.classList.remove('direct-pdf-export');}catch(e){}
       try{win?.scrollTo(0,oldScrollY);}catch(e){}
@@ -3279,13 +3281,45 @@ ${preview?`@media screen{
       win.scrollTo(0,0);
 
       /*
+       * iPhone Safari/WebKit에서는 문서의 마지막 요소가 body 끝에 정확히 붙어 있으면
+       * html2canvas가 마지막 몇 px을 캡처 범위 밖으로 계산하는 경우가 있다.
+       * PDF용 투명 끝표시를 잠시 추가해 마지막 내용과 하단 여백이 반드시 캡처되게 한다.
+       */
+      exportEndGuard=doc.createElement('div');
+      exportEndGuard.setAttribute('data-direct-pdf-end-guard','1');
+      exportEndGuard.setAttribute('aria-hidden','true');
+      exportEndGuard.style.cssText='display:block!important;width:100%!important;height:3mm!important;min-height:3mm!important;clear:both!important;flex:0 0 3mm!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;overflow:hidden!important;';
+      doc.body.appendChild(exportEndGuard);
+
+      await new Promise(r=>win.requestAnimationFrame(()=>win.requestAnimationFrame(r)));
+
+      /*
        * 반드시 body 전체를 캡처한다.
        * 내부 .paper/.document만 캡처하면 body의 좌우 여백이 PDF 폭 확대로 상쇄된다.
+       * scrollHeight뿐 아니라 실제 자식 요소의 최하단 위치도 함께 계산하여
+       * Safari의 소수점/레이아웃 반올림으로 인한 마지막 줄 잘림을 방지한다.
        */
       const target=doc.body;
       const rect=target.getBoundingClientRect();
       const sourceWidth=Math.ceil(rect.width);
-      const sourceHeight=Math.ceil(Math.max(target.scrollHeight,target.offsetHeight,rect.height));
+
+      let deepestBottom=rect.height;
+      for(const el of target.children){
+        try{
+          const r=el.getBoundingClientRect();
+          const bottom=r.bottom-rect.top;
+          if(Number.isFinite(bottom)) deepestBottom=Math.max(deepestBottom,bottom);
+        }catch(e){}
+      }
+
+      const docHeight=Math.max(
+        target.scrollHeight||0,
+        target.offsetHeight||0,
+        rect.height||0,
+        deepestBottom||0,
+        doc.documentElement?.scrollHeight||0
+      );
+      const sourceHeight=Math.ceil(docHeight+2);
 
       if(sourceWidth<10 || sourceHeight<10){
         throw new Error('문서 크기를 계산하지 못했습니다.');
