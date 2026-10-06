@@ -3156,7 +3156,8 @@ ${preview?`@media screen{
         }
 
         html.direct-pdf-export body{
-          padding:${mt}mm ${mr}mm ${mb}mm ${ml}mm !important;
+          /* 하단 여백은 Safari 캡처에 맡기지 않고 PDF 페이지 높이에서 별도로 확보한다. */
+          padding:${mt}mm ${mr}mm 0 ${ml}mm !important;
           box-sizing:border-box !important;
         }
 
@@ -3285,10 +3286,15 @@ ${preview?`@media screen{
        * html2canvas가 마지막 몇 px을 캡처 범위 밖으로 계산하는 경우가 있다.
        * PDF용 투명 끝표시를 잠시 추가해 마지막 내용과 하단 여백이 반드시 캡처되게 한다.
        */
+      /*
+       * 마지막 내용이 캔버스 끝에 직접 닿지 않도록 작은 흰색 안전영역을 둔다.
+       * 이 안전영역은 최종 PDF 높이 계산에서 다시 빼므로 사용자가 설정한 하단 여백에는 포함되지 않는다.
+       */
+      const END_GUARD_MM=3;
       exportEndGuard=doc.createElement('div');
       exportEndGuard.setAttribute('data-direct-pdf-end-guard','1');
       exportEndGuard.setAttribute('aria-hidden','true');
-      exportEndGuard.style.cssText='display:block!important;width:100%!important;height:3mm!important;min-height:3mm!important;clear:both!important;flex:0 0 3mm!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;overflow:hidden!important;';
+      exportEndGuard.style.cssText=`display:block!important;width:100%!important;height:${END_GUARD_MM}mm!important;min-height:${END_GUARD_MM}mm!important;clear:both!important;flex:0 0 ${END_GUARD_MM}mm!important;margin:0!important;padding:0!important;border:0!important;background:#fff!important;overflow:hidden!important;`;
       doc.body.appendChild(exportEndGuard);
 
       await new Promise(r=>win.requestAnimationFrame(()=>win.requestAnimationFrame(r)));
@@ -3325,6 +3331,19 @@ ${preview?`@media screen{
         throw new Error('문서 크기를 계산하지 못했습니다.');
       }
 
+      /*
+       * 중요: iPhone Safari에서는 body의 padding-bottom을 html2canvas가 마지막 캡처에서
+       * 누락하거나 소수점 반올림으로 잘라내는 경우가 있다.
+       * 따라서 하단 여백은 캔버스 내부 CSS 여백이 아니라 PDF 페이지 자체의 빈 공간으로 확보한다.
+       *
+       * sourceHeight에는 END_GUARD_MM 안전영역이 들어 있으므로 그 높이는 제거하고,
+       * 사용자가 편집용지에서 지정한 mb(mm)를 정확히 다시 더한다.
+       */
+      const pxPerMm=sourceWidth/CONTINUOUS_PDF_WIDTH_MM;
+      const endGuardHeightPx=Math.max(0,exportEndGuard?.getBoundingClientRect().height||0);
+      const configuredBottomMarginPx=Math.max(0,mb*pxPerMm);
+      const pdfSourceHeight=Math.max(1,sourceHeight-endGuardHeightPx+configuredBottomMarginPx+1);
+
       const isIOS=
         /iPad|iPhone|iPod/i.test(navigator.userAgent) ||
         (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
@@ -3336,7 +3355,7 @@ ${preview?`@media screen{
 
       const PT_PER_MM=72/25.4;
       const physicalPdfWidthPt=CONTINUOUS_PDF_WIDTH_MM*PT_PER_MM;
-      const physicalPdfHeightPt=physicalPdfWidthPt*(sourceHeight/sourceWidth);
+      const physicalPdfHeightPt=physicalPdfWidthPt*(pdfSourceHeight/sourceWidth);
 
       /*
        * PDF 기본 사용자 공간의 약 14,400pt 한계를 넘는 초장문도 한 페이지로 유지한다.
@@ -3415,7 +3434,7 @@ ${preview?`@media screen{
 
       showPdfReady(blob,fileName);
       setStatus('PDF 생성 완료');
-      toast('210mm 폭의 연속 PDF가 준비되었습니다.');
+      toast('설정한 여백을 반영한 210mm 폭 연속 PDF가 준비되었습니다.');
 
       if(!isIOS){
         const a=document.createElement('a');
