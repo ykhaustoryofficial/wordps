@@ -3310,7 +3310,12 @@ ${preview?`@media screen{
       const sourceWidth=Math.ceil(rect.width);
 
       let deepestBottom=rect.height;
-      for(const el of target.children){
+      /*
+       * body 직계 자식만 보면 absolute/relative 배치 또는 중첩 요소의 실제 최하단을
+       * Safari가 scrollHeight에 완전히 반영하지 않는 경우가 있다.
+       * 모든 하위 요소의 실제 렌더링 하단까지 확인한다.
+       */
+      for(const el of target.querySelectorAll('*')){
         try{
           const r=el.getBoundingClientRect();
           const bottom=r.bottom-rect.top;
@@ -3326,6 +3331,17 @@ ${preview?`@media screen{
         doc.documentElement?.scrollHeight||0
       );
       const sourceHeight=Math.ceil(docHeight+2);
+
+      /*
+       * 매우 중요: iPhone에서는 현재 iframe의 실제 viewport 폭이 대개 700px 미만이라
+       * 문서의 모바일 @media 규칙이 적용된 상태로 sourceHeight를 측정한다.
+       * 그런데 html2canvas의 windowWidth를 210mm 본문 폭(sourceWidth)으로 주면
+       * 복제 문서에서는 데스크톱 @media 규칙이 적용되어 내용 높이가 더 길어질 수 있다.
+       * 그러면 측정 높이보다 렌더링 내용이 길어져 PDF 하단이 중간에서 잘린다.
+       * 캡처용 복제 창의 viewport는 '측정 당시 실제 iframe viewport'와 동일하게 유지한다.
+       */
+      const captureViewportWidth=Math.max(1,Math.round(win.innerWidth||doc.documentElement?.clientWidth||sourceWidth));
+      const captureViewportHeight=Math.max(1,Math.round(win.innerHeight||doc.documentElement?.clientHeight||800));
 
       if(sourceWidth<10 || sourceHeight<10){
         throw new Error('문서 크기를 계산하지 못했습니다.');
@@ -3396,8 +3412,9 @@ ${preview?`@media screen{
           height:h,
           scrollX:0,
           scrollY:0,
-          windowWidth:sourceWidth,
-          windowHeight:Math.max(1200,Math.min(sourceHeight,4000)),
+          /* 측정 시와 동일한 responsive viewport를 사용해야 모바일 Safari에서 높이가 달라지지 않는다. */
+          windowWidth:captureViewportWidth,
+          windowHeight:captureViewportHeight,
           foreignObjectRendering:false,
           removeContainer:true
         });
