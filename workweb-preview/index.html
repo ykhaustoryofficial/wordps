@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>WORK &amp; WEB · 프로젝트 종합현황</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="desktop-canvas" id="desktop-canvas">
+  <header class="dashboard-top">
+    <details class="project-switcher" id="project-switcher">
+      <summary>프로젝트 선택</summary>
+      <div class="project-options" aria-label="프로젝트 목록">
+        <button type="button" data-project="0001">#0001 예시담당자</button>
+        <button type="button" data-project="0002">#0002 진흥산업</button>
+        <button type="button" data-project="0003">#0003 현산개발</button>
+      </div>
+    </details>
+    <div class="overview-prototype-meta"><span>공개 미리보기 · 가상 데이터 · 실거래 정보 없음</span><a href="../">기존 HTML 편집기</a></div>
+  </header>
+  <main class="dashboard-content" aria-label="선택 프로젝트 요약 대시보드">
+    <section class="hero-summary" aria-labelledby="dashboard-name">
+      <button type="button" class="hero-main summary-action" data-open-panel="basic" aria-label="프로젝트 기본정보 상세 보기">
+        <span class="hero-caption">프로젝트 기본정보 · 상세 보기 <span aria-hidden="true">↗</span></span>
+        <span class="hero-title" id="dashboard-name">개인 포트폴리오 홈페이지 제작</span>
+        <span class="hero-number" id="dashboard-number">#0001</span>
+        <span class="hero-meta" id="dashboard-customer">고객 예시담당자 · 담당 예시담당자</span>
+      </button>
+      <div class="hero-progress">
+        <div class="hero-progress-top"><button type="button" class="summary-action inline-action" data-open-panel="basic"><span id="dashboard-status" class="status-pill">제작중</span></button><button type="button" class="summary-action inline-action" data-open-panel="basic"><span class="progress-figure" id="dashboard-progress">35%</span> <span class="muted">진행도 상세 ↗</span></button></div>
+        <div class="hero-progress-track" aria-hidden="true"><span id="dashboard-progress-fill"></span></div>
+        <button type="button" class="hero-deadline summary-action" data-open-panel="basic">납기 <strong id="dashboard-due">2026.12.31</strong> <span id="dashboard-remaining">77일</span></button>
+      </div>
+    </section>
+    <section class="money-summary" aria-label="프로젝트 대금 요약">
+      <button type="button" class="money-tile summary-action" data-open-panel="payments"><span class="metric-label">계약 총금액 <span aria-hidden="true">↗</span></span><strong id="metric-contract">1,050,000원</strong></button>
+      <button type="button" class="money-tile summary-action" data-open-panel="payments"><span class="metric-label">수금합계 <span aria-hidden="true">↗</span></span><strong class="green" id="metric-collected">600,000원</strong></button>
+      <button type="button" class="money-tile outstanding summary-action" data-open-panel="payments"><span class="metric-label">미수금 <span aria-hidden="true">↗</span></span><strong class="red" id="metric-unpaid">450,000원</strong><small id="metric-next-payment">다음 입금예정 10.20</small></button>
+    </section>
+    <div class="dashboard-grid">
+      <section class="dashboard-card" aria-labelledby="schedule-heading">
+        <div class="card-heading"><h2 id="schedule-heading">업무일정</h2><button type="button" data-open-panel="tasks" class="card-more summary-action">전체 보기 ↗</button></div>
+        <div id="dashboard-tasks" class="compact-rows"><button type="button" data-open-panel="tasks" class="compact-item summary-action">일정을 확인하세요 ↗</button></div>
+      </section>
+      <section class="dashboard-card" aria-labelledby="attention-heading">
+        <div class="card-heading"><h2 id="attention-heading">확인 필요</h2><button type="button" data-open-panel="attention" class="card-more summary-action">전체 보기 ↗</button></div>
+        <div id="dashboard-attention" class="compact-rows"><button type="button" data-open-panel="attention" class="compact-item summary-action">확인사항을 확인하세요 ↗</button></div>
+      </section>
+      <section class="dashboard-card" aria-labelledby="recent-contact-heading">
+        <div class="card-heading"><h2 id="recent-contact-heading">최근 접촉</h2><button type="button" data-open-panel="contacts" class="card-more summary-action">이력 보기 ↗</button></div>
+        <div id="dashboard-contacts" class="compact-rows"><button type="button" data-open-panel="contacts" class="compact-item summary-action">접촉이력 확인 ↗</button></div>
+        <button type="button" class="card-foot summary-action" data-open-panel="contacts">다음 접촉 <strong id="dashboard-next-contact">미정</strong> ↗</button>
+      </section>
+      <section class="dashboard-card" aria-labelledby="docs-heading">
+        <div class="card-heading"><h2 id="docs-heading">문서·납품</h2><button type="button" data-open-panel="docs" class="card-more summary-action">상세 보기 ↗</button></div>
+        <div id="dashboard-documents" class="compact-rows"><button type="button" data-open-panel="docs" class="compact-item summary-action">문서 현황 확인 ↗</button></div>
+      </section>
+    </div>
+    <section class="operations-summary" aria-labelledby="operations-heading">
+      <div class="card-heading"><h2 id="operations-heading">구축·운영 정보</h2><button type="button" data-open-panel="services" class="card-more summary-action">전체 보기 ↗</button></div>
+      <div class="operation-items">
+        <button type="button" data-open-panel="services" class="summary-action summary-chip">연동 서비스 <strong id="dashboard-service-count">5개</strong></button>
+        <button type="button" data-open-panel="delivery" class="summary-action summary-chip">고객 검수 <strong id="dashboard-acceptance">검수 전</strong></button>
+        <button type="button" data-open-panel="delivery" class="summary-action summary-chip">포트폴리오 <strong id="dashboard-portfolio">미정</strong></button>
+        <button type="button" data-open-panel="links" class="summary-action summary-chip">개발·운영 링크 ↗</button>
+      </div>
+    </section>
+  </main>
+</div>
+<dialog id="detail-dialog" class="detail-dialog" aria-labelledby="dialog-title">
+  <div class="dialog-shell">
+    <header class="dialog-head"><div><p class="dialog-overline">프로젝트 상세정보 · 예시 데이터</p><h2 id="dialog-title">상세정보</h2></div><button type="button" id="dialog-close" class="close-dialog" aria-label="상세 창 닫기">닫기 <span aria-hidden="true">×</span></button></header>
+    <nav class="dialog-nav" aria-label="상세 항목 빠른 이동">
+      <button type="button" data-open-panel="basic">기본정보</button><button type="button" data-open-panel="payments">대금</button><button type="button" data-open-panel="tasks">업무일정</button><button type="button" data-open-panel="attention">확인 필요</button><button type="button" data-open-panel="contacts">접촉이력</button><button type="button" data-open-panel="docs">문서</button><button type="button" data-open-panel="services">구축서비스</button><button type="button" data-open-panel="links">개발 링크</button><button type="button" data-open-panel="delivery">납품·포트폴리오</button>
+    </nav>
+    <div class="dialog-body" id="dialog-body">
+      <div class="detail-panel" data-dialog-panel="basic" hidden><main class="screen">
+<table aria-label="고객 및 프로젝트 기본 정보" class="project-table">
+<colgroup><col/><col/><col/><col/><col/></colgroup>
+<thead>
+<tr>
+<th scope="col">고객명</th>
+<th scope="col">담당자 이름</th>
+<th scope="col">연락처 · 이메일</th>
+<th scope="col">프로젝트 고유번호</th>
+<th scope="col">프로젝트명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="고객명" id="project-customer">예시담당자</td>
+<td data-label="담당자 이름" id="project-contact-person">예시담당자</td>
+<td data-label="연락처 · 이메일" id="project-phone"><div class="contact-primary">010-0000-0000</div><div class="secondary-line" id="project-email">owner@example.com</div></td>
+<td data-label="프로젝트 고유번호" id="project-number">#0001</td>
+<td data-label="프로젝트명" id="project-name"><div id="project-name-text">개인 포트폴리오 홈페이지 제작</div><div class="status-line">진행상태 <span class="pill-status" id="project-status">제작중</span></div></td>
+</tr>
+<tr class="detail-row">
+<th scope="row">발주일</th>
+<td id="project-order-date">2026.10.01</td>
+<th scope="row">납기일</th>
+<td colspan="2" id="project-due-date">2026.12.31</td>
+</tr>
+<tr class="detail-row">
+<th scope="row">남은 기간</th>
+<td id="project-remaining">77일</td>
+<th scope="row">진행도</th>
+<td colspan="2"><div class="progress-value"><span id="project-percent">35%</span><div aria-label="프로젝트 진행도" aria-valuemax="100" aria-valuemin="0" aria-valuenow="35" class="progress-track" role="progressbar"><div class="progress-fill" id="project-progress-fill"></div></div></div></td>
+</tr>
+</tbody>
+</table>
+</main>
+</div>
+      <div class="detail-panel" data-dialog-panel="payments" hidden><section aria-labelledby="payment-summary-heading" class="payment-summary">
+<div class="build-info-heading"><h2 id="payment-summary-heading">대금 현황</h2><p class="build-info-note">총 계약대금 · 수금·미수 분리 · 입금예정일과 실제 수금일 / 예시 데이터</p></div>
+<table aria-label="프로젝트별 착수금, 중도금, 잔금, 추가금의 수금 및 미수 현황" class="payment-table">
+<colgroup><col/><col/><col/><col/><col/><col/><col/></colgroup>
+<thead><tr><th scope="col">착수금</th><th scope="col">중도금</th><th scope="col">잔금</th><th scope="col">추가금</th><th scope="col">계약 총금액</th><th class="payment-total" scope="col">수금합계</th><th class="payment-outstanding" scope="col">미수금</th></tr></thead>
+<tbody id="payment-summary-rows"><tr><td data-label="착수금"><span class="payment-paid">수금 300,000원</span><small class="payment-detail">입금예정 2026.10.05</small><small class="payment-detail">실제 수금일 2026.10.04</small></td><td data-label="중도금"><span class="payment-paid">수금 250,000원</span><span class="payment-unpaid">미수 150,000원</span><small class="payment-detail">입금예정 2026.10.20</small><small class="payment-detail">실제 수금일 2026.10.13</small></td><td data-label="잔금"><span class="payment-unpaid">미수 300,000원</span><small class="payment-detail">입금예정 2026.12.31</small><small class="payment-detail">실제 수금일 미수</small></td><td data-label="추가금"><span class="payment-paid">수금 50,000원</span><small class="payment-detail">입금예정 2026.10.12</small><small class="payment-detail">실제 수금일 2026.10.11</small></td><td class="payment-contract" data-label="계약 총금액"><strong class="payment-neutral">1,050,000원</strong></td><td class="payment-total" data-label="수금합계"><strong class="payment-paid">600,000원</strong></td><td class="payment-outstanding" data-label="미수금"><strong class="payment-unpaid">450,000원</strong></td></tr></tbody>
+</table>
+</section>
+</div>
+      <div class="detail-panel" data-dialog-panel="tasks" hidden><section aria-labelledby="tasks-detail-heading"><h3 id="tasks-detail-heading">업무일정·진행현황</h3><p class="detail-caption">현재 프로젝트 일정 · 예시 데이터</p><div class="popup-table-scroller"><table class="detail-data-table"><thead><tr><th>업무명</th><th>담당자</th><th>예정일</th><th>상태</th><th>완료일</th></tr></thead><tbody id="task-detail-rows"></tbody></table></div></section></div>
+      <div class="detail-panel" data-dialog-panel="attention" hidden><section aria-labelledby="attention-detail-heading"><h3 id="attention-detail-heading">확인 필요 · 미해결 사항</h3><p class="detail-caption">미해결 문제 및 변경요청 · 예시 데이터</p><div class="popup-table-scroller"><table class="detail-data-table"><thead><tr><th>구분</th><th>내용</th><th>중요도</th><th>상태</th><th>담당자</th></tr></thead><tbody id="attention-detail-rows"></tbody></table></div></section></div>
+      <div class="detail-panel" data-dialog-panel="contacts" hidden><section aria-labelledby="contact-history-heading" class="contact-history">
+<div class="build-info-heading">
+<h2 id="contact-history-heading">접촉이력</h2>
+<p class="build-info-note">전화 · 이메일 · 카톡 · 문자 / 화면 확인용 예시 기록</p>
+</div>
+<div aria-label="프로젝트 접촉이력 목록" class="contact-scroll" role="region" tabindex="0">
+<table aria-label="프로젝트 접촉 상대·결과·후속일정을 포함한 접촉이력" class="contact-table">
+<colgroup><col/><col/><col/><col/><col/><col/><col/></colgroup>
+<thead><tr><th scope="col">접촉방식</th><th scope="col">접촉정보</th><th scope="col">접촉일자</th><th scope="col">접촉 대상자</th><th scope="col">접촉주요내용</th><th scope="col">접촉 결과</th><th scope="col">다음접촉예정일</th></tr></thead>
+<tbody id="contact-rows"><tr><td data-label="접촉방식">전화</td><td data-label="접촉정보">010-0000-0000</td><td data-label="접촉일자">2026.10.14</td><td data-label="접촉 대상자">예시담당자</td><td data-label="접촉주요내용">요구사항 확인 및 작업 일정 협의</td><td data-label="접촉 결과"><span class="contact-result result-ok">연락완료</span></td><td data-label="다음접촉예정일">2026.10.21</td></tr><tr><td data-label="접촉방식">이메일</td><td data-label="접촉정보">contact@example.com</td><td data-label="접촉일자">2026.10.12</td><td data-label="접촉 대상자">예시담당자</td><td data-label="접촉주요내용">견적서 전달 및 검토 요청</td><td data-label="접촉 결과"><span class="contact-result result-attention">추가확인 필요</span></td><td data-label="다음접촉예정일">2026.10.17</td></tr><tr><td data-label="접촉방식">카톡</td><td data-label="접촉정보">담당자 채팅방</td><td data-label="접촉일자">2026.10.10</td><td data-label="접촉 대상자">예시담당자</td><td data-label="접촉주요내용">참고자료 수신 및 적용 범위 확인</td><td data-label="접촉 결과"><span class="contact-result result-ok">연락완료</span></td><td data-label="다음접촉예정일">미정</td></tr><tr><td data-label="접촉방식">문자</td><td data-label="접촉정보">010-0000-0000</td><td data-label="접촉일자">2026.10.08</td><td data-label="접촉 대상자">예시담당자</td><td data-label="접촉주요내용">상담 일정 안내</td><td data-label="접촉 결과"><span class="contact-result result-attention">재연락 필요</span></td><td data-label="다음접촉예정일">2026.10.10</td></tr><tr class="is-empty"><td data-label="접촉방식"></td><td data-label="접촉정보"></td><td data-label="접촉일자"></td><td data-label="접촉 대상자"></td><td data-label="접촉주요내용"></td><td data-label="접촉 결과"></td><td data-label="다음접촉예정일"></td></tr></tbody>
+</table>
+</div>
+</section>
+</div>
+      <div class="detail-panel" data-dialog-panel="docs" hidden><section aria-labelledby="document-status-heading" class="project-links document-status-section">
+<div class="build-info-heading"><h2 id="document-status-heading">문서 현황</h2></div>
+<table aria-label="프로젝트 문서별 제작 및 인계 상태" class="project-links-table document-status-table">
+<colgroup><col/><col/></colgroup>
+<tbody id="document-status-rows"><tr><td>계약서</td><td><span class="document-stage document-stage-ready">제작완료</span><div class="doc-meta">버전 v1.1 · 변경 2026.10.11</div><a class="doc-sample-link" download="0001_계약서_예시.txt" href="data:text/plain;charset=utf-8,%5BWORK%20%26%20WEB%20UI%20%EC%8B%9C%EC%97%B0%EC%9A%A9%20%EB%AC%B8%EC%84%9C%5D%0A%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%3A%20%230001%0A%EB%AC%B8%EC%84%9C%3A%20%EA%B3%84%EC%95%BD%EC%84%9C%0A%EC%8B%A4%EC%A0%9C%20%EA%B3%84%EC%95%BD%EC%84%9C/%EC%9D%B8%EA%B3%84%20%EC%A6%9D%EB%B9%99%EC%9D%B4%20%EC%95%84%EB%8B%99%EB%8B%88%EB%8B%A4.%0A%EC%9D%B4%20%ED%8C%8C%EC%9D%BC%EC%9D%80%20UI%20%EC%8B%9C%EC%95%88%20%ED%99%95%EC%9D%B8%20%EB%AA%A9%EC%A0%81%EC%9D%98%20%EC%98%88%EC%8B%9C%20%ED%85%8D%EC%8A%A4%ED%8A%B8%EC%9E%85%EB%8B%88%EB%8B%A4.%0A">예시 파일 받기</a></td></tr><tr><td>상품설계서</td><td><span class="document-stage document-stage-ready">제작완료</span><div class="doc-meta">버전 v0.9 · 변경 2026.10.13</div><a class="doc-sample-link" download="0001_상품설계서_예시.txt" href="data:text/plain;charset=utf-8,%5BWORK%20%26%20WEB%20UI%20%EC%8B%9C%EC%97%B0%EC%9A%A9%20%EB%AC%B8%EC%84%9C%5D%0A%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%3A%20%230001%0A%EB%AC%B8%EC%84%9C%3A%20%EC%83%81%ED%92%88%EC%84%A4%EA%B3%84%EC%84%9C%0A%EC%8B%A4%EC%A0%9C%20%EA%B3%84%EC%95%BD%EC%84%9C/%EC%9D%B8%EA%B3%84%20%EC%A6%9D%EB%B9%99%EC%9D%B4%20%EC%95%84%EB%8B%99%EB%8B%88%EB%8B%A4.%0A%EC%9D%B4%20%ED%8C%8C%EC%9D%BC%EC%9D%80%20UI%20%EC%8B%9C%EC%95%88%20%ED%99%95%EC%9D%B8%20%EB%AA%A9%EC%A0%81%EC%9D%98%20%EC%98%88%EC%8B%9C%20%ED%85%8D%EC%8A%A4%ED%8A%B8%EC%9E%85%EB%8B%88%EB%8B%A4.%0A">예시 파일 받기</a></td></tr><tr><td>상품설명서</td><td><span class="document-stage document-stage-pending">미완</span><div class="doc-meta">버전 - · 변경 2026.10.14</div><span class="doc-file-blank">파일 미등록</span></td></tr><tr><td>인수인계확인서</td><td><span class="document-stage document-stage-pending">미완</span><div class="doc-meta">버전 - · 변경 미기록</div><span class="doc-file-blank">파일 미등록</span></td></tr></tbody>
+</table>
+</section></div>
+      <div class="detail-panel" data-dialog-panel="services" hidden><section aria-labelledby="build-info-heading" class="build-info">
+<div class="build-info-heading">
+<h2 id="build-info-heading">구축 주요정보</h2>
+<p class="build-info-note">연동 서비스 종류·개수 제한 없음 · 유지비는 화면 확인용 예시값</p>
+</div>
+<div aria-label="프로젝트의 구축 및 연동 서비스 목록" class="build-scroll" role="region" tabindex="0">
+<table aria-label="프로젝트 구축 및 연동 서비스 관리 정보" class="build-table">
+<colgroup><col/><col/><col/><col/><col/></colgroup>
+<thead><tr><th scope="col">서비스·시스템명</th><th scope="col">사용 용도</th><th scope="col">연결·관리 정보</th><th scope="col">유지비</th><th scope="col">비고</th></tr></thead>
+<tbody id="service-rows"><tr><td data-label="서비스·시스템명">GitHub</td><td data-label="사용 용도">소스·버전 관리</td><td data-label="연결·관리 정보"><div class="service-main">저장소 주소 미입력</div><small class="service-mini">계정 소유자 · 개발자 계정</small><small class="service-mini">비용 부담 · 무료</small><small class="service-mini">갱신·만료 · 해당 없음</small></td><td data-label="유지비">무료</td><td data-label="비고">버전관리</td></tr><tr><td data-label="서비스·시스템명">호스팅.kr</td><td data-label="사용 용도">도메인 관리</td><td data-label="연결·관리 정보"><div class="service-main">example.com (예시)</div><small class="service-mini">계정 소유자 · 고객</small><small class="service-mini">비용 부담 · 고객</small><small class="service-mini">갱신·만료 · 2027.10.01</small></td><td data-label="유지비">13,000원/년</td><td data-label="비고">자동갱신 여부 확인</td></tr><tr><td data-label="서비스·시스템명">ImproveMX</td><td data-label="사용 용도">이메일 전달</td><td data-label="연결·관리 정보"><div class="service-main">설정 계정 미입력</div><small class="service-mini">계정 소유자 · 고객</small><small class="service-mini">비용 부담 · 고객</small><small class="service-mini">갱신·만료 · 2026.11.01</small></td><td data-label="유지비">3,000원/월</td><td data-label="비고">갱신 예정</td></tr><tr><td data-label="서비스·시스템명">Vercel</td><td data-label="사용 용도">웹 배포</td><td data-label="연결·관리 정보"><div class="service-main">배포 도메인 미입력</div><small class="service-mini">계정 소유자 · 고객</small><small class="service-mini">비용 부담 · 고객</small><small class="service-mini">갱신·만료 · 해당 없음</small></td><td data-label="유지비">무료</td><td data-label="비고">예시</td></tr><tr><td data-label="서비스·시스템명">Supabase</td><td data-label="사용 용도">DB · 파일 저장</td><td data-label="연결·관리 정보"><div class="service-main">프로젝트 ID 미입력</div><small class="service-mini">계정 소유자 · 고객</small><small class="service-mini">비용 부담 · 고객</small><small class="service-mini">갱신·만료 · 요금제별 확인</small></td><td data-label="유지비">무료</td><td data-label="비고">예시</td></tr></tbody>
+</table>
+</div>
+</section>
+</div>
+      <div class="detail-panel" data-dialog-panel="links" hidden><section aria-labelledby="project-links-heading" class="project-links">
+<div class="build-info-heading">
+<h2 id="project-links-heading">프로젝트 개발 링크</h2>
+</div>
+<table aria-label="프로젝트별 GitHub 저장소 및 ChatGPT 대화 링크" class="project-links-table">
+<colgroup><col/><col/></colgroup>
+<thead><tr><th scope="col">구분</th><th scope="col">연결 주소</th></tr></thead>
+<tbody id="project-link-rows"><tr><td>GitHub 리포지토리</td><td><a href="https://example.com/demo-repository" rel="noopener noreferrer" target="_blank">https://example.com/demo-repository (예시)</a></td></tr><tr><td>ChatGPT 대화</td><td>대화 링크 미등록</td></tr><tr><td>실제 운영 URL</td><td><a href="https://example.com" rel="noopener noreferrer" target="_blank">https://example.com (예시)</a></td></tr><tr><td>최근 배포일</td><td>2026.10.12 (예시)</td></tr></tbody>
+</table>
+</section></div>
+      <div class="detail-panel" data-dialog-panel="delivery" hidden><section aria-labelledby="delivery-info-heading" class="project-links delivery-info">
+<div class="build-info-heading">
+<h2 id="delivery-info-heading">납품·포트폴리오 정보</h2>
+</div>
+<table aria-label="프로젝트 납품 및 포트폴리오 공개 정보" class="project-links-table">
+<colgroup><col/><col/></colgroup>
+<thead><tr><th scope="col">구분</th><th scope="col">내용</th></tr></thead>
+<tbody id="delivery-info-rows"><tr><td>납품정보</td><td>납품 준비중</td></tr><tr><td>실제 납품일</td><td>미납품</td></tr><tr><td>고객 검수상태</td><td>검수 전</td></tr><tr><td>유지보수 종료일</td><td>미시작</td></tr><tr><td>포트폴리오 공개여부</td><td>미정</td></tr><tr><td>포트폴리오 공개승인 근거</td><td>공개 동의 미확보</td></tr></tbody>
+</table>
+</section></div>
+    </div>
+  </div>
+</dialog>
+<script src="./app.js" defer></script>
+</body>
+</html>
