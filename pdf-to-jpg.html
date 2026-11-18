@@ -184,6 +184,7 @@ function setBusy(value) {
   ui.quality.disabled = value;
   document.querySelectorAll('input[name="pageMode"]').forEach((radio) => {radio.disabled = value;});
   ui.progressSection.hidden = !value;
+  ui.cancel.disabled = !value;
   updateButtons();
 }
 function progress(value, label) {
